@@ -5,20 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>all</artifactId>
+        <artifactId>frameworks</artifactId>
         <groupId>com.grace.train12306</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>frameworks</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>base</module>
-        <module>convention</module>
-    </modules>
-
-
-
+    <artifactId>train12306-convention-spring-boot-starter</artifactId>
 
 </project>
