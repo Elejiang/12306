@@ -22,6 +22,7 @@
         <module>distributedid</module>
         <module>database</module>
         <module>log</module>
+        <module>web</module>
     </modules>
 
 
