@@ -21,6 +21,7 @@
         <module>common</module>
         <module>distributedid</module>
         <module>database</module>
+        <module>log</module>
     </modules>
 
 
