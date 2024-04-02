@@ -23,6 +23,7 @@
         <module>database</module>
         <module>log</module>
         <module>web</module>
+        <module>cache</module>
     </modules>
 
 
