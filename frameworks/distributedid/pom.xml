@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>train12306-distributedid-spring-boot-start</artifactId>
+    <artifactId>train12306-distributedid-spring-boot-starter</artifactId>
 
     <dependencies>
         <dependency>
