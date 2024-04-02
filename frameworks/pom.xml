@@ -18,6 +18,7 @@
         <module>convention</module>
         <module>user</module>
         <module>designpattern</module>
+        <module>common</module>
     </modules>
 
 
