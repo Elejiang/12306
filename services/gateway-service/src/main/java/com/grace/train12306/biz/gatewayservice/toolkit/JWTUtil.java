@@ -1,13 +1,11 @@
-package com.grace.train12306.framework.starter.user.toolkit;
+package com.grace.train12306.biz.gatewayservice.toolkit;
 
 import com.alibaba.fastjson2.JSON;
-import com.grace.train12306.framework.starter.user.core.UserInfoDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
@@ -27,7 +25,7 @@ public final class JWTUtil {
         SECRET = System.getenv("JWT_SECRET");
     }
 
-    private static final long EXPIRATION = 86400L; // 24h有效期
+    private static final long EXPIRATION = 86400L;
     public static final String ISS = "train12306";
     public static final String SECRET;
 
