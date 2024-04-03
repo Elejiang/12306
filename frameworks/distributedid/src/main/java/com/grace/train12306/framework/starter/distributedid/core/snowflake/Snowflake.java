@@ -11,28 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Twitter的Snowflake 算法<br>
  * 分布式系统中，有一些需要使用全局唯一ID的场景，有些时候我们希望能使用一种简单一些的ID，并且希望ID能够按照时间有序生成。
- *
- * <p>
- * snowflake的结构如下(每部分用-分开):<br>
- *
- * <pre>
- * 符号位（1bit）- 时间戳相对值（41bit）- 数据中心标志（5bit）- 机器标志（5bit）- 递增序号（12bit）
- * 0 - 0000000000 0000000000 0000000000 0000000000 0 - 00000 - 00000 - 000000000000
- * </pre>
- * <p>
- * 第一位为未使用(符号位表示正数)，接下来的41位为毫秒级时间(41位的长度可以使用69年)<br>
- * 然后是5位datacenterId和5位workerId(10位的长度最多支持部署1024个节点）<br>
- * 最后12位是毫秒内的计数（12位的计数顺序号支持每个节点每毫秒产生4096个ID序号）
- * <p>
- * 并且可以通过生成的id反推出生成时间,datacenterId和workerId
- * <p>
- * 参考：http://www.cnblogs.com/relucent/p/4955340.html<br>
- * 关于长度是18还是19的问题见：https://blog.csdn.net/unifirst/article/details/80408050
- *
- * @author Looly
- * @since 3.0.1
  */
 public class Snowflake implements Serializable, IdGenerator {
 
