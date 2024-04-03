@@ -48,8 +48,23 @@ public class StringRedisTemplateProxy implements DistributedCache {
     }
 
     @Override
+    public Object get(String key, Object hashKey) {
+        return stringRedisTemplate.opsForHash().get(key, hashKey);
+    }
+
+    @Override
     public void put(String key, Object value) {
         put(key, value, redisProperties.getValueTimeout());
+    }
+
+    @Override
+    public void putHash(String key, Object hashKey, Object value) {
+        stringRedisTemplate.opsForHash().put(key, hashKey, value);
+    }
+
+    @Override
+    public Boolean putHashIfAbsent(String key, Object hashKey, Object value) {
+        return stringRedisTemplate.opsForHash().putIfAbsent(key, hashKey, value);
     }
 
     @Override
@@ -187,6 +202,11 @@ public class StringRedisTemplateProxy implements DistributedCache {
     @Override
     public Long countExistingKeys(String... keys) {
         return stringRedisTemplate.countExistingKeys(Lists.newArrayList(keys));
+    }
+
+    @Override
+    public Boolean expire(String key, long timeout, TimeUnit timeUnit) {
+        return stringRedisTemplate.expire(key, timeout, timeUnit);
     }
 
     private <T> T loadAndSet(String key, CacheLoader<T> cacheLoader, long timeout, TimeUnit timeUnit, boolean safeFlag, RBloomFilter<String> bloomFilter) {
