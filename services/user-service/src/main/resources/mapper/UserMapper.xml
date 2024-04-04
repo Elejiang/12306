@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.grace.train12306.biz.userservice.dao.mapper.UserMapper">
+
+    <!-- 注销用户 -->
+    <update id="deletionUser" parameterType="com.grace.train12306.biz.userservice.dao.entity.UserDO">
+        update t_user
+        set deletion_time = #{deletionTime},
+            del_flag      = '1'
+        where username = #{username} and del_flag = '0'
+    </update>
+</mapper>
