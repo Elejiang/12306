@@ -38,6 +38,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static com.grace.train12306.biz.userservice.common.constant.RedisKeyConstant.*;
+import static com.grace.train12306.biz.userservice.common.constant.RedisTTLConstant.TOKEN_TTL;
+import static com.grace.train12306.biz.userservice.common.constant.RedisTTLConstant.TOKEN_TTL_TIMEUNIT;
 import static com.grace.train12306.biz.userservice.common.enums.UserRegisterErrorCodeEnum.*;
 import static com.grace.train12306.biz.userservice.toolkit.UserReuseUtil.hashShardingIdx;
 
@@ -99,7 +101,7 @@ public class UserLoginServiceImpl implements UserLoginService {
                     .build();
             String accessToken = JWTUtil.generateAccessToken(userInfo);
             UserLoginRespDTO actual = new UserLoginRespDTO(userInfo.getUserId(), requestParam.getUsernameOrMailOrPhone(), userDO.getRealName(), accessToken);
-            distributedCache.put(accessToken, JSON.toJSONString(actual), 30, TimeUnit.MINUTES);
+            distributedCache.put(accessToken, JSON.toJSONString(actual), TOKEN_TTL, TOKEN_TTL_TIMEUNIT);
             return actual;
         }
         throw new ServiceException("账号不存在或密码错误");
