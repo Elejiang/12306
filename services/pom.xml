@@ -12,6 +12,7 @@
 
     <modules>
         <module>gateway-service</module>
+        <module>user-service</module>
     </modules>
 
     <artifactId>services</artifactId>
