@@ -4,7 +4,6 @@ import com.grace.train12306.framework.starter.bases.ApplicationContextHolder;
 import com.grace.train12306.framework.starter.idempotent.core.param.IdempotentParamService;
 import com.grace.train12306.framework.starter.idempotent.core.spel.IdempotentSpELByMQExecuteHandler;
 import com.grace.train12306.framework.starter.idempotent.core.spel.IdempotentSpELByRestAPIExecuteHandler;
-import com.grace.train12306.framework.starter.idempotent.core.token.IdempotentTokenService;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 
@@ -26,7 +25,6 @@ public final class IdempotentExecuteHandlerFactory {
             case RESTAPI -> {
                 switch (type) {
                     case PARAM -> result = ApplicationContextHolder.getBean(IdempotentParamService.class);
-                    case TOKEN -> result = ApplicationContextHolder.getBean(IdempotentTokenService.class);
                     case SPEL -> result = ApplicationContextHolder.getBean(IdempotentSpELByRestAPIExecuteHandler.class);
                     default -> {
                     }

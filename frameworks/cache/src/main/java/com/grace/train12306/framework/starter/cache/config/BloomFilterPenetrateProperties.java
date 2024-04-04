@@ -20,10 +20,10 @@ public class BloomFilterPenetrateProperties {
     /**
      * 每个元素的预期插入量
      */
-    private Long expectedInsertions = 64L;
+    private Long expectedInsertions = 1000L;
 
     /**
      * 预期错误概率
      */
-    private Double falseProbability = 0.03D;
+    private Double falseProbability = 0.02D;
 }

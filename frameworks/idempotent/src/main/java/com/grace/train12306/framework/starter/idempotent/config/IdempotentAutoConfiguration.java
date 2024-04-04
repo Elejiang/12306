@@ -7,9 +7,6 @@ import com.grace.train12306.framework.starter.idempotent.core.param.IdempotentPa
 import com.grace.train12306.framework.starter.idempotent.core.spel.IdempotentSpELByMQExecuteHandler;
 import com.grace.train12306.framework.starter.idempotent.core.spel.IdempotentSpELByRestAPIExecuteHandler;
 import com.grace.train12306.framework.starter.idempotent.core.spel.IdempotentSpELService;
-import com.grace.train12306.framework.starter.idempotent.core.token.IdempotentTokenController;
-import com.grace.train12306.framework.starter.idempotent.core.token.IdempotentTokenExecuteHandler;
-import com.grace.train12306.framework.starter.idempotent.core.token.IdempotentTokenService;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,24 +33,6 @@ public class IdempotentAutoConfiguration {
     @ConditionalOnMissingBean
     public IdempotentParamService idempotentParamExecuteHandler(RedissonClient redissonClient) {
         return new IdempotentParamExecuteHandler(redissonClient);
-    }
-
-    /**
-     * Token 方式幂等实现，基于 RestAPI 场景
-     */
-    @Bean
-    @ConditionalOnMissingBean
-    public IdempotentTokenService idempotentTokenExecuteHandler(DistributedCache distributedCache,
-                                                                IdempotentProperties idempotentProperties) {
-        return new IdempotentTokenExecuteHandler(distributedCache, idempotentProperties);
-    }
-
-    /**
-     * 申请幂等 Token 控制器，基于 RestAPI 场景
-     */
-    @Bean
-    public IdempotentTokenController idempotentTokenController(IdempotentTokenService idempotentTokenService) {
-        return new IdempotentTokenController(idempotentTokenService);
     }
 
     /**
