@@ -12,6 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDynamicThreadPool
 @MapperScan("com.grace.train12306.biz.ticketservice.dao.mapper")
+@EnableFeignClients("com.grace.train12306.biz.ticketservice.remote")
 public class TicketServiceApplication {
 
     public static void main(String[] args) {
