@@ -76,6 +76,14 @@ framework:
       value-timeout: 16
       value-time-unit: days
 
+remote:
+  pay:
+    url: 127.0.0.1:9004
+  order:
+    url: 127.0.0.1:9003
+  user:
+    url: 127.0.0.1:9001
+
 feign:
   client:
     config:
