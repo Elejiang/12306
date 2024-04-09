@@ -14,6 +14,7 @@
         <module>gateway-service</module>
         <module>user-service</module>
         <module>ticket-service</module>
+        <module>order-service</module>
     </modules>
 
     <artifactId>services</artifactId>
