@@ -24,7 +24,7 @@ import static com.grace.train12306.framework.starter.bases.constant.UserConstant
 public final class JWTUtil {
 
     static {
-        SECRET = System.getenv("JWT_SECRET");
+        SECRET = System.getenv("JWT_KEY");
     }
 
     private static final long EXPIRATION = 86400L; // 24h有效期
