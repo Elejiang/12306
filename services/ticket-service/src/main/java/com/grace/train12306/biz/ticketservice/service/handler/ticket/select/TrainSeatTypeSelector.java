@@ -48,16 +48,20 @@ public final class TrainSeatTypeSelector {
 
     public List<TrainPurchaseTicketRespDTO> select(Integer trainType, PurchaseTicketReqDTO requestParam) {
         List<PurchaseTicketPassengerDetailDTO> passengerDetails = requestParam.getPassengers();
+        // 根据用户购买的座位类型进行分组
         Map<Integer, List<PurchaseTicketPassengerDetailDTO>> seatTypeMap = passengerDetails.stream()
                 .collect(Collectors.groupingBy(PurchaseTicketPassengerDetailDTO::getSeatType));
+        // 分配好用户相关的座位信息，容器修改为线程安全的数组集合
         List<TrainPurchaseTicketRespDTO> actualResult = new CopyOnWriteArrayList<>();
         if (seatTypeMap.size() > 1) {
+            // 添加多线程执行结果类获取 Future，流程执行完成后获取
             List<Future<List<TrainPurchaseTicketRespDTO>>> futureResults = new ArrayList<>();
             seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
                 Future<List<TrainPurchaseTicketRespDTO>> completableFuture = selectSeatThreadPoolExecutor
-                        .submit(() -> distributeSeats(trainType, seatType, requestParam, passengerSeatDetails));
+                          .submit(() -> distributeSeats(trainType, seatType, requestParam, passengerSeatDetails));
                 futureResults.add(completableFuture);
             });
+            // 获取座位分配结果
             futureResults.parallelStream().forEach(completableFuture -> {
                 try {
                     actualResult.addAll(completableFuture.get());
