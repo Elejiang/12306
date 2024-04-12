@@ -1,7 +1,9 @@
 package com.grace.train12306.framework.starter.designpattern.chain;
 
 import com.grace.train12306.framework.starter.bases.ApplicationContextHolder;
+import com.grace.train12306.framework.starter.bases.init.ApplicationInitializingEvent;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.util.CollectionUtils;
 
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * 抽象责任链上下文
  */
-public final class AbstractChainContext<T> implements CommandLineRunner {
+public final class AbstractChainContext<T> implements ApplicationListener<ApplicationInitializingEvent> {
 
     private final Map<String, List<AbstractChainHandler>> abstractChainHandlerContainer = new HashMap<>();
 
@@ -30,7 +32,7 @@ public final class AbstractChainContext<T> implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void onApplicationEvent(ApplicationInitializingEvent event) {
         Map<String, AbstractChainHandler> chainFilterMap = ApplicationContextHolder
                 .getBeansOfType(AbstractChainHandler.class);
         chainFilterMap.forEach((beanName, bean) -> {
