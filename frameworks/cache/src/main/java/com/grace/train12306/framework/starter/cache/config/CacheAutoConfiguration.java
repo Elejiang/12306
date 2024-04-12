@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
  * 缓存配置自动装配
  */
 @AllArgsConstructor
-@EnableConfigurationProperties({RedisDistributedProperties.class, BloomFilterPenetrateProperties.class})
+@EnableConfigurationProperties({RedisDistributedProperties.class})
 public class CacheAutoConfiguration {
 
     private final RedisDistributedProperties redisDistributedProperties;
@@ -27,17 +27,6 @@ public class CacheAutoConfiguration {
         String prefix = redisDistributedProperties.getPrefix();
         String prefixCharset = redisDistributedProperties.getPrefixCharset();
         return new RedisKeySerializer(prefix, prefixCharset);
-    }
-
-    /**
-     * 防止缓存穿透的布隆过滤器
-     */
-    @Bean
-    @ConditionalOnProperty(prefix = BloomFilterPenetrateProperties.PREFIX, name = "enabled", havingValue = "true")
-    public RBloomFilter<String> cachePenetrationBloomFilter(RedissonClient redissonClient, BloomFilterPenetrateProperties bloomFilterPenetrateProperties) {
-        RBloomFilter<String> cachePenetrationBloomFilter = redissonClient.getBloomFilter(bloomFilterPenetrateProperties.getName());
-        cachePenetrationBloomFilter.tryInit(bloomFilterPenetrateProperties.getExpectedInsertions(), bloomFilterPenetrateProperties.getFalseProbability());
-        return cachePenetrationBloomFilter;
     }
 
     @Bean

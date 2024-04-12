@@ -47,7 +47,7 @@ public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentEx
         Boolean setIfAbsent =
                 distributedCache.putHashIfAbsent(uniqueKey, IdempotentMQConsumeKeyEnum.CONSUMPTION_ID.getKey(), consumptionId);
         if (setIfAbsent != null && !setIfAbsent) {
-            String consumeStatus = distributedCache.get(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey()).toString();
+            String consumeStatus = distributedCache.getHash(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey()).toString();
             boolean error = IdempotentMQConsumeStatusEnum.isError(consumeStatus);
             LogUtil.getLog(wrapper.getJoinPoint()).warn("[{}] MQ repeated consumption, {}.", uniqueKey, error ? "Wait for the client to delay consumption" : "Status is completed");
             // 抛出异常，交给上层判断应该重试还是将消息吞掉
@@ -79,7 +79,7 @@ public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentEx
             Idempotent idempotent = wrapper.getIdempotent();
             String uniqueKey = idempotent.uniqueKeyPrefix() + wrapper.getLockKey();
             String consumptionId = wrapper.getConsumptionId();
-            boolean isOwn = StrUtil.equals(consumptionId, distributedCache.get(uniqueKey, IdempotentMQConsumeKeyEnum.CONSUMPTION_ID.getKey()).toString());
+            boolean isOwn = StrUtil.equals(consumptionId, distributedCache.getHash(uniqueKey, IdempotentMQConsumeKeyEnum.CONSUMPTION_ID.getKey()).toString());
             if (isOwn) {
                 distributedCache.putHash(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey(), IdempotentMQConsumeStatusEnum.CONSUMED.getCode());
                 distributedCache.expire(uniqueKey, idempotent.keyTimeout(), TimeUnit.SECONDS);

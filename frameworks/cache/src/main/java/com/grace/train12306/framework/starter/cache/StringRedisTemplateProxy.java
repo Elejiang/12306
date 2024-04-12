@@ -8,7 +8,6 @@ import com.grace.train12306.framework.starter.cache.core.CacheGetFilter;
 import com.grace.train12306.framework.starter.cache.core.CacheGetIfAbsent;
 import com.grace.train12306.framework.starter.cache.core.CacheLoader;
 import com.grace.train12306.framework.starter.cache.toolkit.CacheUtil;
-import com.grace.train12306.framework.starter.cache.toolkit.FastJson2Util;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -44,11 +43,11 @@ public class StringRedisTemplateProxy implements DistributedCache {
         if (String.class.isAssignableFrom(clazz)) {
             return (T) value;
         }
-        return JSON.parseObject(value, FastJson2Util.buildType(clazz));
+        return JSON.parseObject(value, clazz);
     }
 
     @Override
-    public Object get(String key, Object hashKey) {
+    public Object getHash(String key, Object hashKey) {
         return stringRedisTemplate.opsForHash().get(key, hashKey);
     }
 

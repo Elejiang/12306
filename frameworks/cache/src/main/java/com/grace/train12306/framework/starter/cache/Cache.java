@@ -19,7 +19,7 @@ public interface Cache {
     /**
      * 获取哈希类型缓存
      */
-    Object get(@NotBlank String key, Object hashKey);
+    Object getHash(@NotBlank String key, Object hashKey);
 
     /**
      * 放入缓存
