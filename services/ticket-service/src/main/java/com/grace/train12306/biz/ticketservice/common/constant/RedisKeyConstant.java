@@ -23,7 +23,7 @@ public final class RedisKeyConstant {
     /**
      * 站点查询，Key Prefix + 起始城市_终点城市_日期
      */
-    public static final String REGION_TRAIN_STATION = "train12306-ticket-service:region_train_station:%s_%s";
+    public static final String REGION_TRAIN_STATION = "train12306-ticket-service:region_train_station:%s_%s_%s";
 
     /**
      * 站点查询分布式锁 Key

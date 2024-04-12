@@ -31,19 +31,19 @@ public class PayDataBaseComplexAlgorithm implements ComplexKeysShardingAlgorithm
         Map<String, Collection<Comparable<Long>>> columnNameAndShardingValuesMap = shardingValue.getColumnNameAndShardingValuesMap();
         Collection<String> result = new LinkedHashSet<>(availableTargetNames.size());
         if (CollUtil.isNotEmpty(columnNameAndShardingValuesMap)) {
-            Collection<Comparable<Long>> customerUserIdCollection = columnNameAndShardingValuesMap.get("order_sn");
-            if (CollUtil.isNotEmpty(customerUserIdCollection)) {
-                getOrderSn(result, customerUserIdCollection);
+            Collection<Comparable<Long>> customerOrderSnCollection = columnNameAndShardingValuesMap.get("order_sn");
+            if (CollUtil.isNotEmpty(customerOrderSnCollection)) {
+                getOrderSn(result, customerOrderSnCollection);
             } else {
-                Collection<Comparable<Long>> orderSnCollection = columnNameAndShardingValuesMap.get("pay_sn");
-                getOrderSn(result, orderSnCollection);
+                Collection<Comparable<Long>> paySnCollection = columnNameAndShardingValuesMap.get("pay_sn");
+                getOrderSn(result, paySnCollection);
             }
         }
         return result;
     }
 
-    private void getOrderSn(Collection<String> result, Collection<Comparable<Long>> orderSnCollection) {
-        Comparable<?> comparable = orderSnCollection.stream().findFirst().get();
+    private void getOrderSn(Collection<String> result, Collection<Comparable<Long>> collection) {
+        Comparable<?> comparable = collection.stream().findFirst().get();
         if (comparable instanceof String) {
             String actualOrderSn = comparable.toString();
             result.add("ds_" + hashShardingValue(actualOrderSn.substring(Math.max(actualOrderSn.length() - 6, 0))) % shardingCount / tableShardingCount);
