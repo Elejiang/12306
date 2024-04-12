@@ -7,8 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import com.grace.train12306.biz.orderservice.common.enums.OrderCanalErrorCodeEnum;
 import com.grace.train12306.biz.orderservice.dao.entity.OrderDO;
 import com.grace.train12306.biz.orderservice.dao.entity.OrderItemDO;
@@ -20,6 +18,8 @@ import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderPassengerDetail
 import com.grace.train12306.biz.orderservice.service.OrderItemService;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;

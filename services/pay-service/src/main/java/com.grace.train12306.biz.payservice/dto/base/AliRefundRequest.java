@@ -1,10 +1,10 @@
 package com.grace.train12306.biz.payservice.dto.base;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
 import com.grace.train12306.biz.payservice.common.enums.PayChannelEnum;
 import com.grace.train12306.biz.payservice.common.enums.PayTradeTypeEnum;
 import com.grace.train12306.biz.payservice.common.enums.TradeStatusEnum;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 

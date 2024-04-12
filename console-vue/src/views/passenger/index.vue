@@ -50,16 +50,12 @@
 </template>
 
 <script setup>
-import { Card, Input, Button, Space, Table, message } from 'ant-design-vue'
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined
-} from '@ant-design/icons-vue'
+import {Button, Card, Input, message, Space, Table} from 'ant-design-vue'
+import {DeleteOutlined, EditOutlined, PlusOutlined} from '@ant-design/icons-vue'
 import Cookie from 'js-cookie'
-import { useRouter } from 'vue-router'
-import { fetchPassengerList, fetchDeletePassenger } from '@/service/index'
-import { onMounted, reactive, ref, toRaw } from 'vue'
+import {useRouter} from 'vue-router'
+import {fetchDeletePassenger, fetchPassengerList} from '@/service/index'
+import {onMounted, reactive, ref} from 'vue'
 
 const username = Cookie.get('username')
 const passengerList = ref([])

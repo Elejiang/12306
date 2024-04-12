@@ -1,8 +1,6 @@
 package com.grace.train12306.biz.ticketservice.canal;
 
 import cn.hutool.core.collection.CollUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import com.grace.train12306.biz.ticketservice.common.enums.CanalExecuteStrategyMarkEnum;
 import com.grace.train12306.biz.ticketservice.mq.event.CanalBinlogEvent;
 import com.grace.train12306.biz.ticketservice.remote.TicketOrderRemoteService;
@@ -14,6 +12,8 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.designpattern.strategy.AbstractExecuteStrategy;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

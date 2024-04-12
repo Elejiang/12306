@@ -1,7 +1,6 @@
 package com.grace.train12306.biz.orderservice.controller;
 
 import cn.crane4j.annotation.AutoOperate;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.orderservice.dto.req.*;
 import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderDetailRespDTO;
 import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderDetailSelfRespDTO;
@@ -11,6 +10,7 @@ import com.grace.train12306.biz.orderservice.service.OrderService;
 import com.grace.train12306.framework.starter.convention.page.PageResponse;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.web.Results;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

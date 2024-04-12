@@ -2,7 +2,6 @@ package com.grace.train12306.framework.starter.designpattern.chain;
 
 import com.grace.train12306.framework.starter.bases.ApplicationContextHolder;
 import com.grace.train12306.framework.starter.bases.init.ApplicationInitializingEvent;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.util.CollectionUtils;

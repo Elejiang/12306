@@ -2,10 +2,6 @@ package com.grace.train12306.biz.ticketservice.mq.consumer;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.core.RocketMQListener;
 import com.grace.train12306.biz.ticketservice.common.constant.TicketRocketMQConstant;
 import com.grace.train12306.biz.ticketservice.dto.domain.RouteDTO;
 import com.grace.train12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
@@ -21,6 +17,10 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.result.Result;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;

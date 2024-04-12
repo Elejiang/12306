@@ -73,12 +73,13 @@
 </template>
 
 <script setup>
-import { defineProps, reactive } from 'vue'
+import {defineProps, reactive} from 'vue'
 import IconFont from '@/components/icon-font'
-import { Layout, Menu, Divider, message, Tooltip } from 'ant-design-vue'
-import { fetchLogout } from '@/service'
-import { RouterLink } from 'vue-router'
+import {Divider, Layout, Menu, message, Tooltip} from 'ant-design-vue'
+import {fetchLogout} from '@/service'
+import {RouterLink} from 'vue-router'
 import Cookie from 'js-cookie'
+
 const { SubMenu, Item } = Menu
 const { Sider } = Layout
 const props = defineProps({

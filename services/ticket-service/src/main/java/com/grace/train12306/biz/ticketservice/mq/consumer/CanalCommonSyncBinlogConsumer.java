@@ -2,14 +2,14 @@ package com.grace.train12306.biz.ticketservice.mq.consumer;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.core.RocketMQListener;
 import com.grace.train12306.biz.ticketservice.common.constant.TicketRocketMQConstant;
 import com.grace.train12306.biz.ticketservice.common.enums.CanalExecuteStrategyMarkEnum;
 import com.grace.train12306.biz.ticketservice.mq.event.CanalBinlogEvent;
 import com.grace.train12306.framework.starter.designpattern.strategy.AbstractStrategyChoose;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

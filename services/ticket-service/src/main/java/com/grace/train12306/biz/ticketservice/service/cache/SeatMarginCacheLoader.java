@@ -3,7 +3,6 @@ package com.grace.train12306.biz.ticketservice.service.cache;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.common.enums.SeatStatusEnum;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
@@ -14,6 +13,7 @@ import com.grace.train12306.biz.ticketservice.dto.domain.RouteDTO;
 import com.grace.train12306.biz.ticketservice.service.TrainStationService;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.cache.toolkit.CacheUtil;
+import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyConstant.*;
+import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 
 /**
  * 座位余量缓存加载

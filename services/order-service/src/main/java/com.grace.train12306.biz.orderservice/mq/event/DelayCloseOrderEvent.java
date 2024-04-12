@@ -1,10 +1,10 @@
 package com.grace.train12306.biz.orderservice.mq.event;
 
+import com.grace.train12306.biz.orderservice.dto.req.TicketOrderItemCreateReqDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.biz.orderservice.dto.req.TicketOrderItemCreateReqDTO;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
 package com.grace.train12306.biz.ticketservice.controller;
 
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
 import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import com.grace.train12306.biz.ticketservice.dto.req.RefundTicketReqDTO;
@@ -13,9 +12,9 @@ import com.grace.train12306.biz.ticketservice.service.TicketService;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
-import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 import com.grace.train12306.framework.starter.log.annotation.ILog;
 import com.grace.train12306.framework.starter.web.Results;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -45,8 +44,7 @@ public class TicketController {
                     + "+'_'+"
                     + "T(com.grace.train12306.framework.starter.user.core.UserContext).getUsername()",
             message = "正在执行下单流程，请稍后...",
-            scene = IdempotentSceneEnum.RESTAPI,
-            type = IdempotentTypeEnum.SPEL
+            scene = IdempotentSceneEnum.RESTAPI
     )
     @PostMapping("/api/ticket-service/ticket/purchase")
     public Result<TicketPurchaseRespDTO> purchaseTickets(@RequestBody PurchaseTicketReqDTO requestParam) {
@@ -63,8 +61,7 @@ public class TicketController {
                     + "+'_'+"
                     + "T(com.grace.train12306.framework.starter.user.core.UserContext).getUsername()",
             message = "正在执行下单流程，请稍后...",
-            scene = IdempotentSceneEnum.RESTAPI,
-            type = IdempotentTypeEnum.SPEL
+            scene = IdempotentSceneEnum.RESTAPI
     )
     @PostMapping("/api/ticket-service/ticket/purchase/v2")
     public Result<TicketPurchaseRespDTO> purchaseTicketsV2(@RequestBody PurchaseTicketReqDTO requestParam) {

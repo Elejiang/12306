@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.payservice.dto;
 
-import lombok.Data;
 import com.grace.train12306.biz.payservice.dto.base.AbstractRefundRequest;
+import lombok.Data;
 
 import java.math.BigDecimal;
 

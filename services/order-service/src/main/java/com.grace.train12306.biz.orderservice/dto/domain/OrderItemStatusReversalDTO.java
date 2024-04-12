@@ -1,10 +1,10 @@
 package com.grace.train12306.biz.orderservice.dto.domain;
 
+import com.grace.train12306.biz.orderservice.dao.entity.OrderItemDO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.biz.orderservice.dao.entity.OrderItemDO;
 
 import java.util.List;
 

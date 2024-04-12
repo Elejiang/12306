@@ -1,11 +1,11 @@
 package com.grace.train12306.biz.ticketservice.service.handler.ticket.dto;
 
+import com.grace.train12306.biz.ticketservice.dto.domain.PurchaseTicketPassengerDetailDTO;
+import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.biz.ticketservice.dto.domain.PurchaseTicketPassengerDetailDTO;
-import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 
 import java.util.List;
 

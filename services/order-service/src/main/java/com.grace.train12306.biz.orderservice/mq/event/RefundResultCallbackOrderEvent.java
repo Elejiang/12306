@@ -1,10 +1,10 @@
 package com.grace.train12306.biz.orderservice.mq.event;
 
+import com.grace.train12306.biz.orderservice.common.enums.RefundTypeEnum;
+import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderPassengerDetailRespDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.biz.orderservice.common.enums.RefundTypeEnum;
-import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderPassengerDetailRespDTO;
 
 import java.util.List;
 

@@ -3,9 +3,6 @@ package com.grace.train12306.biz.ticketservice.service.handler.ticket.select;
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.grace.train12306.framework.starter.user.core.UserContext;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.TrainStationPriceDO;
@@ -21,6 +18,9 @@ import com.grace.train12306.framework.starter.convention.exception.RemoteExcepti
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.designpattern.strategy.AbstractStrategyChoose;
+import com.grace.train12306.framework.starter.user.core.UserContext;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

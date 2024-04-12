@@ -2,12 +2,12 @@ package com.grace.train12306.biz.orderservice.dto.resp;
 
 import cn.crane4j.annotation.AssembleEnum;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.grace.train12306.biz.orderservice.common.enums.OrderItemStatusEnum;
+import com.grace.train12306.biz.orderservice.serialize.IdCardDesensitizationSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.biz.orderservice.common.enums.OrderItemStatusEnum;
-import com.grace.train12306.biz.orderservice.serialize.IdCardDesensitizationSerializer;
 
 /**
  * 车票订单详情返回参数

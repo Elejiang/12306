@@ -4,7 +4,6 @@ package com.grace.train12306.biz.ticketservice.toolkit;
 import com.grace.train12306.biz.ticketservice.dto.domain.RouteDTO;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

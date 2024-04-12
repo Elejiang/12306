@@ -1,9 +1,5 @@
-package com.grace.train12306.framework.starter.idempotent.core.spel;
+package com.grace.train12306.framework.starter.idempotent.core.handler;
 
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import com.grace.train12306.framework.starter.convention.exception.ClientException;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.core.AbstractIdempotentExecuteHandler;
@@ -11,18 +7,22 @@ import com.grace.train12306.framework.starter.idempotent.core.IdempotentAspect;
 import com.grace.train12306.framework.starter.idempotent.core.IdempotentContext;
 import com.grace.train12306.framework.starter.idempotent.core.IdempotentParamWrapper;
 import com.grace.train12306.framework.starter.idempotent.toolkit.SpELUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
 /**
- * 基于 SpEL 方法验证请求幂等性，适用于 RestAPI 场景
+ * 验证请求幂等性，适用于 RestAPI 场景
  */
 @RequiredArgsConstructor
-public final class IdempotentSpELByRestAPIExecuteHandler extends AbstractIdempotentExecuteHandler implements IdempotentSpELService {
+public final class IdempotentByRestAPIExecuteHandler extends AbstractIdempotentExecuteHandler {
 
     private final RedissonClient redissonClient;
 
-    private final static String LOCK = "lock:spEL:restAPI";
+    private final static String LOCK = "lock:restAPI";
 
     @SneakyThrows
     @Override

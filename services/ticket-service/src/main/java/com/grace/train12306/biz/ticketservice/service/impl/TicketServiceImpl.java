@@ -11,8 +11,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import com.grace.train12306.biz.ticketservice.common.enums.*;
 import com.grace.train12306.biz.ticketservice.dao.entity.*;
 import com.grace.train12306.biz.ticketservice.dao.mapper.*;
@@ -45,6 +43,8 @@ import com.grace.train12306.framework.starter.convention.exception.ServiceExcept
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.designpattern.chain.AbstractChainContext;
 import com.grace.train12306.framework.starter.user.core.UserContext;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,8 +62,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
-import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyConstant.*;
+import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 import static com.grace.train12306.biz.ticketservice.toolkit.DateUtil.convertDateToLocalTime;
 
 /**

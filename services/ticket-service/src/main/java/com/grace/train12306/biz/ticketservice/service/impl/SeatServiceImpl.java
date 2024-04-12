@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.common.enums.SeatStatusEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
 import com.grace.train12306.biz.ticketservice.dao.mapper.SeatMapper;
@@ -15,6 +14,7 @@ import com.grace.train12306.biz.ticketservice.service.SeatService;
 import com.grace.train12306.biz.ticketservice.service.TrainStationService;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPurchaseTicketRespDTO;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 

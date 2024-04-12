@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.dao.entity.TrainDO;
 import com.grace.train12306.biz.ticketservice.dao.entity.TrainStationDO;
 import com.grace.train12306.biz.ticketservice.dao.mapper.TrainMapper;
@@ -13,6 +12,7 @@ import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.EnvironmentUtil;
 import com.grace.train12306.framework.starter.convention.exception.ClientException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;

@@ -1,9 +1,9 @@
 package com.grace.train12306.biz.ticketservice.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
 import com.grace.train12306.biz.ticketservice.dto.domain.SeatTypeCountDTO;
 import org.apache.ibatis.annotations.Param;
-import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
 
 import java.util.List;
 

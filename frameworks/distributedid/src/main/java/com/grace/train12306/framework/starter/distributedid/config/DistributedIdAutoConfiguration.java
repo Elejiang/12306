@@ -1,12 +1,10 @@
 package com.grace.train12306.framework.starter.distributedid.config;
 
-import com.grace.train12306.framework.starter.bases.ApplicationContextHolder;
 import com.grace.train12306.framework.starter.distributedid.core.snowflake.LocalRedisWorkIdChoose;
 import com.grace.train12306.framework.starter.distributedid.core.snowflake.RandomWorkIdChoose;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 /**
  * 分布式 ID 自动装配

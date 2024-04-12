@@ -5,8 +5,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.TrainDO;
 import com.grace.train12306.biz.ticketservice.dao.mapper.SeatMapper;
@@ -22,6 +20,8 @@ import com.grace.train12306.framework.starter.bases.Singleton;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.Assert;
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.core.io.ClassPathResource;
@@ -37,8 +37,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyConstant.*;
+import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 
 /**
  * 列车车票余量令牌桶，应对海量并发场景下满足并行、限流以及防超卖等场景

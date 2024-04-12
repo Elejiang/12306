@@ -2,10 +2,6 @@ package com.grace.train12306.biz.ticketservice.mq.consumer;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.core.RocketMQListener;
 import com.grace.train12306.biz.ticketservice.common.constant.TicketRocketMQConstant;
 import com.grace.train12306.biz.ticketservice.common.enums.SeatStatusEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
@@ -19,7 +15,10 @@ import com.grace.train12306.framework.starter.convention.exception.ServiceExcept
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
-import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +43,6 @@ public class PayResultCallbackTicketConsumer implements RocketMQListener<Message
     @Idempotent(
             uniqueKeyPrefix = "train12306-ticket:pay_result_callback:",
             key = "#message.getKeys()+'_'+#message.hashCode()",
-            type = IdempotentTypeEnum.SPEL,
             scene = IdempotentSceneEnum.MQ,
             keyTimeout = 7200L
     )

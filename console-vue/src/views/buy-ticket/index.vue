@@ -363,34 +363,30 @@
 
 <script setup>
 import {
+  Button,
   Card,
-  Divider,
-  Space,
   Checkbox,
   CheckboxGroup,
-  Table,
+  Divider,
+  Input,
+  message,
+  Modal,
   Select,
   SelectOption,
-  Input,
-  Button,
-  Modal,
-  message
+  Space,
+  Table
 } from 'ant-design-vue'
-import { useRoute } from 'vue-router'
-import {
-  fetchTicketSearch,
-  fetchPassengerList,
-  fetchBuyTicket
-} from '@/service'
-import { onMounted, reactive, toRaw, watch, ref } from 'vue'
-import { getWeekNumber } from '@/utils'
-import { UserOutlined, CloseCircleOutlined } from '@ant-design/icons-vue'
-import { TICKET_TYPE_LIST, ID_CARD_TYPE } from '@/constants'
+import {useRoute} from 'vue-router'
+import {fetchBuyTicket, fetchPassengerList, fetchTicketSearch} from '@/service'
+import {onMounted, reactive, ref, toRaw, watch} from 'vue'
+import {getWeekNumber} from '@/utils'
+import {CloseCircleOutlined, UserOutlined} from '@ant-design/icons-vue'
+import {ID_CARD_TYPE, SEAT_CLASS_TYPE_LIST, TICKET_TYPE_LIST} from '@/constants'
 import IconFont from '@/components/icon-font'
 import dayjs from 'dayjs'
-import { SEAT_CLASS_TYPE_LIST } from '@/constants'
 import Cookie from 'js-cookie'
 import router from '@/router'
+
 const styleWidth = { width: '150px' }
 
 const { query } = useRoute()

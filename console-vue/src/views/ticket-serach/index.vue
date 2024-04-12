@@ -1,34 +1,30 @@
 <script setup>
-import { reactive, toRaw, ref, h, watch, onMounted } from 'vue'
+import {onMounted, reactive, ref, toRaw, watch} from 'vue'
 import {
-  Card,
-  Form,
-  FormItem,
-  Space,
-  Select,
+  Alert,
   Button,
-  TabPane,
-  Tabs,
-  DatePicker,
-  Table,
+  Card,
+  CheckableTag,
   Checkbox,
   CheckboxGroup,
-  CheckableTag,
-  Row,
   Col,
-  Alert,
-  Tooltip,
-  message
+  DatePicker,
+  Form,
+  FormItem,
+  message,
+  Row,
+  Select,
+  Space,
+  Table,
+  TabPane,
+  Tabs,
+  Tooltip
 } from 'ant-design-vue'
-import { RetweetOutlined, SwapRightOutlined } from '@ant-design/icons-vue'
+import {RetweetOutlined, SwapRightOutlined} from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
-import { getWeekNumber, getTicketNumber } from '@/utils'
-import {
-  fetchTicketSearch,
-  fetchStationAll,
-  fetchTrainStation
-} from '@/service/index'
-import { SEAT_CLASS_TYPE_LIST, TRAIN_BRAND_LIST, TRAIN_TAG } from '@/constants'
+import {getTicketNumber, getWeekNumber} from '@/utils'
+import {fetchStationAll, fetchTicketSearch, fetchTrainStation} from '@/service/index'
+import {SEAT_CLASS_TYPE_LIST, TRAIN_BRAND_LIST, TRAIN_TAG} from '@/constants'
 
 const useForm = Form.useForm
 

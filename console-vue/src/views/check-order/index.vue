@@ -35,16 +35,9 @@
 </template>
 
 <script setup>
-import {
-  Card,
-  Space,
-  Divider,
-  Checkbox,
-  Table,
-  Form,
-  FormItem
-} from 'ant-design-vue'
-import { UserOutlined } from '@ant-design/icons-vue'
+import {Card, Checkbox, Divider, Form, Space, Table} from 'ant-design-vue'
+import {UserOutlined} from '@ant-design/icons-vue'
+
 const columns = [
   {
     dataIndex: 'number',

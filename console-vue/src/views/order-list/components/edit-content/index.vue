@@ -6,8 +6,9 @@
 </template>
 
 <script setup>
-import { Space, Button } from 'ant-design-vue'
-import { defineProps } from 'vue'
+import {Button, Space} from 'ant-design-vue'
+import {defineProps} from 'vue'
+
 const props = defineProps({
   orderSn: String,
   cancel: Function,

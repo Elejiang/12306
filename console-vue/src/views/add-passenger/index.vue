@@ -48,29 +48,26 @@
 
 <script setup>
 import {
-  Card,
   Alert,
-  Form,
-  TypographyTitle,
-  FormItem,
-  Select,
-  Input,
   Button,
-  Space,
+  Card,
+  Form,
+  FormItem,
+  Input,
+  message,
   Row,
+  Select,
   SelectOption,
-  message
+  Space,
+  TypographyTitle
 } from 'ant-design-vue'
 
-import { reactive, toRaw, ref, onMounted } from 'vue'
-import {
-  fetchAddPassenger,
-  fetchPassengerList,
-  fetchEditPassenger
-} from '@/service'
-import { DISCOUNTS_TYPE } from '@/constants'
-import { useRouter, useRoute } from 'vue-router'
+import {onMounted, reactive, ref, toRaw} from 'vue'
+import {fetchAddPassenger, fetchEditPassenger, fetchPassengerList} from '@/service'
+import {DISCOUNTS_TYPE} from '@/constants'
+import {useRoute, useRouter} from 'vue-router'
 import Cookie from 'js-cookie'
+
 const useForm = Form.useForm
 const router = useRouter()
 const { query } = useRoute()

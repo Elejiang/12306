@@ -1,14 +1,13 @@
 package com.grace.train12306.biz.payservice.controller;
 
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.payservice.convert.PayRequestConvert;
 import com.grace.train12306.biz.payservice.dto.*;
 import com.grace.train12306.biz.payservice.dto.base.PayRequest;
 import com.grace.train12306.biz.payservice.service.PayService;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
-import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 import com.grace.train12306.framework.starter.web.Results;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -25,7 +24,6 @@ public class PayController {
      * 对接常用支付方式，比如：支付宝、微信以及银行卡等
      */
     @Idempotent(
-            type = IdempotentTypeEnum.SPEL,
             uniqueKeyPrefix = "train12306-pay:lock_create_pay:",
             key = "#requestParam.getOutOrderSn()"
     )

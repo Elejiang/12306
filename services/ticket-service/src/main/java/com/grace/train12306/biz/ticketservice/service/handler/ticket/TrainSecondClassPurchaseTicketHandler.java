@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Pair;
 import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import com.grace.train12306.biz.ticketservice.dto.domain.PurchaseTicketPassengerDetailDTO;
@@ -16,6 +15,7 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPu
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.select.SeatSelection;
 import com.grace.train12306.biz.ticketservice.toolkit.SeatNumberUtil;
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

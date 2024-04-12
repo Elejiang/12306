@@ -1,11 +1,11 @@
 package com.grace.train12306.biz.payservice.mq.event;
 
+import com.grace.train12306.biz.payservice.common.enums.RefundTypeEnum;
+import com.grace.train12306.biz.payservice.remote.dto.TicketOrderPassengerDetailRespDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.biz.payservice.common.enums.RefundTypeEnum;
-import com.grace.train12306.biz.payservice.remote.dto.TicketOrderPassengerDetailRespDTO;
 
 import java.util.List;
 

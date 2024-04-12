@@ -1,11 +1,11 @@
 package com.grace.train12306.biz.orderservice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.grace.train12306.framework.starter.database.base.BaseDO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.grace.train12306.framework.starter.database.base.BaseDO;
 
 /**
  * 乘车人订单关系实体

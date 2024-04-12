@@ -1,7 +1,7 @@
 <script setup>
-import { Layout, ConfigProvider, Space } from 'ant-design-vue'
-import { useRoute } from 'vue-router'
-import { ref, watch, onMounted, reactive } from 'vue'
+import {ConfigProvider, Layout} from 'ant-design-vue'
+import {useRoute} from 'vue-router'
+import {onMounted, reactive, ref, watch} from 'vue'
 import BreadHeader from '@/components/bread-header'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import Header from './components/header'
@@ -10,6 +10,7 @@ import jsCookie from 'js-cookie'
 import axios from './service/axios'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+
 dayjs.extend(duration)
 
 const state = reactive()

@@ -3,8 +3,7 @@
 </template>
 
 <script setup>
-import Vue, { reactive, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import {useRoute} from 'vue-router'
 
 const { query } = useRoute()
 

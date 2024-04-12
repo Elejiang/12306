@@ -1,8 +1,8 @@
 package com.grace.train12306.biz.payservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import lombok.Data;
 import com.grace.train12306.biz.payservice.dto.base.AbstractPayRequest;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;

@@ -265,39 +265,29 @@
 
 <script setup>
 import {
-  Tabs,
-  TabPane,
-  Table,
-  Card,
-  Pagination,
-  message,
-  // CheckboxGroup,
-  // Checkbox,
-  // TableSummary,
-  // TableSummaryCell,
-  // TableSummaryRow,
-  CheckboxGroup,
-  Modal,
   Alert,
+  Button,
+  Card,
+  CheckboxGroup,
   Divider,
+  message,
+  Modal,
+  Pagination,
   Space,
-  Button
+  Table,
+  TabPane,
+  Tabs
 } from 'ant-design-vue'
-import { QuestionCircleFilled } from '@ant-design/icons-vue'
+import {QuestionCircleFilled} from '@ant-design/icons-vue'
 
 import CarInfo from './components/show-card-info'
 import EditContent from './components/edit-content'
 import RefundTicket from './components/refund-ticket'
-import { fetchTicketList, fetchOrderCancel, fetchRefundTicket } from '@/service'
-import { reactive, watch, h } from 'vue'
-import {
-  ID_CARD_TYPE,
-  SEAT_CLASS_TYPE_LIST,
-  TICKET_TYPE_LIST,
-  TICKET_STATUS_LIST
-} from '@/constants'
+import {fetchOrderCancel, fetchRefundTicket, fetchTicketList} from '@/service'
+import {h, reactive, watch} from 'vue'
+import {ID_CARD_TYPE, SEAT_CLASS_TYPE_LIST, TICKET_STATUS_LIST, TICKET_TYPE_LIST} from '@/constants'
 import Cookie from 'js-cookie'
-import { useRouter } from 'vue-router'
+import {useRouter} from 'vue-router'
 
 const state = reactive({
   activeKey: 0,

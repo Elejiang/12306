@@ -1,12 +1,12 @@
 package com.grace.train12306.biz.orderservice.mq.produce;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.common.message.MessageConst;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import com.grace.train12306.biz.orderservice.common.constant.OrderRocketMQConstant;
 import com.grace.train12306.biz.orderservice.mq.domain.MessageWrapper;
 import com.grace.train12306.biz.orderservice.mq.event.DelayCloseOrderEvent;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.common.message.MessageConst;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.messaging.Message;

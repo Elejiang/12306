@@ -1,4 +1,4 @@
-package com.grace.train12306.framework.starter.idempotent.core.spel;
+package com.grace.train12306.framework.starter.idempotent.core.handler;
 
 import cn.hutool.core.util.StrUtil;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
@@ -18,13 +18,13 @@ import org.aspectj.lang.reflect.MethodSignature;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 基于 SpEL 方法验证请求幂等性，适用于 MQ 场景
+ * 验证请求幂等性，适用于 MQ 场景
  */
 @RequiredArgsConstructor
-public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentExecuteHandler implements IdempotentSpELService {
+public final class IdempotentByMQExecuteHandler extends AbstractIdempotentExecuteHandler {
 
     private final static int TIMEOUT = 600;
-    private final static String WRAPPER = "wrapper:spEL:MQ";
+    private final static String WRAPPER = "wrapper:MQ";
     private final DistributedCache distributedCache;
 
     @SneakyThrows
@@ -44,9 +44,11 @@ public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentEx
         String uniqueKey = wrapper.getIdempotent().uniqueKeyPrefix() + wrapper.getLockKey();
         // 取到消费id
         String consumptionId = wrapper.getConsumptionId();
+        // 消息是否正在消费或者消费完成
         Boolean setIfAbsent =
                 distributedCache.putHashIfAbsent(uniqueKey, IdempotentMQConsumeKeyEnum.CONSUMPTION_ID.getKey(), consumptionId);
         if (setIfAbsent != null && !setIfAbsent) {
+            // 消息已经被消费或正在消费中
             String consumeStatus = distributedCache.getHash(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey()).toString();
             boolean error = IdempotentMQConsumeStatusEnum.isError(consumeStatus);
             LogUtil.getLog(wrapper.getJoinPoint()).warn("[{}] MQ repeated consumption, {}.", uniqueKey, error ? "Wait for the client to delay consumption" : "Status is completed");
@@ -59,32 +61,37 @@ public final class IdempotentSpELByMQExecuteHandler extends AbstractIdempotentEx
     }
 
     @Override
-    public void exceptionProcessing() {
-        IdempotentParamWrapper wrapper = (IdempotentParamWrapper) IdempotentContext.getKey(WRAPPER);
-        if (wrapper != null) {
-            Idempotent idempotent = wrapper.getIdempotent();
-            String uniqueKey = idempotent.uniqueKeyPrefix() + wrapper.getLockKey();
-            try {
-                distributedCache.delete(uniqueKey);
-            } catch (Throwable ex) {
-                LogUtil.getLog(wrapper.getJoinPoint()).error("[{}] Failed to del MQ anti-heavy token.", uniqueKey);
-            }
-        }
-    }
-
-    @Override
     public void postProcessing() {
         IdempotentParamWrapper wrapper = (IdempotentParamWrapper) IdempotentContext.getKey(WRAPPER);
         if (wrapper != null) {
             Idempotent idempotent = wrapper.getIdempotent();
             String uniqueKey = idempotent.uniqueKeyPrefix() + wrapper.getLockKey();
             String consumptionId = wrapper.getConsumptionId();
+            // 判断是否是自己消费的
             boolean isOwn = StrUtil.equals(consumptionId, distributedCache.getHash(uniqueKey, IdempotentMQConsumeKeyEnum.CONSUMPTION_ID.getKey()).toString());
             if (isOwn) {
                 distributedCache.putHash(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey(), IdempotentMQConsumeStatusEnum.CONSUMED.getCode());
                 distributedCache.expire(uniqueKey, idempotent.keyTimeout(), TimeUnit.SECONDS);
             } else {
                 throw new ServiceException("消息消费出错");
+            }
+        }
+    }
+
+    @Override
+    public void exceptionProcessing() {
+        IdempotentParamWrapper wrapper = (IdempotentParamWrapper) IdempotentContext.getKey(WRAPPER);
+        if (wrapper != null) {
+            Idempotent idempotent = wrapper.getIdempotent();
+            String uniqueKey = idempotent.uniqueKeyPrefix() + wrapper.getLockKey();
+            String consumptionId = wrapper.getConsumptionId();
+            boolean isOwn = StrUtil.equals(consumptionId, distributedCache.getHash(uniqueKey, IdempotentMQConsumeKeyEnum.CONSUMPTION_ID.getKey()).toString());
+            try {
+                // 删除幂等标识
+                if (isOwn)
+                    distributedCache.delete(uniqueKey);
+            } catch (Throwable ex) {
+                LogUtil.getLog(wrapper.getJoinPoint()).error("[{}] Failed to del MQ anti-heavy token.", uniqueKey);
             }
         }
     }

@@ -2,13 +2,9 @@ package com.grace.train12306.framework.starter.user.toolkit;
 
 import com.alibaba.fastjson2.JSON;
 import com.grace.train12306.framework.starter.user.core.UserInfoDTO;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;

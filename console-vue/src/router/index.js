@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { message } from 'ant-design-vue'
+import {createRouter, createWebHistory} from 'vue-router'
+import {message} from 'ant-design-vue'
 import Login from '../views/login'
 import TicketSearch from '../views/ticket-serach'
 import Userinfo from '../views/user-info'
@@ -14,6 +14,7 @@ import TikectList from '../views/order-list'
 import PersonalTicket from '../views/personalTicket'
 import PaySuccess from '../views/pay-success'
 import Cookies from 'js-cookie'
+
 const routes = [
   {
     path: '/',

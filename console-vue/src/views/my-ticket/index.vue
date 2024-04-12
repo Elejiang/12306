@@ -5,7 +5,6 @@
 </template>
 
 <script setup>
-import { Card } from 'ant-design-vue'
-</script>
+import {Card} from 'ant-design-vue'</script>
 
 <style lang="scss" scoped></style>

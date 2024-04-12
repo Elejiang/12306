@@ -1,13 +1,12 @@
 package com.grace.train12306.framework.starter.idempotent.core;
 
+import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.aspectj.lang.ProceedingJoinPoint;
-import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
-import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 
 /**
  * 幂等参数包装
@@ -30,7 +29,7 @@ public final class IdempotentParamWrapper {
     private ProceedingJoinPoint joinPoint;
 
     /**
-     * 锁标识，{@link IdempotentTypeEnum#PARAM}
+     * 锁标识，用于RestAPI场景
      */
     private String lockKey;
 

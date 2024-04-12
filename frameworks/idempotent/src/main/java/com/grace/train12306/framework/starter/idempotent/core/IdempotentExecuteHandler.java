@@ -1,7 +1,7 @@
 package com.grace.train12306.framework.starter.idempotent.core;
 
-import org.aspectj.lang.ProceedingJoinPoint;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
+import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
  * 幂等执行处理器
@@ -16,7 +16,7 @@ public interface IdempotentExecuteHandler {
     void handler(IdempotentParamWrapper wrapper);
 
     /**
-     * 执行幂等处理逻辑
+     * 执行幂等处理逻辑，是模板
      *
      * @param joinPoint  AOP 方法处理
      * @param idempotent 幂等注解

@@ -1,7 +1,6 @@
 package com.grace.train12306.biz.payservice.dao.algorithm;
 
 import cn.hutool.core.collection.CollUtil;
-import lombok.Getter;
 import org.apache.shardingsphere.infra.util.exception.ShardingSpherePreconditions;
 import org.apache.shardingsphere.sharding.api.sharding.complex.ComplexKeysShardingAlgorithm;
 import org.apache.shardingsphere.sharding.api.sharding.complex.ComplexKeysShardingValue;

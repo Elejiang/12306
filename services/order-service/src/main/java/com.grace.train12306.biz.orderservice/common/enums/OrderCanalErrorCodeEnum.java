@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.orderservice.common.enums;
 
-import lombok.AllArgsConstructor;
 import com.grace.train12306.framework.starter.convention.errorcode.IErrorCode;
+import lombok.AllArgsConstructor;
 
 /**
  * 订单取消错误码枚举

@@ -4,7 +4,6 @@ import com.grace.train12306.framework.starter.convention.errorcode.IErrorCode;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 
-import java.rmi.RemoteException;
 import java.util.Optional;
 
 /**

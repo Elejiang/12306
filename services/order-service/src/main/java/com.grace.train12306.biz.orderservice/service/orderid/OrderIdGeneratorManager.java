@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.orderservice.service.orderid;
 
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
+import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.InitializingBean;

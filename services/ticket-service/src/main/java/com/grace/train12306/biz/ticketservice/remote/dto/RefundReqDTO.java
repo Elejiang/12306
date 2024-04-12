@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.ticketservice.remote.dto;
 
-import lombok.Data;
 import com.grace.train12306.biz.ticketservice.common.enums.RefundTypeEnum;
+import lombok.Data;
 
 import java.util.List;
 

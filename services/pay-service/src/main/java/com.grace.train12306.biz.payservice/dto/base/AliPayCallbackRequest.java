@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.payservice.dto.base;
 
-import lombok.Data;
 import com.grace.train12306.biz.payservice.common.enums.PayChannelEnum;
+import lombok.Data;
 
 import java.util.Date;
 

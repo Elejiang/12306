@@ -14,11 +14,12 @@
 </template>
 
 <script setup>
-import { Breadcrumb, BreadcrumbItem } from 'ant-design-vue'
-import { useRoute } from 'vue-router'
-import { routes } from '@/router'
-import { watch, ref } from 'vue'
+import {Breadcrumb, BreadcrumbItem} from 'ant-design-vue'
+import {useRoute} from 'vue-router'
+import {routes} from '@/router'
+import {ref, watch} from 'vue'
 import IconFont from '@/components/icon-font'
+
 const route = useRoute()
 const currentPath = ref(null)
 

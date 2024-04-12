@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.ticketservice.service.handler.ticket.filter.purchase;
 
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /**

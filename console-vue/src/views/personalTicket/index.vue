@@ -95,25 +95,26 @@
 </template>
 <script setup>
 import {
+  BadgeRibbon,
+  Button,
+  Checkbox,
+  DatePicker,
+  Divider,
   Form,
   FormItem,
-  DatePicker,
-  Checkbox,
-  Button,
-  BadgeRibbon,
-  Tag,
-  Divider,
-  Space,
   Pagination,
-  Spin
+  Space,
+  Spin,
+  Tag
 } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { SwapRightOutlined } from '@ant-design/icons-vue'
-import { getWeekNumber } from '@/utils'
-import { reactive, watch } from 'vue'
-import { fetchMyTicket } from '@/service'
-import { SEAT_CLASS_TYPE_LIST, DISCOUNTS_TYPE } from '@/constants'
+import {SwapRightOutlined} from '@ant-design/icons-vue'
+import {getWeekNumber} from '@/utils'
+import {reactive, watch} from 'vue'
+import {fetchMyTicket} from '@/service'
+import {DISCOUNTS_TYPE, SEAT_CLASS_TYPE_LIST} from '@/constants'
 import moment from 'moment'
+
 const { RangePicker } = DatePicker
 
 const state = reactive({

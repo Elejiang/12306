@@ -49,18 +49,12 @@
 </template>
 
 <script setup>
-import {
-  Layout,
-  Avatar,
-  Dropdown,
-  Menu,
-  MenuItem,
-  message
-} from 'ant-design-vue'
-import { useRouter, useRoute } from 'vue-router'
-import { defineProps, reactive, toRefs, watch } from 'vue'
-import { fetchLogout } from '@/service'
+import {Avatar, Dropdown, Layout, Menu, MenuItem, message} from 'ant-design-vue'
+import {useRoute, useRouter} from 'vue-router'
+import {defineProps, reactive, toRefs, watch} from 'vue'
+import {fetchLogout} from '@/service'
 import Cookie from 'js-cookie'
+
 const username = Cookie.get('username')
 
 const { Header } = Layout

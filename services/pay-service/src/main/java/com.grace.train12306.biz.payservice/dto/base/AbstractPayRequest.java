@@ -1,8 +1,8 @@
 package com.grace.train12306.biz.payservice.dto.base;
 
+import com.grace.train12306.framework.starter.distributedid.toolkit.SnowflakeIdUtil;
 import lombok.Getter;
 import lombok.Setter;
-import com.grace.train12306.framework.starter.distributedid.toolkit.SnowflakeIdUtil;
 
 /**
  * 抽象支付入参实体

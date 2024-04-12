@@ -1,19 +1,11 @@
 <script setup>
-import {
-  Form,
-  FormItem,
-  Input,
-  InputPassword,
-  Button,
-  message,
-  Select,
-  Modal
-} from 'ant-design-vue'
-import { reactive, ref, unref } from 'vue'
-import { fetchLogin, fetchRegister } from '../../service'
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-import { useRouter } from 'vue-router'
+import {Button, Form, FormItem, Input, InputPassword, message, Modal, Select} from 'ant-design-vue'
+import {reactive, ref} from 'vue'
+import {fetchLogin, fetchRegister} from '../../service'
+import {LockOutlined, UserOutlined} from '@ant-design/icons-vue'
+import {useRouter} from 'vue-router'
 import Cookies from 'js-cookie'
+
 const useForm = Form.useForm
 
 const formState = reactive({

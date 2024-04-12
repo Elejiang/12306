@@ -1,12 +1,12 @@
 package com.grace.train12306.biz.ticketservice.service.handler.ticket.filter.purchase;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.dto.domain.PurchaseTicketPassengerDetailDTO;
 import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
 import com.grace.train12306.biz.ticketservice.service.cache.SeatMarginCacheLoader;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.convention.exception.ClientException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 

@@ -11,7 +11,8 @@
 </template>
 
 <script setup>
-import { TICKET_STATUS_LIST } from '@/constants'
+import {TICKET_STATUS_LIST} from '@/constants'
+
 const props = defineProps({
   status: Number,
   refundClick: Function

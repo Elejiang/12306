@@ -85,23 +85,24 @@
 
 <script setup>
 import {
+  Button,
   Card,
+  Col,
+  Divider,
   Form,
   FormItem,
-  TypographyTitle,
   Input,
-  Button,
-  Divider,
+  message,
   Row,
-  Col,
   Select,
   SelectOption,
-  message
+  TypographyTitle
 } from 'ant-design-vue'
-import { reactive, onMounted } from 'vue'
+import {onMounted, reactive} from 'vue'
 import jsCookie from 'js-cookie'
-import { fechUserInfo, fetchUserUpdate } from '@/service'
-import { REGIN_MAP, CHECK_STATUS, DISCOUNTS_TYPE } from '@/constants'
+import {fechUserInfo, fetchUserUpdate} from '@/service'
+import {CHECK_STATUS, DISCOUNTS_TYPE, REGIN_MAP} from '@/constants'
+
 const useForm = Form.useForm
 
 const state = reactive({

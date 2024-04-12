@@ -229,34 +229,14 @@
 </template>
 
 <script setup>
-import {
-  Card,
-  Space,
-  Table,
-  Divider,
-  Button,
-  Modal,
-  message,
-  Spin,
-  Row,
-  Col
-} from 'ant-design-vue'
+import {Button, Card, Col, Divider, message, Modal, Row, Space, Spin, Table} from 'ant-design-vue'
 import dayjs from 'dayjs'
-import {
-  fetchOrderBySn,
-  fetchPay,
-  fetchOrderCancel,
-  fetchOrderStatus
-} from '@/service'
-import { useRoute, useRouter } from 'vue-router'
-import { onMounted, reactive, computed, watch, onUnmounted } from 'vue'
-import {
-  TICKET_TYPE_LIST,
-  ID_CARD_TYPE,
-  BANK_LIST,
-  SEAT_CLASS_TYPE_LIST
-} from '@/constants'
-import { getWeekNumber } from '@/utils'
+import {fetchOrderBySn, fetchOrderCancel, fetchOrderStatus, fetchPay} from '@/service'
+import {useRoute, useRouter} from 'vue-router'
+import {computed, onMounted, onUnmounted, reactive, watch} from 'vue'
+import {BANK_LIST, ID_CARD_TYPE, SEAT_CLASS_TYPE_LIST, TICKET_TYPE_LIST} from '@/constants'
+import {getWeekNumber} from '@/utils'
+
 let timer = undefined
 
 const { query } = useRoute()

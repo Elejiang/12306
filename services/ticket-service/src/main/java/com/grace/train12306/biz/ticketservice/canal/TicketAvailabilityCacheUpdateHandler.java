@@ -2,12 +2,12 @@ package com.grace.train12306.biz.ticketservice.canal;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.common.enums.CanalExecuteStrategyMarkEnum;
 import com.grace.train12306.biz.ticketservice.common.enums.SeatStatusEnum;
 import com.grace.train12306.biz.ticketservice.mq.event.CanalBinlogEvent;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.designpattern.strategy.AbstractExecuteStrategy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 

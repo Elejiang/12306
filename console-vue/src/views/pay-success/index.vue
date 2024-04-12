@@ -58,20 +58,15 @@
 </template>
 
 <script setup scoped>
-import { Card, Space, Table, Divider, Button } from 'ant-design-vue'
+import {Button, Card, Divider, Space, Table} from 'ant-design-vue'
 import IconFont from '@/components/icon-font'
-import { fetchOrderBySn, fechUserInfo } from '@/service'
-import { h, onMounted, reactive, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import {fechUserInfo, fetchOrderBySn} from '@/service'
+import {h, onMounted, reactive} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
 import Cookie from 'js-cookie'
 import dayjs from 'dayjs'
-import {
-  ID_CARD_TYPE,
-  TICKET_TYPE_LIST,
-  SEAT_CLASS_TYPE_LIST,
-  TICKET_STATUS_LIST
-} from '@/constants'
-import { getWeekNumber } from '@/utils'
+import {ID_CARD_TYPE, SEAT_CLASS_TYPE_LIST, TICKET_STATUS_LIST, TICKET_TYPE_LIST} from '@/constants'
+import {getWeekNumber} from '@/utils'
 
 const column = [
   {

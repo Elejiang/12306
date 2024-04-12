@@ -8,7 +8,6 @@ import com.grace.train12306.biz.userservice.service.PassengerService;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
-import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
 import com.grace.train12306.framework.starter.user.core.UserContext;
 import com.grace.train12306.framework.starter.web.Results;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +46,6 @@ public class PassengerController {
     @Idempotent(
             uniqueKeyPrefix = "train12306-user:lock_passenger-alter:",
             key = "T(com.grace.train12306.framework.starter.user.core.UserContext).getUsername()",
-            type = IdempotentTypeEnum.SPEL,
             scene = IdempotentSceneEnum.RESTAPI,
             message = "正在新增乘车人，请稍后再试..."
     )
@@ -63,7 +61,6 @@ public class PassengerController {
     @Idempotent(
             uniqueKeyPrefix = "train12306-user:lock_passenger-alter:",
             key = "T(com.grace.train12306.framework.starter.user.core.UserContext).getUsername()",
-            type = IdempotentTypeEnum.SPEL,
             scene = IdempotentSceneEnum.RESTAPI,
             message = "正在修改乘车人，请稍后再试..."
     )
@@ -79,7 +76,6 @@ public class PassengerController {
     @Idempotent(
             uniqueKeyPrefix = "train12306-user:lock_passenger-alter:",
             key = "T(com.grace.train12306.framework.starter.user.core.UserContext).getUsername()",
-            type = IdempotentTypeEnum.SPEL,
             scene = IdempotentSceneEnum.RESTAPI,
             message = "正在移除乘车人，请稍后再试..."
     )

@@ -1,8 +1,8 @@
 package com.grace.train12306.biz.ticketservice.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.grace.train12306.framework.starter.database.base.BaseDO;
+import lombok.Data;
 
 /**
  * 车站实体

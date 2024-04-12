@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.payservice.dto;
 
-import lombok.Data;
 import com.grace.train12306.biz.payservice.remote.dto.TicketOrderPassengerDetailRespDTO;
+import lombok.Data;
 
 import java.util.List;
 

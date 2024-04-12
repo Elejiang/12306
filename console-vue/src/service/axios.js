@@ -1,4 +1,4 @@
-import { message } from 'ant-design-vue'
+import {message} from 'ant-design-vue'
 import Axios from 'axios'
 import Cookie from 'js-cookie'
 

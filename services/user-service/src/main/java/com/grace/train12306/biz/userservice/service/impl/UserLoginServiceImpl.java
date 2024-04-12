@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 import static com.grace.train12306.biz.userservice.common.constant.RedisKeyConstant.*;
 import static com.grace.train12306.biz.userservice.common.constant.RedisTTLConstant.TOKEN_TTL;

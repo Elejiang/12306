@@ -1,9 +1,5 @@
 package com.grace.train12306.biz.orderservice.mq.consumer;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.core.RocketMQListener;
 import com.grace.train12306.biz.orderservice.common.constant.OrderRocketMQConstant;
 import com.grace.train12306.biz.orderservice.common.enums.OrderItemStatusEnum;
 import com.grace.train12306.biz.orderservice.common.enums.OrderStatusEnum;
@@ -13,7 +9,10 @@ import com.grace.train12306.biz.orderservice.mq.event.PayResultCallbackOrderEven
 import com.grace.train12306.biz.orderservice.service.OrderService;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
-import com.grace.train12306.framework.starter.idempotent.enums.IdempotentTypeEnum;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,6 @@ public class PayResultCallbackOrderConsumer implements RocketMQListener<MessageW
     @Idempotent(
             uniqueKeyPrefix = "train12306-order:pay_result_callback:",
             key = "#message.getKeys()+'_'+#message.hashCode()",
-            type = IdempotentTypeEnum.SPEL,
             scene = IdempotentSceneEnum.MQ,
             keyTimeout = 7200L
     )

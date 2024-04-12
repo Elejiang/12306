@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import lombok.RequiredArgsConstructor;
 import com.grace.train12306.biz.ticketservice.common.enums.RegionStationQueryTypeEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.RegionDO;
 import com.grace.train12306.biz.ticketservice.dao.entity.StationDO;
@@ -21,6 +20,7 @@ import com.grace.train12306.framework.starter.cache.toolkit.CacheUtil;
 import com.grace.train12306.framework.starter.common.enums.FlagEnum;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.exception.ClientException;
+import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -29,8 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyConstant.*;
+import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
 
 /**
  * 地区以及车站接口实现层
