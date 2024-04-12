@@ -1,4 +1,4 @@
-package com.grace.train12306.framework.starter.common.threadpool.proxy;
+package com.grace.train12306.biz.ticketservice.config.proxy;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
