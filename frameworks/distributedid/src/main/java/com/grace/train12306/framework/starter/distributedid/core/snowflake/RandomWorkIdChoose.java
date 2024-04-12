@@ -10,9 +10,9 @@ import org.springframework.beans.factory.InitializingBean;
 public class RandomWorkIdChoose extends AbstractWorkIdChooseTemplate implements InitializingBean {
 
     @Override
-    protected WorkIdWrapper chooseWorkId() {
+    protected idWrapper chooseId() {
         int start = 0, end = 31;
-        return new WorkIdWrapper(getRandom(start, end), getRandom(start, end));
+        return new idWrapper(getRandom(start, end), getRandom(start, end));
     }
 
     @Override

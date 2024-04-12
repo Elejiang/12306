@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WorkIdWrapper {
+public class idWrapper {
 
     /**
      * 工作ID
