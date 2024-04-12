@@ -24,12 +24,12 @@ import static com.grace.train12306.framework.starter.bases.constant.UserConstant
 public final class JWTUtil {
 
     static {
-        SECRET = System.getenv("JWT_KEY");
+        KEY = System.getenv("JWT_KEY");
     }
 
     private static final long EXPIRATION = 86400L; // 24h有效期
     public static final String ISS = "train12306";
-    public static final String SECRET;
+    public static final String KEY;
 
     /**
      * 生成用户 Token
@@ -43,35 +43,12 @@ public final class JWTUtil {
         customerUserMap.put(USER_NAME_KEY, userInfo.getUsername());
         customerUserMap.put(REAL_NAME_KEY, userInfo.getRealName());
         String jwtToken = Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, SECRET)
+                .signWith(SignatureAlgorithm.HS512, KEY)
                 .setIssuedAt(new Date())
                 .setIssuer(ISS)
                 .setSubject(JSON.toJSONString(customerUserMap))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION * 1000))
                 .compact();
         return jwtToken;
-    }
-
-    /**
-     * 解析用户 Token
-     *
-     * @param jwtToken 用户访问 Token
-     * @return 用户信息
-     */
-    public static UserInfoDTO parseJwtToken(String jwtToken) {
-        if (StringUtils.hasText(jwtToken)) {
-            try {
-                Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(jwtToken).getBody();
-                Date expiration = claims.getExpiration();
-                if (expiration.after(new Date())) {
-                    String subject = claims.getSubject();
-                    return JSON.parseObject(subject, UserInfoDTO.class);
-                }
-            } catch (ExpiredJwtException ignored) {
-            } catch (Exception ex) {
-                log.error("JWT Token解析失败，请检查", ex);
-            }
-        }
-        return null;
     }
 }

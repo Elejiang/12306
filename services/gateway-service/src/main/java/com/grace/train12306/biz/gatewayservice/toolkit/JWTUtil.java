@@ -22,33 +22,10 @@ import static com.grace.train12306.framework.starter.bases.constant.UserConstant
 public final class JWTUtil {
 
     static {
-        SECRET = System.getenv("JWT_KEY");
+        KEY = System.getenv("JWT_KEY");
     }
 
-    private static final long EXPIRATION = 86400L;
-    public static final String ISS = "train12306";
-    public static final String SECRET;
-
-    /**
-     * 生成用户 Token
-     *
-     * @param userInfo 用户信息
-     * @return 用户访问 Token
-     */
-    public static String generateAccessToken(UserInfoDTO userInfo) {
-        Map<String, Object> customerUserMap = new HashMap<>();
-        customerUserMap.put(USER_ID_KEY, userInfo.getUserId());
-        customerUserMap.put(USER_NAME_KEY, userInfo.getUsername());
-        customerUserMap.put(REAL_NAME_KEY, userInfo.getRealName());
-        String jwtToken = Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, SECRET)
-                .setIssuedAt(new Date())
-                .setIssuer(ISS)
-                .setSubject(JSON.toJSONString(customerUserMap))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION * 1000))
-                .compact();
-        return jwtToken;
-    }
+    public static final String KEY;
 
     /**
      * 解析用户 Token
@@ -59,7 +36,7 @@ public final class JWTUtil {
     public static UserInfoDTO parseJwtToken(String jwtToken) {
         if (StringUtils.hasText(jwtToken)) {
             try {
-                Claims claims = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(jwtToken).getBody();
+                Claims claims = Jwts.parser().setSigningKey(KEY).parseClaimsJws(jwtToken).getBody();
                 Date expiration = claims.getExpiration();
                 if (expiration.after(new Date())) {
                     String subject = claims.getSubject();
