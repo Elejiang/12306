@@ -2,7 +2,6 @@ package com.grace.train12306.biz.orderservice.dao.algorithm;
 
 import cn.hutool.core.collection.CollUtil;
 import com.google.common.base.Preconditions;
-import lombok.Getter;
 import org.apache.shardingsphere.sharding.api.sharding.complex.ComplexKeysShardingAlgorithm;
 import org.apache.shardingsphere.sharding.api.sharding.complex.ComplexKeysShardingValue;
 
@@ -16,9 +15,6 @@ import java.util.Properties;
  */
 public class OrderCommonTableComplexAlgorithm implements ComplexKeysShardingAlgorithm {
 
-    @Getter
-    private Properties props;
-
     private int shardingCount;
 
     private static final String SHARDING_COUNT_KEY = "sharding-count";
@@ -28,22 +24,22 @@ public class OrderCommonTableComplexAlgorithm implements ComplexKeysShardingAlgo
         Map<String, Collection<Comparable<?>>> columnNameAndShardingValuesMap = shardingValue.getColumnNameAndShardingValuesMap();
         Collection<String> result = new LinkedHashSet<>(availableTargetNames.size());
         if (CollUtil.isNotEmpty(columnNameAndShardingValuesMap)) {
-            Collection<Comparable<?>> customerUserIdCollection = columnNameAndShardingValuesMap.get("user_id");
-            if (CollUtil.isNotEmpty(customerUserIdCollection)) {
-                getUserId(shardingValue, result, customerUserIdCollection);
+            Collection<Comparable<?>> userIdCollection = columnNameAndShardingValuesMap.get("user_id");
+            if (CollUtil.isNotEmpty(userIdCollection)) {
+                addResult(shardingValue, result, userIdCollection);
             } else {
                 Collection<Comparable<?>> orderSnCollection = columnNameAndShardingValuesMap.get("order_sn");
-                getUserId(shardingValue, result, orderSnCollection);
+                addResult(shardingValue, result, orderSnCollection);
             }
         }
         return result;
     }
 
-    private void getUserId(ComplexKeysShardingValue shardingValue, Collection<String> result, Collection<Comparable<?>> customerUserIdCollection) {
-        Comparable<?> comparable = customerUserIdCollection.stream().findFirst().get();
+    private void addResult(ComplexKeysShardingValue shardingValue, Collection<String> result, Collection<Comparable<?>> collection) {
+        Comparable<?> comparable = collection.stream().findFirst().get();
         if (comparable instanceof String) {
-            String actualUserId = comparable.toString();
-            result.add(shardingValue.getLogicTableName() + "_" + hashShardingValue(actualUserId.substring(Math.max(actualUserId.length() - 6, 0))) % shardingCount);
+            String actualString = comparable.toString();
+            result.add(shardingValue.getLogicTableName() + "_" + hashShardingValue(actualString.substring(Math.max(actualString.length() - 6, 0))) % shardingCount);
         } else {
             result.add(shardingValue.getLogicTableName() + "_" + hashShardingValue((Long) comparable % 1000000) % shardingCount);
         }
@@ -51,7 +47,6 @@ public class OrderCommonTableComplexAlgorithm implements ComplexKeysShardingAlgo
 
     @Override
     public void init(Properties props) {
-        this.props = props;
         shardingCount = getShardingCount(props);
     }
 

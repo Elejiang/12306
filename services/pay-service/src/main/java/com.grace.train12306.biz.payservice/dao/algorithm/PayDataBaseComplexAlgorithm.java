@@ -16,37 +16,39 @@ import java.util.Properties;
  * 支付数据库复合分片算法配置
  */
 public class PayDataBaseComplexAlgorithm implements ComplexKeysShardingAlgorithm {
-
-    @Getter
-    private Properties props;
+    private static final String SHARDING_COUNT_KEY = "sharding-count";
+    private static final String TABLE_SHARDING_COUNT_KEY = "table-sharding-count";
 
     private int shardingCount;
     private int tableShardingCount;
 
-    private static final String SHARDING_COUNT_KEY = "sharding-count";
-    private static final String TABLE_SHARDING_COUNT_KEY = "table-sharding-count";
-
     @Override
     public Collection<String> doSharding(Collection availableTargetNames, ComplexKeysShardingValue shardingValue) {
+        // 得到列名和值
         Map<String, Collection<Comparable<Long>>> columnNameAndShardingValuesMap = shardingValue.getColumnNameAndShardingValuesMap();
         Collection<String> result = new LinkedHashSet<>(availableTargetNames.size());
         if (CollUtil.isNotEmpty(columnNameAndShardingValuesMap)) {
-            Collection<Comparable<Long>> customerOrderSnCollection = columnNameAndShardingValuesMap.get("order_sn");
-            if (CollUtil.isNotEmpty(customerOrderSnCollection)) {
-                getOrderSn(result, customerOrderSnCollection);
+            // 首先判断SQL是否包含订单号，如果包含直接取订单号后六位
+            Collection<Comparable<Long>> orderSnCollection = columnNameAndShardingValuesMap.get("order_sn");
+            if (CollUtil.isNotEmpty(orderSnCollection)) {
+                // 获取到 SQL 中包含的用户 ID 对应值
+                addResult(result, orderSnCollection);
             } else {
+                // 如果不包含订单号，那么就要从支付号中获取后六位，也就是订单号后六位
+                // 流程同订单号获取流程
                 Collection<Comparable<Long>> paySnCollection = columnNameAndShardingValuesMap.get("pay_sn");
-                getOrderSn(result, paySnCollection);
+                addResult(result, paySnCollection);
             }
         }
+        // 返回的是库名
         return result;
     }
 
-    private void getOrderSn(Collection<String> result, Collection<Comparable<Long>> collection) {
+    private void addResult(Collection<String> result, Collection<Comparable<Long>> collection) {
         Comparable<?> comparable = collection.stream().findFirst().get();
         if (comparable instanceof String) {
-            String actualOrderSn = comparable.toString();
-            result.add("ds_" + hashShardingValue(actualOrderSn.substring(Math.max(actualOrderSn.length() - 6, 0))) % shardingCount / tableShardingCount);
+            String actualString = comparable.toString();
+            result.add("ds_" + hashShardingValue(actualString.substring(Math.max(actualString.length() - 6, 0))) % shardingCount / tableShardingCount);
         } else {
             result.add("ds_" + hashShardingValue((Long) comparable % 1000000) % shardingCount / tableShardingCount);
         }
@@ -54,7 +56,6 @@ public class PayDataBaseComplexAlgorithm implements ComplexKeysShardingAlgorithm
 
     @Override
     public void init(Properties props) {
-        this.props = props;
         shardingCount = getShardingCount(props);
         tableShardingCount = getTableShardingCount(props);
     }

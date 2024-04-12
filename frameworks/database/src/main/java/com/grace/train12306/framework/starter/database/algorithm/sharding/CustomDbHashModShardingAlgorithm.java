@@ -22,12 +22,6 @@ public final class CustomDbHashModShardingAlgorithm implements StandardShardingA
     private int tableShardingCount;
 
     @Override
-    public void init(final Properties props) {
-        shardingCount = getShardingCount(props);
-        tableShardingCount = getTableShardingCount(props);
-    }
-
-    @Override
     public String doSharding(final Collection<String> availableTargetNames, final PreciseShardingValue<Comparable<?>> shardingValue) {
         String suffix = String.valueOf(hashShardingValue(shardingValue.getValue()) % shardingCount / tableShardingCount);
         return ShardingAutoTableAlgorithmUtil.findMatchedTargetName(availableTargetNames, suffix, shardingValue.getDataNodeInfo()).orElse(null);
@@ -36,6 +30,12 @@ public final class CustomDbHashModShardingAlgorithm implements StandardShardingA
     @Override
     public Collection<String> doSharding(final Collection<String> availableTargetNames, final RangeShardingValue<Comparable<?>> shardingValue) {
         return availableTargetNames;
+    }
+
+    @Override
+    public void init(final Properties props) {
+        shardingCount = getShardingCount(props);
+        tableShardingCount = getTableShardingCount(props);
     }
 
     private int getShardingCount(final Properties props) {
