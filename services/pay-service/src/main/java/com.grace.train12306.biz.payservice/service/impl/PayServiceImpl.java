@@ -33,6 +33,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.grace.train12306.biz.payservice.common.constant.RedisKeyConstant.ORDER_PAY_RESULT_INFO;
+import static com.grace.train12306.biz.payservice.common.constant.RedisTTLConstant.ORDER_PAY_RESULT_INFO_TTL;
+import static com.grace.train12306.biz.payservice.common.constant.RedisTTLConstant.ORDER_PAY_RESULT_INFO_TTL_TIMEUNIT;
 
 /**
  * 支付接口层实现
@@ -55,6 +57,14 @@ public class PayServiceImpl implements PayService {
         }
         // 策略模式：通过策略模式封装支付渠道和支付场景，用户支付时动态选择对应的支付组件
         PayResponse result = abstractStrategyChoose.chooseAndExecuteResp(requestParam.buildMark(), requestParam);
+        // 创建支付订单
+        insertPay(requestParam);
+        // 信息放入缓存
+        distributedCache.put(ORDER_PAY_RESULT_INFO + requestParam.getOrderSn(), JSON.toJSONString(result), ORDER_PAY_RESULT_INFO_TTL, ORDER_PAY_RESULT_INFO_TTL_TIMEUNIT);
+        return BeanUtil.convert(result, PayRespDTO.class);
+    }
+
+    private void insertPay(PayRequest requestParam) {
         PayDO insertPay = BeanUtil.convert(requestParam, PayDO.class);
         String paySn = PayIdGeneratorManager.generateId(requestParam.getOrderSn());
         insertPay.setPaySn(paySn);
@@ -65,8 +75,6 @@ public class PayServiceImpl implements PayService {
             log.error("支付单创建失败，支付聚合根：{}", JSON.toJSONString(requestParam));
             throw new ServiceException("支付单创建失败");
         }
-        distributedCache.put(ORDER_PAY_RESULT_INFO + requestParam.getOrderSn(), JSON.toJSONString(result), 10, TimeUnit.MINUTES);
-        return BeanUtil.convert(result, PayRespDTO.class);
     }
 
     @Override

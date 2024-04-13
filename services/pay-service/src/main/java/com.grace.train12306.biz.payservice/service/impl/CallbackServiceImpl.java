@@ -15,6 +15,7 @@ import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,28 @@ public class CallbackServiceImpl implements CallbackService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void callbackPay(PayCallbackReqDTO requestParam) {
+        // 获取支付订单
+        PayDO payDO = getPayDO(requestParam);
+        // 修改支付订单
+        updateDO(requestParam, payDO);
+        // 交易成功，回调订单服务告知支付结果，修改订单流转状态
+        if (Objects.equals(requestParam.getStatus(), TradeStatusEnum.TRADE_SUCCESS.tradeCode())) {
+            payResultCallbackOrderSendProduce.sendMessage(BeanUtil.convert(payDO, PayResultCallbackOrderEvent.class));
+        }
+    }
+
+    private void updateDO(PayCallbackReqDTO requestParam, PayDO payDO) {
+        LambdaUpdateWrapper<PayDO> updateWrapper = Wrappers.lambdaUpdate(PayDO.class)
+                .eq(PayDO::getOrderSn, requestParam.getOrderSn());
+        int result = payMapper.update(payDO, updateWrapper);
+        if (result <= 0) {
+            log.error("修改支付单支付结果失败，支付单信息：{}", JSON.toJSONString(payDO));
+            throw new ServiceException("修改支付单支付结果失败");
+        }
+    }
+
+    @NotNull
+    private PayDO getPayDO(PayCallbackReqDTO requestParam) {
         LambdaQueryWrapper<PayDO> queryWrapper = Wrappers.lambdaQuery(PayDO.class)
                 .eq(PayDO::getOrderSn, requestParam.getOrderSn());
         PayDO payDO = payMapper.selectOne(queryWrapper);
@@ -42,16 +65,6 @@ public class CallbackServiceImpl implements CallbackService {
         payDO.setStatus(requestParam.getStatus());
         payDO.setPayAmount(requestParam.getPayAmount());
         payDO.setGmtPayment(requestParam.getGmtPayment());
-        LambdaUpdateWrapper<PayDO> updateWrapper = Wrappers.lambdaUpdate(PayDO.class)
-                .eq(PayDO::getOrderSn, requestParam.getOrderSn());
-        int result = payMapper.update(payDO, updateWrapper);
-        if (result <= 0) {
-            log.error("修改支付单支付结果失败，支付单信息：{}", JSON.toJSONString(payDO));
-            throw new ServiceException("修改支付单支付结果失败");
-        }
-        // 交易成功，回调订单服务告知支付结果，修改订单流转状态
-        if (Objects.equals(requestParam.getStatus(), TradeStatusEnum.TRADE_SUCCESS.tradeCode())) {
-            payResultCallbackOrderSendProduce.sendMessage(BeanUtil.convert(payDO, PayResultCallbackOrderEvent.class));
-        }
+        return payDO;
     }
 }
