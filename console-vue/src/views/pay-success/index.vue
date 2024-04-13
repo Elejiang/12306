@@ -12,7 +12,7 @@
         </div>
         <div>
           <span class="tip-text"
-            >{{
+          >{{
               state.userInfo?.realName
             }}
             先生/女士可持购票时所使用的中国居民身份证原件于购票后、列车开车前到车站直接检票乘车</span
@@ -24,7 +24,7 @@
       <Card title="订单信息">
         <div class="ticket-info">
           <span class="main-text"
-            >{{ state.orderDetail?.ridingDate }}（{{
+          >{{ state.orderDetail?.ridingDate }}（{{
               getWeekNumber(dayjs(state.orderDetail?.ridingDate).day())
             }}）{{ state.orderDetail?.trainNumber }}</span
           >
@@ -32,19 +32,19 @@
           <span class="main-text">{{ state.orderDetail?.departure }}</span>
           <span class="small-text">站</span>
           <span class="main-text"
-            >（{{ state.orderDetail?.departureTime }}开）-{{
+          >（{{ state.orderDetail?.departureTime }}开）-{{
               state.orderDetail?.arrival
             }}</span
           >
           <span class="small-text"
-            >站（{{ state.orderDetail?.arrivalTime }}到）</span
+          >站（{{ state.orderDetail?.arrivalTime }}到）</span
           >
         </div>
         <Table
-          :columns="column"
-          size="small"
-          :data-source="state.orderDetail?.passengerDetails"
-          :pagination="false"
+            :columns="column"
+            size="small"
+            :data-source="state.orderDetail?.passengerDetails"
+            :pagination="false"
         ></Table>
         <Divider></Divider>
         <Space style="justify-content: center; width: 100%">
@@ -72,8 +72,8 @@ const column = [
   {
     title: '序号',
     dataIndex: 'id',
-    customRender: ({ text, record, index }) =>
-      h('div', { innerHTML: index + 1 })
+    customRender: ({text, record, index}) =>
+        h('div', {innerHTML: index + 1})
   },
   {
     title: '姓名',
@@ -82,10 +82,10 @@ const column = [
   {
     title: '证件类型',
     dataIndex: 'idType',
-    customRender: ({ text }) =>
-      h('div', {
-        innerHTML: ID_CARD_TYPE.find((item) => item.value === text)?.label
-      })
+    customRender: ({text}) =>
+        h('div', {
+          innerHTML: ID_CARD_TYPE.find((item) => item.value === text)?.label
+        })
   },
   {
     title: '证件号码',
@@ -94,27 +94,27 @@ const column = [
   {
     title: '票种',
     dataIndex: 'ticketType',
-    customRender: ({ text }) =>
-      h('div', {
-        innerHTML: TICKET_TYPE_LIST.find((item) => item.value === text)?.label
-      })
+    customRender: ({text}) =>
+        h('div', {
+          innerHTML: TICKET_TYPE_LIST.find((item) => item.value === text)?.label
+        })
   },
   {
     title: '席别',
     dataIndex: 'seatType',
-    customRender: ({ text }) =>
-      h('div', {
-        innerHTML: SEAT_CLASS_TYPE_LIST.find((item) => item.code === text)
-          ?.label
-      })
+    customRender: ({text}) =>
+        h('div', {
+          innerHTML: SEAT_CLASS_TYPE_LIST.find((item) => item.code === text)
+              ?.label
+        })
   },
   {
     title: '车厢',
     dataIndex: 'carriageNumber',
-    customRender: ({ text }) =>
-      h('div', {
-        innerHTML: text + '车'
-      })
+    customRender: ({text}) =>
+        h('div', {
+          innerHTML: text + '车'
+        })
   },
   {
     title: '席位号',
@@ -123,22 +123,22 @@ const column = [
   {
     title: '票价（元）',
     dataIndex: 'amount',
-    customRender: ({ text }) =>
-      h('a', {
-        innerHTML: text / 100 + '¥'
-      })
+    customRender: ({text}) =>
+        h('a', {
+          innerHTML: text / 100 + '¥'
+        })
   },
   {
     title: '订单状态',
     dataIndex: 'status',
-    customRender: ({ text }) =>
-      h('div', {
-        innerHTML: TICKET_STATUS_LIST.find((item) => item.value === text)?.label
-      })
+    customRender: ({text}) =>
+        h('div', {
+          innerHTML: TICKET_STATUS_LIST.find((item) => item.value === text)?.label
+        })
   }
 ]
 
-const { query } = useRoute()
+const {query} = useRoute()
 const router = useRouter()
 const state = reactive({
   orderDetail: null,
@@ -146,10 +146,10 @@ const state = reactive({
 })
 
 onMounted(() => {
-  fetchOrderBySn({ orderSn: query?.orderSn }).then((res) => {
+  fetchOrderBySn({orderSn: query?.orderSn}).then((res) => {
     state.orderDetail = res?.data
   })
-  fechUserInfo({ username: Cookie.get('username') }).then((res) => {
+  fechUserInfo({username: Cookie.get('username')}).then((res) => {
     state.userInfo = res?.data
   })
 })
@@ -163,22 +163,27 @@ onMounted(() => {
   background-color: #f0fed1;
   display: flex;
   align-items: center;
+
   .icon {
     margin-right: 30px;
   }
+
   .info {
     .top {
       margin-bottom: 6px;
+
       .success-text {
         color: #9ecf6a;
         font-size: 16px;
         font-weight: bolder;
         margin-right: 6px;
       }
+
       .thank-text {
         font-size: 14px;
         color: black;
       }
+
       .order-text {
         font-size: 16px;
         color: #eb8940;
@@ -191,16 +196,20 @@ onMounted(() => {
     }
   }
 }
+
 .ticket-info {
   margin-bottom: 6px;
+
   .main-text {
     font-size: 16px;
     font-weight: bolder;
   }
+
   .small-text {
     font-size: 14px;
   }
 }
+
 ::v-deep {
   .ant-table-thead {
     .ant-table-cell {

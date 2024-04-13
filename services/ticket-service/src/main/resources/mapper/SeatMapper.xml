@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.grace.train12306.biz.ticketservice.dao.mapper.SeatMapper">
 
-    <select id="listSeatRemainingTicket" parameterType="com.grace.train12306.biz.ticketservice.dao.entity.SeatDO" resultType="Integer">
+    <select id="listSeatRemainingTicket" parameterType="com.grace.train12306.biz.ticketservice.dao.entity.SeatDO"
+            resultType="Integer">
         select count(*) as count
         from t_seat
         where train_id = #{seatDO.trainId}

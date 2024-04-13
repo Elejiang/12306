@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.grace.train12306.biz.userservice.dao.entity.UserDO;
-import com.grace.train12306.biz.userservice.dao.entity.UserDeletionDO;
 import com.grace.train12306.biz.userservice.dao.entity.UserMailDO;
-import com.grace.train12306.biz.userservice.dao.mapper.UserDeletionMapper;
 import com.grace.train12306.biz.userservice.dao.mapper.UserMailMapper;
 import com.grace.train12306.biz.userservice.dao.mapper.UserMapper;
 import com.grace.train12306.biz.userservice.dto.req.UserUpdateReqDTO;
@@ -20,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 用户信息接口实现层
@@ -30,7 +27,6 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
-    private final UserDeletionMapper userDeletionMapper;
     private final UserMailMapper userMailMapper;
 
     @Override
@@ -61,18 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer queryUserDeletionNum(Integer idType, String idCard) {
-        LambdaQueryWrapper<UserDeletionDO> queryWrapper = Wrappers.lambdaQuery(UserDeletionDO.class)
-                .eq(UserDeletionDO::getIdType, idType)
-                .eq(UserDeletionDO::getIdCard, idCard);
-        // TODO 此处应该先查缓存
-        Long deletionCount = userDeletionMapper.selectCount(queryWrapper);
-        return Optional.ofNullable(deletionCount).map(Long::intValue).orElse(0);
-    }
-
-    @Override
     public void update(UserUpdateReqDTO requestParam) {
-        // TODO 能根据id查询应该优先根据id查询，避免回表，但需要前端保证id不为空
         UserQueryRespDTO userQueryRespDTO = queryUserByUsername(requestParam.getUsername());
         UserDO userDO = BeanUtil.convert(requestParam, UserDO.class);
         LambdaUpdateWrapper<UserDO> userUpdateWrapper = Wrappers.lambdaUpdate(UserDO.class)

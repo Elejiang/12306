@@ -8,24 +8,24 @@
   </div>
   <Card :bordered="false" :style="{ padding: '0 10px' }">
     <CheckboxGroup
-      :style="{ width: '100%' }"
-      v-model:value="state.checkList"
-      @change="
+        :style="{ width: '100%' }"
+        v-model:value="state.checkList"
+        @change="
         (e) => {
           state.checkList = e
         }
       "
     >
       <Table
-        :columns="state.columns"
-        :data-source="state.dataSource"
-        :pagination="false"
-        :loading="state.loading"
-        :bordered="true"
+          :columns="state.columns"
+          :data-source="state.dataSource"
+          :pagination="false"
+          :loading="state.loading"
+          :bordered="true"
       >
         <template #id="{ text, record }">
           <div
-            :style="{
+              :style="{
               display: 'flex',
               alignItems: 'center'
             }"
@@ -54,18 +54,18 @@
             </div> -->
             <div>
               <span :style="{ marginRight: '5px', width: '60%' }">{{
-                record?.realName
-              }}</span>
+                  record?.realName
+                }}</span>
               <a
-                v-if="state.activeKey !== 0"
-                :style="{ textDecoration: 'underline' }"
-                >打印信息单</a
+                  v-if="state.activeKey !== 0"
+                  :style="{ textDecoration: 'underline' }"
+              >打印信息单</a
               >
             </div>
             <div>
               {{
                 ID_CARD_TYPE.find((item) => item.value === record?.idType)
-                  ?.label
+                    ?.label
               }}
             </div>
           </div>
@@ -74,7 +74,7 @@
           <div>
             {{
               SEAT_CLASS_TYPE_LIST.find(
-                (item) => item.code === record?.seatType
+                  (item) => item.code === record?.seatType
               )?.label
             }}
           </div>
@@ -89,7 +89,7 @@
           <div>
             {{
               TICKET_TYPE_LIST.find((item) => item.value === record?.ticketType)
-                ?.label
+                  ?.label
             }}
           </div>
           <div :style="{ color: 'orange' }">￥{{ record?.amount / 100 }}</div>
@@ -99,19 +99,20 @@
           <div>
             {{
               TICKET_STATUS_LIST.find((item) => item.value === record?.status)
-                ?.label ?? '--'
+                  ?.label ?? '--'
             }}
           </div>
           <div v-if="record?.status === 10">
             <Button
-              type="link"
-              @click="
+                type="link"
+                @click="
                 () => {
                   state.visible = true
                   state.currentOrder = record?.orderSn
                 }
               "
-              >退票</Button
+            >退票
+            </Button
             >
           </div>
         </template>
@@ -134,7 +135,7 @@
       </Table>
     </CheckboxGroup>
     <div
-      :style="{
+        :style="{
         width: '100%',
         marginTop: '20px',
         display: 'flex',
@@ -142,12 +143,12 @@
       }"
     >
       <Pagination
-        :show-total="(total) => `总共 ${state.data?.total} 条`"
-        :current="state.current"
-        :size="state.size"
-        :total="state.data?.total"
-        show-size-changer
-        @change="handlePage"
+          :show-total="(total) => `总共 ${state.data?.total} 条`"
+          :current="state.current"
+          :size="state.size"
+          :total="state.data?.total"
+          show-size-changer
+          @change="handlePage"
       ></Pagination>
     </div>
     <div class="tips-txt">
@@ -162,29 +163,31 @@
     </div>
   </Card>
   <Modal
-    width="40%"
-    :visible="state.visible"
-    title="退票申请"
-    class="custom-modal"
-    @cancel="state.visible = false"
-    :footer="null"
+      width="40%"
+      :visible="state.visible"
+      title="退票申请"
+      class="custom-modal"
+      @cancel="state.visible = false"
+      :footer="null"
   >
     <Alert
-      message="您确认要退款吗？"
-      type="warning"
-      description="如有定餐饮或特产，请按规定到网站自行办理退订"
-      show-icon
-      style="background-color: #fff; border: none"
+        message="您确认要退款吗？"
+        type="warning"
+        description="如有定餐饮或特产，请按规定到网站自行办理退订"
+        show-icon
+        style="background-color: #fff; border: none"
     >
-      <template #icon><QuestionCircleFilled /></template>
+      <template #icon>
+        <QuestionCircleFilled/>
+      </template>
     </Alert>
-    <Divider :dashed="true" />
+    <Divider :dashed="true"/>
     <div style="padding: 0 30px">
       请选择要退票的订单：
       <CheckboxGroup
-        v-model:value="state.refundOrder"
-        @change="(value) => console.log(value, 'value')"
-        :options="
+          v-model:value="state.refundOrder"
+          @change="(value) => console.log(value, 'value')"
+          :options="
           state.dataSource
             ?.find((item) => item.orderSn === state.currentOrder)
             .passengerDetails.map((item) => ({
@@ -195,69 +198,70 @@
       ></CheckboxGroup>
     </div>
 
-    <Divider :dashed="true" />
+    <Divider :dashed="true"/>
     <div style="padding: 0 30px">
       共计退款：<a>{{
         '¥' +
         state.dataSource
-          ?.find((item) => item.orderSn === state.currentOrder)
-          ?.passengerDetails?.filter((item) =>
+            ?.find((item) => item.orderSn === state.currentOrder)
+            ?.passengerDetails?.filter((item) =>
             state.refundOrder.includes(item.id)
-          )
-          ?.map((item) => item.amount)
-          ?.reduce((after, pre) => after + pre, 0) /
-          100
+        )
+            ?.map((item) => item.amount)
+            ?.reduce((after, pre) => after + pre, 0) /
+        100
       }}</a>
     </div>
-    <Divider :dashed="true" />
+    <Divider :dashed="true"/>
     <div style="padding: 0 30px">
       <div style="margin-bottom: 20px">
         车票票价：<a>{{
           '¥' +
           state.dataSource
-            ?.find((item) => item.orderSn === state.currentOrder)
-            ?.passengerDetails?.filter((item) =>
+              ?.find((item) => item.orderSn === state.currentOrder)
+              ?.passengerDetails?.filter((item) =>
               state.refundOrder.includes(item.id)
-            )
-            ?.map((item) => item.amount)
-            ?.reduce((after, pre) => after + pre, 0) /
-            100
+          )
+              ?.map((item) => item.amount)
+              ?.reduce((after, pre) => after + pre, 0) /
+          100
         }}</a>
       </div>
       <div>
         应退票款：<a>{{
           '¥' +
           state.dataSource
-            ?.find((item) => item.orderSn === state.currentOrder)
-            ?.passengerDetails?.filter((item) =>
+              ?.find((item) => item.orderSn === state.currentOrder)
+              ?.passengerDetails?.filter((item) =>
               state.refundOrder.includes(item.id)
-            )
-            ?.map((item) => item.amount)
-            ?.reduce((after, pre) => after + pre, 0) /
-            100
+          )
+              ?.map((item) => item.amount)
+              ?.reduce((after, pre) => after + pre, 0) /
+          100
         }}</a>
       </div>
     </div>
-    <Divider :dashed="true" />
+    <Divider :dashed="true"/>
     <div style="color: #999999; padding: 0 30px">
-      <QuestionCircleFilled />
+      <QuestionCircleFilled/>
       <span style="margin-left: 20px"
-        >实际核收退票费及应退票款将按最终交易时间计算。</span
+      >实际核收退票费及应退票款将按最终交易时间计算。</span
       >
     </div>
     <div style="color: #999999; padding: 0 30px">
-      <QuestionCircleFilled />
+      <QuestionCircleFilled/>
       <span style="margin-left: 20px"
-        >如你需要办理该次列车前续、后续退票业务，请于退票车次票面开车时间前办理。</span
+      >如你需要办理该次列车前续、后续退票业务，请于退票车次票面开车时间前办理。</span
       >
     </div>
     <Space style="width: 100%; justify-content: center; margin-top: 20px">
       <Button @click="state.visible = false">取消</Button>
       <Button
-        @click="handleRefund"
-        type="primary"
-        :disabled="!state.refundOrder.length"
-        >确定</Button
+          @click="handleRefund"
+          type="primary"
+          :disabled="!state.refundOrder.length"
+      >确定
+      </Button
       >
     </Space>
   </Modal>
@@ -311,8 +315,8 @@ const columns = [
     title: '车次信息',
     dataIndex: 'arrival',
     key: 'arrival',
-    slots: { customRender: 'info' },
-    customRender: ({ text, record }) => {
+    slots: {customRender: 'info'},
+    customRender: ({text, record}) => {
       return {
         children: h(CarInfo, {
           trainNumber: record?.trainNumber,
@@ -332,26 +336,26 @@ const columns = [
     title: '旅客信息',
     dataIndex: 'id',
     key: 'id',
-    slots: { customRender: 'id' }
+    slots: {customRender: 'id'}
   },
   {
     title: '席位信息',
     dataIndex: 'seatType',
     key: 'seatType',
-    slots: { customRender: 'seatType' }
+    slots: {customRender: 'seatType'}
   },
   {
     title: '票价',
     dataIndex: 'amount',
     key: 'amount',
-    slots: { customRender: 'amount' }
+    slots: {customRender: 'amount'}
   },
   {
     title: '车票状态',
     dataIndex: 'status',
     key: 'status',
-    slots: { customRender: 'status' },
-    customRender: ({ text, record }) => {
+    slots: {customRender: 'status'},
+    customRender: ({text, record}) => {
       return {
         children: h(RefundTicket, {
           status: record?.status,
@@ -369,42 +373,42 @@ const columns = [
 ]
 
 watch(
-  () => state.activeKey,
-  (newValue) => {
-    if (newValue === 0) {
-      state.columns = [
-        ...columns,
-        {
-          title: '操作',
-          dataIndex: 'edit',
-          key: 'edit',
-          slots: { customRender: 'edit' },
-          customRender: ({ text, record }) => {
-            return {
-              children: h(EditContent, {
-                orderSn: record?.orderSn,
-                cancel,
-                pay
-              }),
-              props: {
-                rowSpan: record?.rowSpan
+    () => state.activeKey,
+    (newValue) => {
+      if (newValue === 0) {
+        state.columns = [
+          ...columns,
+          {
+            title: '操作',
+            dataIndex: 'edit',
+            key: 'edit',
+            slots: {customRender: 'edit'},
+            customRender: ({text, record}) => {
+              return {
+                children: h(EditContent, {
+                  orderSn: record?.orderSn,
+                  cancel,
+                  pay
+                }),
+                props: {
+                  rowSpan: record?.rowSpan
+                }
               }
             }
           }
-        }
-      ]
-    } else {
-      state.columns = columns
-    }
-  },
-  { immediate: true }
+        ]
+      } else {
+        state.columns = columns
+      }
+    },
+    {immediate: true}
 )
 watch(
-  () => state.checkList,
-  (val) => {
-    state.indeterminate = !!val.length && val.length < state.dataSource.length
-    state.checkAll = val.length === state.dataSource.length
-  }
+    () => state.checkList,
+    (val) => {
+      state.indeterminate = !!val.length && val.length < state.dataSource.length
+      state.checkAll = val.length === state.dataSource.length
+    }
 )
 
 const handlePage = (page, pagesize) => {
@@ -412,7 +416,7 @@ const handlePage = (page, pagesize) => {
   state.size = pagesize
 }
 const cancel = (sn) => {
-  fetchOrderCancel({ orderSn: sn }).then((res) => {
+  fetchOrderCancel({orderSn: sn}).then((res) => {
     if (res.success) {
       message.success('订单取消成功')
       getTicketList(state.current, state.size, state.activeKey)
@@ -432,38 +436,38 @@ const getTicketList = (current, size, statusType) => {
     size,
     statusType
   })
-    .then((res) => {
-      let dataSource = []
-      res.data.records.map((info) => {
-        info.passengerDetails?.map((item, index) => {
-          dataSource.push({
-            ...info,
-            ...item,
-            rowSpan: index === 0 ? info.passengerDetails.length : 0
+      .then((res) => {
+        let dataSource = []
+        res.data.records.map((info) => {
+          info.passengerDetails?.map((item, index) => {
+            dataSource.push({
+              ...info,
+              ...item,
+              rowSpan: index === 0 ? info.passengerDetails.length : 0
+            })
           })
         })
+        state.dataSource = dataSource
+        state.data = res.data
+        state.loading = false
       })
-      state.dataSource = dataSource
-      state.data = res.data
-      state.loading = false
-    })
-    .catch((err) => {
-      console.log(err)
-      state.loading = false
-    })
+      .catch((err) => {
+        console.log(err)
+        state.loading = false
+      })
 }
 watch(
-  () => [state.activeKey, state.current, state.size],
-  (newValue) => {
-    state.loading = true
-    const [statusType, current, size] = newValue
-    getTicketList(current, size, statusType)
-  },
-  { immediate: true }
+    () => [state.activeKey, state.current, state.size],
+    (newValue) => {
+      state.loading = true
+      const [statusType, current, size] = newValue
+      getTicketList(current, size, statusType)
+    },
+    {immediate: true}
 )
 const onCheckAllChange = (e) => {
   const a = state.dataSource.map(
-    (item) => String(item.idCard) + String(item.orderSn)
+      (item) => String(item.idCard) + String(item.orderSn)
   )
   Object.assign(state, {
     checkList: e.target.checked ? a : [],
@@ -487,6 +491,7 @@ const handleRefund = () => {
 .card-container {
   overflow: hidden;
 }
+
 .tips-txt {
   background: #fffbe5;
   border: 1px solid #fbd800;
@@ -530,12 +535,14 @@ const handleRefund = () => {
   .ant-tabs-top > .ant-tabs-nav {
     margin: 0;
   }
+
   .ant-tabs-content-holder {
     padding: 12px;
     background-color: #fff;
     box-sizing: border-box;
     background-image: none;
   }
+
   .custom-modal {
     .ant-alert-warning {
       background-color: #fff !important;

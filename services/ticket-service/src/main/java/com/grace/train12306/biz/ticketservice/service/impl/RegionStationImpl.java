@@ -48,9 +48,9 @@ public class RegionStationImpl implements RegionStationService {
     public List<RegionStationQueryRespDTO> listRegionStation(RegionStationQueryReqDTO requestParam) {
         String key;
         if (StrUtil.isNotBlank(requestParam.getName())) {
-            key  = REGION_STATION  + requestParam.getName();
+            key = REGION_STATION + requestParam.getName();
             return safeGetRegionStation(
-                    key ,
+                    key,
                     () -> {
                         LambdaQueryWrapper<StationDO> queryWrapper = Wrappers.lambdaQuery(StationDO.class)
                                 .likeRight(StationDO::getName, requestParam.getName())
@@ -62,7 +62,7 @@ public class RegionStationImpl implements RegionStationService {
                     requestParam.getName()
             );
         }
-        key  = REGION_STATION  + requestParam.getQueryType();
+        key = REGION_STATION + requestParam.getQueryType();
         LambdaQueryWrapper<RegionDO> queryWrapper = switch (requestParam.getQueryType()) {
             case 0 -> Wrappers.lambdaQuery(RegionDO.class)
                     .eq(RegionDO::getPopularFlag, FlagEnum.TRUE.code());
@@ -99,7 +99,7 @@ public class RegionStationImpl implements RegionStationService {
         );
     }
 
-    private  List<RegionStationQueryRespDTO> safeGetRegionStation(final String key, CacheLoader<String> loader, String param) {
+    private List<RegionStationQueryRespDTO> safeGetRegionStation(final String key, CacheLoader<String> loader, String param) {
         List<RegionStationQueryRespDTO> result;
         if (CollUtil.isNotEmpty(result = JSON.parseArray(distributedCache.get(key, String.class), RegionStationQueryRespDTO.class))) {
             return result;

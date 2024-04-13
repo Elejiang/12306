@@ -4,7 +4,7 @@ spring:
   application:
     name: train12306-gateway${unique-name:}-service
   profiles:
-     active: dev
+    active: dev
 
 management:
   endpoints:

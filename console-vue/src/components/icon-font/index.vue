@@ -1,5 +1,5 @@
 <template>
-  <IconFont :type="props.type" />
+  <IconFont :type="props.type"/>
 </template>
 
 <script setup>

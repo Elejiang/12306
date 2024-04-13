@@ -8,8 +8,8 @@
         <span class="time">
           {{
             `${dayjs.duration(state.count).minutes()}分${dayjs
-              .duration(state.count)
-              .seconds()}秒`
+                .duration(state.count)
+                .seconds()}秒`
           }}
         </span>
       </div>
@@ -18,65 +18,68 @@
       <Space :style="{ width: '100%' }" direction="vertical">
         <div>
           <span class="important-text">{{
-            state.currentInfo?.ridingDate
-          }}</span>
+              state.currentInfo?.ridingDate
+            }}</span>
           <span class="important-text"
-            >（{{
+          >（{{
               getWeekNumber(
-                dayjs(state.currentInfo?.ridingDate ?? new Date()).day()
+                  dayjs(state.currentInfo?.ridingDate ?? new Date()).day()
               )
             }}）</span
           >
           <span class="important-text">{{
-            state.currentInfo?.trainNumber
-          }}</span>
+              state.currentInfo?.trainNumber
+            }}</span>
           <span class="small-text">次</span>
           <span class="important-text">{{ state.currentInfo?.departure }}</span>
           <span class="small-text">站</span>
           <span class="important-text"
-            >（{{ state.currentInfo?.departureTime }}开）——</span
+          >（{{ state.currentInfo?.departureTime }}开）——</span
           >
           <span class="important-text">{{ state.currentInfo?.arrival }}</span>
           <span class="small-text">站</span>
           <span class="important-text"
-            >（{{ state.currentInfo?.arrivalTime }}到）</span
+          >（{{ state.currentInfo?.arrivalTime }}到）</span
           >
         </div>
         <Table
-          :columns="columns"
-          :pagination="false"
-          :dataSource="state.currentInfo?.passengerDetails"
+            :columns="columns"
+            :pagination="false"
+            :dataSource="state.currentInfo?.passengerDetails"
         >
           <template #id="{ text, record, index }"> {{ index + 1 }}</template>
           <template #idType="{ text, record }">
             {{
               ID_CARD_TYPE.find((item) => item.value === text)?.label
-            }}</template
+            }}
+          </template
           >
           <template #ticketType="{ text, record }">
             {{
               TICKET_TYPE_LIST.find((item) => item.value === text)?.label
-            }}</template
+            }}
+          </template
           >
           <template #seatType="{ text, record }">
             {{
               SEAT_CLASS_TYPE_LIST.find((item) => item.code === text)?.label
-            }}</template
+            }}
+          </template
           >
           <template #amount="{ text, record }">
             <span :style="{ color: 'rgb(252, 131, 2)' }"
-              >￥{{ text / 100 }}</span
+            >￥{{ text / 100 }}</span
             >
           </template>
         </Table>
         <div :style="{ width: '100%', textAlign: 'end', padding: '10px' }">
           总票价：<span :style="{ color: '#ff8001' }"
-            >￥{{ totalAmount }}元</span
-          >
+        >￥{{ totalAmount }}元</span
+        >
         </div>
         <Divider></Divider>
         <div
-          :style="{
+            :style="{
             width: '100%',
             display: 'flex',
             justifyContent: 'center'
@@ -84,7 +87,7 @@
         >
           <Space size="large">
             <Button
-              @click="
+                @click="
                 () => {
                   fetchOrderCancel({ orderSn: query?.sn }).then((res) => {
                     if (res.success) {
@@ -96,16 +99,18 @@
                   })
                 }
               "
-              >取消订单</Button
+            >取消订单
+            </Button
             >
             <Button
-              :style="{
+                :style="{
                 backgroundColor: '#ff8001',
                 color: '#fff',
                 border: 'none'
               }"
-              @click="state.open = true"
-              >网上支付</Button
+                @click="state.open = true"
+            >网上支付
+            </Button
             >
           </Space>
         </div>
@@ -131,21 +136,21 @@
         </p>
         <p>
           <strong
-            >5.购买铁路乘意险的注册用户年龄须在18周岁以上，使用非中国居民身份证注册的用户如购买铁路乘意险，须在<a
+          >5.购买铁路乘意险的注册用户年龄须在18周岁以上，使用非中国居民身份证注册的用户如购买铁路乘意险，须在<a
               href="../view/information.html"
               shape="rect"
-              >我的12306——个人信息</a
-            >
+          >我的12306——个人信息</a
+          >
             如实填写“出生日期”。</strong
           >
         </p>
         <p>
           <strong
-            >6.父母为未成年子女投保，须在<a
+          >6.父母为未成年子女投保，须在<a
               href="../view/passengers.html"
               shape="rect"
-              >我的乘车人</a
-            >
+          >我的乘车人</a
+          >
             登记未成年子女的有效身份证件信息。</strong
           >
         </p>
@@ -154,27 +159,27 @@
           8.
           为确保乘客在旅途中有一个安全、舒适的乘坐环境，自2020年11月17日起，<span
             style="color: red"
-            >旅客不得随身携带长宽高之和大于130厘米的雪具乘车</span
-          >
+        >旅客不得随身携带长宽高之和大于130厘米的雪具乘车</span
+        >
           。您可选择雪具快运服务，请提前1-2天选择雪具快运“门到站”或“站到站”服务，中铁快运提供雪具到站后3日免费保管，请您根据出行时间，提前咨询和办理。中铁快运客服热线：95572<br
             clear="none"
-          />
+        />
         </p>
       </div>
     </div>
   </Space>
   <Modal
-    :visible="state.open"
-    title="请付款"
-    @cancel="state.open = false"
-    width="40%"
-    :footer="null"
+      :visible="state.open"
+      title="请付款"
+      @cancel="state.open = false"
+      width="40%"
+      :footer="null"
   >
     <Spin :spinning="state.loading">
       <div>
         >>应付金额：<span
           :style="{ fontSize: '20px', color: ' #dc2408', fontWeight: 'bold' }"
-          >{{ totalAmount }}
+      >{{ totalAmount }}
         </span>
         元
       </div>
@@ -182,22 +187,22 @@
       <div :style="{ overflow: 'hidden' }">
         <div v-for="item in BANK_LIST" class="bank3">
           <div class="bank3_5" @click="() => handlePay(item.value)">
-            <img :src="item.img" :alt="item.name" />
+            <img :src="item.img" :alt="item.name"/>
           </div>
         </div>
       </div>
     </Spin>
   </Modal>
   <Modal
-    :visible="state.isPayingOpen"
-    title="网上支付提示"
-    :footer="null"
-    style="top: 30%"
+      :visible="state.isPayingOpen"
+      title="网上支付提示"
+      :footer="null"
+      style="top: 30%"
   >
     <Row :gutter="[24, 6]">
       <Col
-        :span="6"
-        :style="{
+          :span="6"
+          :style="{
           display: 'flex',
           textAlign: 'end',
           alignItems: 'center',
@@ -216,13 +221,15 @@
       </Col>
     </Row>
     <Space
-      :style="{ display: 'flex', justifyContent: 'center', marginTop: '20px' }"
+        :style="{ display: 'flex', justifyContent: 'center', marginTop: '20px' }"
     >
       <Button type="default" @click="() => router.push('/ticketList')"
-        >支付遇到问题</Button
+      >支付遇到问题
+      </Button
       >
       <Button type="primary" @click="() => router.push('/ticketList')"
-        >支付完成</Button
+      >支付完成
+      </Button
       >
     </Space>
   </Modal>
@@ -239,7 +246,7 @@ import {getWeekNumber} from '@/utils'
 
 let timer = undefined
 
-const { query } = useRoute()
+const {query} = useRoute()
 const router = useRouter()
 const state = reactive({
   count: 600000,
@@ -252,23 +259,23 @@ const state = reactive({
   isPayingOpen: false
 })
 const columns = [
-  { title: '序号', dataIndex: 'id', slots: { customRender: 'id' } },
-  { title: '姓名', dataIndex: 'realName' },
-  { title: '证件类型', dataIndex: 'idType', slots: { customRender: 'idType' } },
-  { title: '证件号码', dataIndex: 'idCard' },
+  {title: '序号', dataIndex: 'id', slots: {customRender: 'id'}},
+  {title: '姓名', dataIndex: 'realName'},
+  {title: '证件类型', dataIndex: 'idType', slots: {customRender: 'idType'}},
+  {title: '证件号码', dataIndex: 'idCard'},
   {
     title: '票种',
     dataIndex: 'ticketType',
-    slots: { customRender: 'ticketType' }
+    slots: {customRender: 'ticketType'}
   },
   {
     title: '席别',
     dataIndex: 'seatType',
-    slots: { customRender: 'seatType' }
+    slots: {customRender: 'seatType'}
   },
-  { title: '车厢', dataIndex: 'carriageNumber' },
-  { title: '席位号', dataIndex: 'seatNumber' },
-  { title: '票价(元)', dataIndex: 'amount', slots: { customRender: 'amount' } }
+  {title: '车厢', dataIndex: 'carriageNumber'},
+  {title: '席位号', dataIndex: 'seatNumber'},
+  {title: '票价(元)', dataIndex: 'amount', slots: {customRender: 'amount'}}
 ]
 
 onMounted(() => {
@@ -284,7 +291,7 @@ onUnmounted(() => {
 })
 
 const getOrder = () => {
-  fetchOrderBySn({ orderSn: query?.sn }).then((res) => {
+  fetchOrderBySn({orderSn: query?.sn}).then((res) => {
     if (res.success) {
       state.currentInfo = res.data
     }
@@ -292,10 +299,10 @@ const getOrder = () => {
 }
 
 watch(
-  () => state.isPaying,
-  (newV) => {
-    state.isPayingOpen = newV
-  }
+    () => state.isPaying,
+    (newV) => {
+      state.isPayingOpen = newV
+    }
 )
 const totalAmount = computed(() => {
   let amount = 0
@@ -332,11 +339,11 @@ const handlePay = (channel) => {
 
 const getOrderStatus = () => {
   state.isInitiatePayment &&
-    fetchOrderStatus({ orderSn: query?.sn })
+  fetchOrderStatus({orderSn: query?.sn})
       .then((res) => {
         state.isPaying = res.data.status === 0
         res.data.status === 20 &&
-          router.push(`/paySuccess?orderSn=${res.data.orderSn}`)
+        router.push(`/paySuccess?orderSn=${res.data.orderSn}`)
       })
       .catch((error) => {
         console.log('error:::', error)
@@ -348,15 +355,16 @@ const getOrderStatus = () => {
 .tip-wrapper {
   display: flex;
   align-items: center;
+
   .i-lock {
     display: inline-block;
     width: 42px;
     height: 42px;
-    background: url(https://kyfw.12306.cn/otn/resources/images/bg02.png)
-      repeat-x;
+    background: url(https://kyfw.12306.cn/otn/resources/images/bg02.png) repeat-x;
     background-position: 0 -250px;
     margin-right: 20px;
   }
+
   .time {
     color: #fd6a09;
     font-weight: bolder;
@@ -373,27 +381,32 @@ const getOrderStatus = () => {
   -o-border-radius: 5px;
   -webkit-border-radius: 5px;
 }
+
 .important-text {
   font-size: 16px;
   font-weight: bolder;
 }
+
 .bank3 {
   float: left;
   width: 170px;
   padding: 8px 0;
   margin-left: 16px;
+
   .bank3_5 {
     float: left;
     width: 160px;
     cursor: pointer;
   }
 }
+
 .cyx-hd {
   position: relative;
   line-height: 20px;
   padding: 5px 5px 5px 65px;
   background-image: linear-gradient(45deg, #fef9ff 0%, #fff 100%);
   border: 1px solid #bfd7e3;
+
   .cyx-hd-label {
     position: absolute;
     width: 40px;
@@ -405,6 +418,7 @@ const getOrderStatus = () => {
     display: flex;
     justify-content: space-around;
     align-items: center;
+
     .icon-cyx {
       float: left;
       width: 16px;
@@ -413,6 +427,7 @@ const getOrderStatus = () => {
     }
   }
 }
+
 ::v-deep {
   .ant-table-thead {
     .ant-table-cell {

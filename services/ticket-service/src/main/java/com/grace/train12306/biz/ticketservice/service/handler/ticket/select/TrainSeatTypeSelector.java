@@ -58,7 +58,7 @@ public final class TrainSeatTypeSelector {
             List<Future<List<TrainPurchaseTicketRespDTO>>> futureResults = new ArrayList<>();
             seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
                 Future<List<TrainPurchaseTicketRespDTO>> completableFuture = selectSeatThreadPoolExecutor
-                          .submit(() -> distributeSeats(trainType, seatType, requestParam, passengerSeatDetails));
+                        .submit(() -> distributeSeats(trainType, seatType, requestParam, passengerSeatDetails));
                 futureResults.add(completableFuture);
             });
             // 获取座位分配结果

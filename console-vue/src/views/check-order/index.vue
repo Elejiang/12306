@@ -19,7 +19,10 @@
     </Card>
     <Card title="乘客信息（填写说明）">
       <div>
-        <Space><UserOutlined />乘车人</Space>
+        <Space>
+          <UserOutlined/>
+          乘车人
+        </Space>
       </div>
       <dvi>
         <Space>

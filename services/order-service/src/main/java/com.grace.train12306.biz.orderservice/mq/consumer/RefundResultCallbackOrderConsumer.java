@@ -61,8 +61,10 @@ public class RefundResultCallbackOrderConsumer implements RocketMQListener<Messa
                 .orderItemStatus(OrderItemStatusEnum.REFUNDED.getStatus())
                 .orderItemDOList(orderItemDOList)
                 .build();
-        if (status.equals(OrderStatusEnum.PARTIAL_REFUND.getStatus())) refundOrderItemStatusReversalDTO.setOrderStatus(OrderStatusEnum.PARTIAL_REFUND.getStatus());
-        else if (status.equals(OrderStatusEnum.FULL_REFUND.getStatus())) refundOrderItemStatusReversalDTO.setOrderStatus(OrderStatusEnum.FULL_REFUND.getStatus());
+        if (status.equals(OrderStatusEnum.PARTIAL_REFUND.getStatus()))
+            refundOrderItemStatusReversalDTO.setOrderStatus(OrderStatusEnum.PARTIAL_REFUND.getStatus());
+        else if (status.equals(OrderStatusEnum.FULL_REFUND.getStatus()))
+            refundOrderItemStatusReversalDTO.setOrderStatus(OrderStatusEnum.FULL_REFUND.getStatus());
         orderItemService.orderItemStatusReversal(refundOrderItemStatusReversalDTO);
     }
 }

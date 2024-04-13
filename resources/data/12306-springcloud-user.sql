@@ -1,5 +1,5 @@
 USE
-12306_user_0;
+    12306_user_0;
 
 INSERT INTO `t_passenger_15` (`id`, `username`, `real_name`, `id_type`, `id_card`, `discount_type`, `phone`,
                               `create_date`, `verify_status`, `create_time`, `update_time`, `del_flag`)

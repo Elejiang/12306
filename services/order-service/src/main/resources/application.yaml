@@ -42,7 +42,7 @@ framework:
       value-time-unit: days
 
 rocketmq:
-#  name-server: 127.0.0.1:9876
+  #  name-server: 127.0.0.1:9876
   producer:
     group: train12306_order${unique-name:}-service_common-message-execute_pg
     send-message-timeout: 2000

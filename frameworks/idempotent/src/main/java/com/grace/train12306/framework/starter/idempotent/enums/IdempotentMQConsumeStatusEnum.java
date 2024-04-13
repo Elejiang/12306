@@ -10,20 +10,20 @@ import java.util.Objects;
  */
 @RequiredArgsConstructor
 public enum IdempotentMQConsumeStatusEnum {
-    
+
     /**
      * 消费中
      */
     CONSUMING("0"),
-    
+
     /**
      * 已消费
      */
     CONSUMED("1");
-    
+
     @Getter
     private final String code;
-    
+
     /**
      * 如果消费状态等于消费中，返回失败
      *

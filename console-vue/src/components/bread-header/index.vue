@@ -2,11 +2,12 @@
   <div>
     <Breadcrumb>
       <BreadcrumbItem>
-        <IconFont type="icon-huochezhanxiao" />
+        <IconFont type="icon-huochezhanxiao"/>
         <span>12306</span></BreadcrumbItem
       >
       <BreadcrumbItem
-        ><IconFont :type="currentPath?.icon" color="black" />
+      >
+        <IconFont :type="currentPath?.icon" color="black"/>
         <span>{{ currentPath?.label }}</span></BreadcrumbItem
       >
     </Breadcrumb>
@@ -24,11 +25,11 @@ const route = useRoute()
 const currentPath = ref(null)
 
 watch(
-  () => route.path,
-  (newValue) => {
-    currentPath.value = routes.find((item) => item?.path === newValue)
-  },
-  { immediate: true }
+    () => route.path,
+    (newValue) => {
+      currentPath.value = routes.find((item) => item?.path === newValue)
+    },
+    {immediate: true}
 )
 </script>
 

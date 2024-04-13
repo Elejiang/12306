@@ -1,4 +1,4 @@
-package com.grace.train12306.biz.userservice.service.handler.filter.user;
+package com.grace.train12306.biz.userservice.service.handler.filter;
 
 import com.grace.train12306.biz.userservice.common.enums.UserChainMarkEnum;
 import com.grace.train12306.biz.userservice.dto.req.UserRegisterReqDTO;

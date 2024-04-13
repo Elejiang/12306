@@ -35,14 +35,6 @@ public interface UserLoginService {
     void logout(String accessToken);
 
     /**
-     * 用户名是否存在
-     *
-     * @param username 用户名
-     * @return 用户名是否存在返回结果
-     */
-    Boolean hasUsername(String username);
-
-    /**
      * 用户注册
      *
      * @param requestParam 用户注册入参

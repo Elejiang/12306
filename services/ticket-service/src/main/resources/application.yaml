@@ -15,25 +15,25 @@ spring:
       idle-timeout: 300000
       maximum-pool-size: 5
       minimum-idle: 5
-#  data:
-#    redis:
-#      host: 127.0.0.1
-#      port: 6379
-#      password: 123456
+  #  data:
+  #    redis:
+  #      host: 127.0.0.1
+  #      port: 6379
+  #      password: 123456
   cloud:
     nacos:
-#      discovery:
-#        server-addr: 127.0.0.1:8848
+      #      discovery:
+      #        server-addr: 127.0.0.1:8848
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
         import-check:
           enabled: false
-#      username: nacos
-#      password: nacos
-#    sentinel:
-#      transport:
-#        dashboard: localhost:8686
-#        port: 8719
+  #      username: nacos
+  #      password: nacos
+  #    sentinel:
+  #      transport:
+  #        dashboard: localhost:8686
+  #        port: 8719
   dynamic:
     thread-pool:
       nacos:
@@ -51,7 +51,7 @@ spring:
           rejected-handler: CallerRunsPolicy
 
 rocketmq:
-#  name-server: 127.0.0.1:9876
+  #  name-server: 127.0.0.1:9876
   producer:
     group: train12306_ticket${unique-name:}-service_common-message-execute_pg
     send-message-timeout: 2000

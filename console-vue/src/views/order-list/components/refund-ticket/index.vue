@@ -24,10 +24,12 @@ const props = defineProps({
   color: #8f9598;
   padding: 6px 0;
 }
+
 .border {
   font-weight: bolder;
   padding: 0 4px;
 }
+
 .margin {
   padding: 0 4px;
 }

@@ -42,14 +42,6 @@ public class UserInfoController {
     }
 
     /**
-     * 检查用户名是否已存在
-     */
-    @GetMapping("/api/user-service/has-username")
-    public Result<Boolean> hasUsername(@RequestParam("username") @NotEmpty String username) {
-        return Results.success(userLoginService.hasUsername(username));
-    }
-
-    /**
      * 注册用户
      */
     @PostMapping("/api/user-service/register")

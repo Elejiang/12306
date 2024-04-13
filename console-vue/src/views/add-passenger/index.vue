@@ -1,9 +1,9 @@
 <template>
   <Card>
     <Alert
-      show-icon
-      type="warning"
-      message="如旅客身份信息未能在添加后的24小时内通过核验，请乘车人持有效身份证原件到车站办理身份核验。"
+        show-icon
+        type="warning"
+        message="如旅客身份信息未能在添加后的24小时内通过核验，请乘车人持有效身份证原件到车站办理身份核验。"
     ></Alert>
     <Card :bordered="false">
       <Form :label-col="{ span: 10 }" :wrapper-col="{ span: 4 }">
@@ -29,7 +29,8 @@
             <!-- <SelectOption :value="0">无优惠</SelectOption>
             <SelectOption :value="1">学生优惠</SelectOption> -->
             <SelectOption v-for="item in DISCOUNTS_TYPE" :value="item.value">
-              {{ item.label }}</SelectOption
+              {{ item.label }}
+            </SelectOption
             >
           </Select>
         </FormItem>
@@ -37,8 +38,10 @@
           <Space>
             <Button @click="() => router.push('/passenger')">取消</Button>
             <Button :loading="loading" type="primary" @click="onSubmit"
-              >保存</Button
-            ></Space
+            >保存
+            </Button
+            >
+          </Space
           >
         </Row>
       </Form>
@@ -70,7 +73,7 @@ import Cookie from 'js-cookie'
 
 const useForm = Form.useForm
 const router = useRouter()
-const { query } = useRoute()
+const {query} = useRoute()
 const username = Cookie.get('username')
 
 const disabled = useRoute().query?.type === 'edit'
@@ -119,49 +122,49 @@ const rulesRef = reactive({
   ]
 })
 
-const { resetFields, validate, validateInfos } = useForm(formData, rulesRef)
+const {resetFields, validate, validateInfos} = useForm(formData, rulesRef)
 
 onMounted(() => {
   query.type === 'edit' &&
-    fetchPassengerList({ username }).then((res) => {
-      if (res.data?.length) {
-        const userInfo = res.data.find((item) => item.id == query.id)
-        formData.value = { ...formData.value, ...userInfo }
-      }
-    })
+  fetchPassengerList({username}).then((res) => {
+    if (res.data?.length) {
+      const userInfo = res.data.find((item) => item.id == query.id)
+      formData.value = {...formData.value, ...userInfo}
+    }
+  })
 })
 
 const onSubmit = () => {
   console.log(query)
   validate()
-    .then(() => {
-      loading.value = true
-      let params = { username, ...toRaw(formData.value) }
-      if (query.type === 'edit') {
-        const { id, phone } = formData.value
-        params = { id, phone, username }
-        return fetchEditPassenger(params).then((res) => {
-          if (res.success) {
-            message.success(
-              `乘车人${query.type === 'edit' ? '修改' : '创建'}成功`
-            )
-            router.push('/passenger')
-          }
-        })
-      }
-      fetchAddPassenger(params)
-        .then((res) => {
-          loading.value = true
-          if (res.success) {
-            message.success(
-              `乘车人${query.type === 'edit' ? '修改' : '创建'}成功`
-            )
-            router.push('/passenger')
-          }
-        })
-        .catch((error) => console.log(error))
-    })
-    .catch((err) => console.log(err))
+      .then(() => {
+        loading.value = true
+        let params = {username, ...toRaw(formData.value)}
+        if (query.type === 'edit') {
+          const {id, phone} = formData.value
+          params = {id, phone, username}
+          return fetchEditPassenger(params).then((res) => {
+            if (res.success) {
+              message.success(
+                  `乘车人${query.type === 'edit' ? '修改' : '创建'}成功`
+              )
+              router.push('/passenger')
+            }
+          })
+        }
+        fetchAddPassenger(params)
+            .then((res) => {
+              loading.value = true
+              if (res.success) {
+                message.success(
+                    `乘车人${query.type === 'edit' ? '修改' : '创建'}成功`
+                )
+                router.push('/passenger')
+              }
+            })
+            .catch((error) => console.log(error))
+      })
+      .catch((err) => console.log(err))
 }
 </script>
 

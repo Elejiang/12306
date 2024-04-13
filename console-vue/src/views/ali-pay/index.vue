@@ -5,7 +5,7 @@
 <script setup>
 import {useRoute} from 'vue-router'
 
-const { query } = useRoute()
+const {query} = useRoute()
 
 console.log(query.body)
 setTimeout(() => {

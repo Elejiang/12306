@@ -29,11 +29,11 @@ import {SEAT_CLASS_TYPE_LIST, TRAIN_BRAND_LIST, TRAIN_TAG} from '@/constants'
 const useForm = Form.useForm
 
 const carRangeTime = [
-  { value: 0, label: '00:00-24:00' },
-  { value: 1, label: '00:00-06:00' },
-  { value: 2, label: '06:00-12:00' },
-  { value: 3, label: '12:00-18:00' },
-  { value: 4, label: '18:00-24:00' }
+  {value: 0, label: '00:00-24:00'},
+  {value: 1, label: '00:00-06:00'},
+  {value: 2, label: '06:00-12:00'},
+  {value: 3, label: '12:00-18:00'},
+  {value: 4, label: '18:00-24:00'}
 ]
 
 const headSearch = reactive({
@@ -89,9 +89,9 @@ watch(headSearch, (newValue) => {
   if (newValue?.seat?.length) {
     state.trainList = state.trainList.filter((item) => {
       const list =
-        item.seatClassList?.filter(
-          (item) => newValue.seat.includes(item.type) && item.quantity
-        ) ?? []
+          item.seatClassList?.filter(
+              (item) => newValue.seat.includes(item.type) && item.quantity
+          ) ?? []
       console.log('newValue.seat:::', newValue.seat)
       console.log('item.seatClassList:::', item.seatClassList)
       console.log('list:::', list)
@@ -111,7 +111,7 @@ const columns = [
   {
     title: '车次',
     dataIndex: 'trainNumber',
-    slots: { customRender: 'trainNumber' },
+    slots: {customRender: 'trainNumber'},
     key: 'trainNumber',
     width: 100,
     // ellipsis: true,
@@ -120,7 +120,7 @@ const columns = [
   },
   {
     key: 'station',
-    slots: { title: 'customStaionTitle', customRender: 'station' },
+    slots: {title: 'customStaionTitle', customRender: 'station'},
     width: 100,
     ellipsis: true,
     resizeble: false,
@@ -129,7 +129,7 @@ const columns = [
   {
     dataIndex: 'time',
     key: 'time',
-    slots: { title: 'customTimeTitle', customRender: 'time' },
+    slots: {title: 'customTimeTitle', customRender: 'time'},
     width: 100,
     ellipsis: true,
     resizeble: false,
@@ -147,7 +147,7 @@ const columns = [
   {
     dataIndex: 'seatClassList',
     key: 'seat',
-    slots: { title: 'customSeatTitle', customRender: 'highSpeedTrain' },
+    slots: {title: 'customSeatTitle', customRender: 'highSpeedTrain'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -156,7 +156,7 @@ const columns = [
   {
     title: '一等座',
     dataIndex: 'seatClassList',
-    slots: { customRender: 'firstSeat' },
+    slots: {customRender: 'firstSeat'},
     key: 'first_seat',
     width: 80,
     ellipsis: true,
@@ -166,7 +166,7 @@ const columns = [
   {
     dataIndex: 'seatClassList',
     key: 'second_seat',
-    slots: { title: 'customSecondSeatTitle', customRender: 'secondSeat' },
+    slots: {title: 'customSecondSeatTitle', customRender: 'secondSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -176,7 +176,7 @@ const columns = [
     title: '动卧',
     dataIndex: 'seatClassList',
     key: 'bed',
-    slots: { customRender: 'bed' },
+    slots: {customRender: 'bed'},
     width: 80,
     ellipsis: true,
     resizeble: false
@@ -185,7 +185,7 @@ const columns = [
     title: '高级软卧',
     dataIndex: 'seatClassList',
     key: 'delux_soft_bed',
-    slots: { customRender: 'deluxSoftBed' },
+    slots: {customRender: 'deluxSoftBed'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -194,7 +194,7 @@ const columns = [
   {
     dataIndex: 'seatClassList',
     key: 'first_bed',
-    slots: { title: 'customFirstBedSeatTitle', customRender: 'firstBed' },
+    slots: {title: 'customFirstBedSeatTitle', customRender: 'firstBed'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -203,7 +203,7 @@ const columns = [
   {
     dataIndex: 'seatClassList',
     key: 'scond_hard_bed',
-    slots: { title: 'customScondHardSeadTitle', customRender: 'scondHardBed' },
+    slots: {title: 'customScondHardSeadTitle', customRender: 'scondHardBed'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -213,7 +213,7 @@ const columns = [
     title: '软座',
     dataIndex: 'seatClassList',
     key: 'first_soft_seat',
-    slots: { customRender: 'firstSoftSeat' },
+    slots: {customRender: 'firstSoftSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -223,7 +223,7 @@ const columns = [
     title: '硬座',
     dataIndex: 'seatClassList',
     key: 'hard_seat',
-    slots: { customRender: 'hardSeat' },
+    slots: {customRender: 'hardSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -233,7 +233,7 @@ const columns = [
     title: '无座',
     dataIndex: 'seatClassList',
     key: 'no_seat',
-    slots: { customRender: 'noSeat' },
+    slots: {customRender: 'noSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -243,7 +243,7 @@ const columns = [
     title: '其他',
     dataIndex: 'seatClassList',
     key: 'other',
-    slots: { customRender: 'other' },
+    slots: {customRender: 'other'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -252,7 +252,7 @@ const columns = [
   {
     title: '备注',
     dataIndex: 'remark',
-    slots: { customRender: 'operation' },
+    slots: {customRender: 'operation'},
     align: 'center'
   }
 ]
@@ -293,7 +293,7 @@ const innerColumns = [
   {
     dataIndex: 'seatClassList',
     key: 'seat',
-    slots: { title: 'customSeatTitle', customRender: 'highSpeedTrainPrice' },
+    slots: {title: 'customSeatTitle', customRender: 'highSpeedTrainPrice'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -302,7 +302,7 @@ const innerColumns = [
   {
     title: '一等座',
     dataIndex: 'seatClassList',
-    slots: { customRender: 'firstSeatPrice' },
+    slots: {customRender: 'firstSeatPrice'},
     key: 'first_seat',
     width: 80,
     ellipsis: true,
@@ -312,7 +312,7 @@ const innerColumns = [
   {
     dataIndex: 'seatClassList',
     key: 'second_seat',
-    slots: { title: 'customSecondSeatTitle', customRender: 'secondSeatPrice' },
+    slots: {title: 'customSecondSeatTitle', customRender: 'secondSeatPrice'},
 
     width: 80,
     ellipsis: true,
@@ -323,7 +323,7 @@ const innerColumns = [
     title: '动卧',
     dataIndex: 'seatClassList',
     key: 'bed',
-    slots: { customRender: 'bedPrice' },
+    slots: {customRender: 'bedPrice'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -333,7 +333,7 @@ const innerColumns = [
     title: '高级软卧',
     dataIndex: 'seatClassList',
     key: 'delux_soft_bed',
-    slots: { customRender: 'deluxSoftBedPrice' },
+    slots: {customRender: 'deluxSoftBedPrice'},
     width: 90,
     ellipsis: true,
     resizeble: false,
@@ -342,7 +342,7 @@ const innerColumns = [
   {
     dataIndex: 'seatClassList',
     key: 'first_bed',
-    slots: { title: 'customFirstBedSeatTitle', customRender: 'firstBed' },
+    slots: {title: 'customFirstBedSeatTitle', customRender: 'firstBed'},
 
     width: 80,
     ellipsis: true,
@@ -365,7 +365,7 @@ const innerColumns = [
     title: '软座',
     dataIndex: 'seatClassList',
     key: 'first_soft_seat',
-    slots: { customRender: 'firstSoftSeat' },
+    slots: {customRender: 'firstSoftSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -375,7 +375,7 @@ const innerColumns = [
     title: '硬座',
     dataIndex: 'seatClassList',
     key: 'hard_seat',
-    slots: { customRender: 'hardSeat' },
+    slots: {customRender: 'hardSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -385,7 +385,7 @@ const innerColumns = [
     title: '无座',
     dataIndex: 'seatClassList',
     key: 'no_seat',
-    slots: { customRender: 'noSeat' },
+    slots: {customRender: 'noSeat'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -395,7 +395,7 @@ const innerColumns = [
     title: '其他',
     dataIndex: 'other',
     key: 'other',
-    slots: { customRender: 'other' },
+    slots: {customRender: 'other'},
     width: 80,
     ellipsis: true,
     resizeble: false,
@@ -404,7 +404,7 @@ const innerColumns = [
   {
     title: '备注',
     dataIndex: 'remark',
-    slots: { customRender: 'operation' },
+    slots: {customRender: 'operation'},
     fixed: 'right',
     align: 'center'
   }
@@ -438,16 +438,16 @@ const cardInfoColumns = [
   }
 ]
 
-const { resetFields, validate } = useForm(headSearch)
+const {resetFields, validate} = useForm(headSearch)
 
 const days = new Array(15)
-  .fill(',')
-  .map((item, index) => dayjs().add(index, 'days'))
+    .fill(',')
+    .map((item, index) => dayjs().add(index, 'days'))
 
 const handSubmit = () => {
   validate().then(() => {
-    const { fromStation, toStation, departure, arrival, departureDate } =
-      toRaw(headSearch)
+    const {fromStation, toStation, departure, arrival, departureDate} =
+        toRaw(headSearch)
     fetchTicketSearch({
       fromStation,
       toStation,
@@ -531,7 +531,7 @@ const exchangeCity = () => {
 }
 
 const handleTrainClick = (trainId) => {
-  fetchTrainStation({ trainId }).then((res) => {
+  fetchTrainStation({trainId}).then((res) => {
     state.trainStationList = res.data
     state.loading = false
   })
@@ -539,15 +539,15 @@ const handleTrainClick = (trainId) => {
 
 const handleBook = (record) => {
   window.open(
-    `buyTicket?trainNumber=${record.trainNumber}&&trainId=${
-      record.trainId
-    }&&${Object.entries(headSearch)
-      ?.map((item) => {
-        return `${item[0]}=${
-          item[0] === 'departureDate' ? item[1].format('YYYY-MM-DD') : item[1]
-        }`
-      })
-      .join('&&')}`
+      `buyTicket?trainNumber=${record.trainNumber}&&trainId=${
+          record.trainId
+      }&&${Object.entries(headSearch)
+          ?.map((item) => {
+            return `${item[0]}=${
+                item[0] === 'departureDate' ? item[1].format('YYYY-MM-DD') : item[1]
+            }`
+          })
+          .join('&&')}`
   )
 }
 </script>
@@ -555,14 +555,14 @@ const handleBook = (record) => {
   <div>
     <Space direction="vertical" size="middle" :style="{ width: '100%' }">
       <Form
-        layout="inline"
-        :colon="false"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
+          layout="inline"
+          :colon="false"
+          :label-col="{ span: 8 }"
+          :wrapper-col="{ span: 16 }"
       >
         <Space direction="vertical" size="middle" :style="{ width: '100%' }">
           <Card
-            :style="{
+              :style="{
               width: '100%'
             }"
           >
@@ -570,11 +570,11 @@ const handleBook = (record) => {
               <Col :span="5">
                 <FormItem label="出发地">
                   <Select
-                    v-model:value="headSearch.fromStation"
-                    :style="{ width: '150px' }"
-                    :show-arrow="false"
-                    :show-search="true"
-                    :options="
+                      v-model:value="headSearch.fromStation"
+                      :style="{ width: '150px' }"
+                      :show-arrow="false"
+                      :show-search="true"
+                      :options="
                       state.stationList.map((item) => ({
                         label: item.name,
                         value: item.code
@@ -585,13 +585,13 @@ const handleBook = (record) => {
                 </FormItem>
               </Col>
               <Col
-                :span="2"
-                :style="{
+                  :span="2"
+                  :style="{
                   display: 'flex'
                 }"
               >
                 <div
-                  :style="{
+                    :style="{
                     width: '100%',
                     textAlign: 'center',
                     alignItems: 'center',
@@ -599,22 +599,24 @@ const handleBook = (record) => {
                   }"
                 >
                   <RetweetOutlined
-                    @click="exchangeCity"
-                    :style="{
+                      @click="exchangeCity"
+                      :style="{
                       cursor: 'pointer',
                       fontSize: '20px',
                       color: '#1990ff'
                     }"
-                  /></div
-              ></Col>
+                  />
+                </div
+                >
+              </Col>
               <Col :span="5">
                 <FormItem label="目的地">
                   <Select
-                    v-model:value="headSearch.toStation"
-                    :style="{ width: '150px' }"
-                    :show-arrow="false"
-                    :show-search="true"
-                    :options="
+                      v-model:value="headSearch.toStation"
+                      :style="{ width: '150px' }"
+                      :show-arrow="false"
+                      :show-search="true"
+                      :options="
                       state.stationList.map((item) => ({
                         label: item.name,
                         value: item.code
@@ -627,10 +629,10 @@ const handleBook = (record) => {
               <Col :span="5">
                 <FormItem label="出发日">
                   <DatePicker
-                    v-model:value="headSearch.departureDate"
-                    :style="{ width: '150px' }"
-                    :show-arrow="false"
-                    :allow-clear="false"
+                      v-model:value="headSearch.departureDate"
+                      :style="{ width: '150px' }"
+                      :show-arrow="false"
+                      :allow-clear="false"
                   >
                   </DatePicker>
                 </FormItem>
@@ -638,13 +640,14 @@ const handleBook = (record) => {
               <Col span="2">
                 <FormItem>
                   <Button
-                    type="primary"
-                    @click="
+                      type="primary"
+                      @click="
                       () => {
                         handSubmit()
                       }
                     "
-                    >查询</Button
+                  >查询
+                  </Button
                   >
                 </FormItem>
               </Col>
@@ -652,10 +655,10 @@ const handleBook = (record) => {
           </Card>
           <div class="card-container">
             <Tabs
-              type="card"
-              :default-active-key="headSearch.departureDate.format('MM-DD')"
-              :key="headSearch.departureDate.format('MM-DD')"
-              @change="
+                type="card"
+                :default-active-key="headSearch.departureDate.format('MM-DD')"
+                :key="headSearch.departureDate.format('MM-DD')"
+                @change="
                 (value) => {
                   const year = dayjs().format('YYYY')
                   const date = year + value
@@ -664,9 +667,9 @@ const handleBook = (record) => {
               "
             >
               <TabPane
-                v-for="item in days"
-                :key="item.format('MM-DD')"
-                :tab="getTitle(item)"
+                  v-for="item in days"
+                  :key="item.format('MM-DD')"
+                  :tab="getTitle(item)"
               >
                 <Card flex :bordered="false">
                   <Row justify="space">
@@ -676,8 +679,8 @@ const handleBook = (record) => {
                           <span class="spacial-label">车次类型</span>
                         </template>
                         <CheckboxGroup
-                          :value="headSearch.car_type"
-                          @change="
+                            :value="headSearch.car_type"
+                            @change="
                             (value) => {
                               checkTagCardType =
                                 value.length ===
@@ -687,8 +690,8 @@ const handleBook = (record) => {
                           "
                         >
                           <CheckableTag
-                            :checked="checkTagCardType"
-                            @change="
+                              :checked="checkTagCardType"
+                              @change="
                               (value) => {
                                 checkTagCardType = value
                                 if (value) {
@@ -699,24 +702,26 @@ const handleBook = (record) => {
                                 }
                               }
                             "
-                            :style="{
+                              :style="{
                               border: '1px solid #f0f0f0',
                               marginRight: '10px'
                             }"
-                            >全部</CheckableTag
+                          >全部
+                          </CheckableTag
                           >
                           <Checkbox
-                            v-for="seatItem in state.trainBrandListSelect"
-                            :value="
+                              v-for="seatItem in state.trainBrandListSelect"
+                              :value="
                               TRAIN_BRAND_LIST.find(
                                 (item) => item.code === seatItem
                               )?.code
                             "
-                            >{{
+                          >{{
                               TRAIN_BRAND_LIST.find(
-                                (item) => item.code === seatItem
+                                  (item) => item.code === seatItem
                               )?.label
-                            }}</Checkbox
+                            }}
+                          </Checkbox
                           >
                         </CheckboxGroup>
                       </FormItem>
@@ -725,8 +730,8 @@ const handleBook = (record) => {
                           <span class="spacial-label">出发车站</span>
                         </template>
                         <CheckboxGroup
-                          :value="headSearch.departure"
-                          @change="
+                            :value="headSearch.departure"
+                            @change="
                             (value) => {
                               departureTagAll =
                                 value.length === currCityStations.length
@@ -735,12 +740,12 @@ const handleBook = (record) => {
                           "
                         >
                           <CheckableTag
-                            :style="{
+                              :style="{
                               border: '1px solid #f0f0f0',
                               marginRight: '10px'
                             }"
-                            :checked="departureTagAll"
-                            @change="
+                              :checked="departureTagAll"
+                              @change="
                               (value) => {
                                 departureTagAll = value
                                 if (value) {
@@ -750,12 +755,14 @@ const handleBook = (record) => {
                                 }
                               }
                             "
-                            >全部</CheckableTag
+                          >全部
+                          </CheckableTag
                           >
                           <Checkbox
-                            v-for="item in currCityStations"
-                            :value="item"
-                            >{{ item }}</Checkbox
+                              v-for="item in currCityStations"
+                              :value="item"
+                          >{{ item }}
+                          </Checkbox
                           >
                         </CheckboxGroup>
                       </FormItem>
@@ -764,8 +771,8 @@ const handleBook = (record) => {
                           <span class="spacial-label">到达车站</span>
                         </template>
                         <CheckboxGroup
-                          :value="headSearch.arrival"
-                          @change="
+                            :value="headSearch.arrival"
+                            @change="
                             (value) => {
                               arrivalTagAll =
                                 value.length === currArrivalStations.length
@@ -774,12 +781,12 @@ const handleBook = (record) => {
                           "
                         >
                           <CheckableTag
-                            :checked="arrivalTagAll"
-                            :style="{
+                              :checked="arrivalTagAll"
+                              :style="{
                               border: '1px solid #f0f0f0',
                               marginRight: '10px'
                             }"
-                            @change="
+                              @change="
                               (value) => {
                                 arrivalTagAll = value
                                 if (value) {
@@ -789,12 +796,14 @@ const handleBook = (record) => {
                                 }
                               }
                             "
-                            >全部</CheckableTag
+                          >全部
+                          </CheckableTag
                           >
                           <Checkbox
-                            v-for="item in currArrivalStations"
-                            :value="item"
-                            >{{ item }}</Checkbox
+                              v-for="item in currArrivalStations"
+                              :value="item"
+                          >{{ item }}
+                          </Checkbox
                           >
                         </CheckboxGroup>
                       </FormItem>
@@ -803,9 +812,9 @@ const handleBook = (record) => {
                           <span class="spacial-label">车次席别</span>
                         </template>
                         <CheckboxGroup
-                          :style="{ minWidth: '300px', textWrap: 'nowrap' }"
-                          :value="headSearch.seat"
-                          @change="
+                            :style="{ minWidth: '300px', textWrap: 'nowrap' }"
+                            :value="headSearch.seat"
+                            @change="
                             (value) => {
                               seatTagAll =
                                 value.length ===
@@ -815,8 +824,8 @@ const handleBook = (record) => {
                           "
                         >
                           <CheckableTag
-                            :checked="seatTagAll"
-                            @change="
+                              :checked="seatTagAll"
+                              @change="
                               (value) => {
                                 seatTagAll = value
                                 if (value) {
@@ -827,31 +836,33 @@ const handleBook = (record) => {
                                 }
                               }
                             "
-                            :style="{
+                              :style="{
                               border: '1px solid #f0f0f0',
                               marginRight: '10px'
                             }"
-                            >全部</CheckableTag
+                          >全部
+                          </CheckableTag
                           >
                           <Checkbox
-                            v-for="seatItem in state.seatClassTypeListSelect"
-                            :value="
+                              v-for="seatItem in state.seatClassTypeListSelect"
+                              :value="
                               SEAT_CLASS_TYPE_LIST.find(
                                 (item) => item.code === seatItem
                               )?.code
                             "
-                            >{{
+                          >{{
                               SEAT_CLASS_TYPE_LIST.find(
-                                (item) => item.code === seatItem
+                                  (item) => item.code === seatItem
                               )?.label
-                            }}</Checkbox
+                            }}
+                          </Checkbox
                           >
                         </CheckboxGroup>
                       </FormItem>
                     </Col>
                     <Col
-                      :span="4"
-                      style="
+                        :span="4"
+                        style="
                          {
                           text-align: 'end';
                         }
@@ -859,9 +870,9 @@ const handleBook = (record) => {
                     >
                       <FormItem label="发车时间">
                         <Select
-                          dropdownClassName="custom-select"
-                          :default-value="0"
-                          :options="
+                            dropdownClassName="custom-select"
+                            :default-value="0"
+                            :options="
                             carRangeTime.map((item) => ({
                               label: item.label,
                               value: item.value
@@ -882,15 +893,15 @@ const handleBook = (record) => {
           <span class="city-name">
             {{
               state.stationList.find(
-                (item) => item.code === headSearch.fromStation
+                  (item) => item.code === headSearch.fromStation
               )?.name
             }}
           </span>
-          <SwapRightOutlined />
+          <SwapRightOutlined/>
           <span class="city-name">
             {{
               state.stationList.find(
-                (item) => item.code === headSearch.toStation
+                  (item) => item.code === headSearch.toStation
               )?.name
             }}
           </span>
@@ -899,27 +910,27 @@ const handleBook = (record) => {
             headSearch.departureDate.format('MM月DD日')
           }}</span>
           <span class="time-title">{{
-            getWeekNumber(headSearch.departureDate.day())
-          }}</span
+              getWeekNumber(headSearch.departureDate.day())
+            }}</span
           >） 共计<span :style="{ fontWeight: 'bolder' }">{{
             state.trainList?.length
           }}</span
-          >个车次
+        >个车次
         </Col>
       </Row>
       <div class="custome-table">
         <Table
-          :columns="columns"
-          :data-source="state.trainList"
-          :pagination="false"
+            :columns="columns"
+            :data-source="state.trainList"
+            :pagination="false"
         >
           >
           <template #expandedRowRender="{ record }">
             <Table
-              :show-header="false"
-              :pagination="false"
-              :columns="innerColumns"
-              :data-source="[record]"
+                :show-header="false"
+                :pagination="false"
+                :columns="innerColumns"
+                :data-source="[record]"
             >
               <template #highSpeedTrainPrice="{ text }">
                 <div :style="{ color: '#fc8302' }">
@@ -928,7 +939,7 @@ const handleBook = (record) => {
                     //   '￥' + text?.find((item) => item?.type === 12)?.price) ??
                     // ''
                     handlePriceShow(
-                      text?.find((item) => item?.type === 0)?.price ??
+                        text?.find((item) => item?.type === 0)?.price ??
                         text.find((item) => item?.type === 12)?.price
                     )
                   }}
@@ -938,7 +949,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 1)?.price
+                        text?.find((item) => item?.type === 1)?.price
                     )
                   }}
                 </div>
@@ -947,7 +958,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 2)?.price ??
+                        text?.find((item) => item?.type === 2)?.price ??
                         text?.find((item) => item.type === 3)?.price
                     )
                   }}
@@ -957,7 +968,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 10)?.price
+                        text?.find((item) => item?.type === 10)?.price
                     )
                   }}
                 </div>
@@ -966,7 +977,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 9)?.price
+                        text?.find((item) => item?.type === 9)?.price
                     )
                   }}
                 </div>
@@ -975,7 +986,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 6)?.price ??
+                        text?.find((item) => item?.type === 6)?.price ??
                         text?.find((item) => item?.type === 4)?.price
                     )
                   }}
@@ -985,7 +996,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 7)?.price ??
+                        text?.find((item) => item?.type === 7)?.price ??
                         text?.find((item) => item?.type === 5)?.price
                     )
                   }}
@@ -995,7 +1006,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      item?.find((item) => item?.type === 11)?.price
+                        item?.find((item) => item?.type === 11)?.price
                     )
                   }}
                 </div>
@@ -1004,7 +1015,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 8)?.price
+                        text?.find((item) => item?.type === 8)?.price
                     )
                   }}
                 </div>
@@ -1013,7 +1024,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 13)?.price
+                        text?.find((item) => item?.type === 13)?.price
                     )
                   }}
                 </div>
@@ -1022,7 +1033,7 @@ const handleBook = (record) => {
                 <div :style="{ color: '#fc8302' }">
                   {{
                     handlePriceShow(
-                      text?.find((item) => item?.type === 14)?.price
+                        text?.find((item) => item?.type === 14)?.price
                     )
                   }}
                 </div>
@@ -1031,11 +1042,11 @@ const handleBook = (record) => {
           </template>
           <template #trainNumber="{ text, record }">
             <h1
-              class="card-name"
-              :style="{
+                class="card-name"
+                :style="{
                 cursor: 'pointer'
               }"
-              @click="
+                @click="
                 () => {
                   state.loading = true
                   handleTrainClick(record.trainId)
@@ -1043,15 +1054,15 @@ const handleBook = (record) => {
               "
             >
               <Tooltip
-                :get-popup-container="(node) => node.parentNode"
-                placement="rightTop"
-                trigger="click"
+                  :get-popup-container="(node) => node.parentNode"
+                  placement="rightTop"
+                  trigger="click"
               >
                 <div>
                   {{ text }}
                 </div>
                 <div
-                  style="
+                    style="
                     display: flex;
                     font-size: 10px;
                     font-weight: bold;
@@ -1061,8 +1072,8 @@ const handleBook = (record) => {
                   "
                 >
                   <div
-                    v-for="tag in record?.trainTags"
-                    :style="{
+                      v-for="tag in record?.trainTags"
+                      :style="{
                       color: TRAIN_TAG.find((item) => item.value === tag)
                         ?.color,
                       border: `1px solid ${
@@ -1079,18 +1090,20 @@ const handleBook = (record) => {
                 </div>
                 <template #title>
                   <Table
-                    :columns="cardInfoColumns"
-                    :data-source="state.trainStationList"
-                    :pagination="false"
-                    :loading="state.loading"
-                  ></Table> </template
-              ></Tooltip>
+                      :columns="cardInfoColumns"
+                      :data-source="state.trainStationList"
+                      :pagination="false"
+                      :loading="state.loading"
+                  ></Table>
+                </template
+                >
+              </Tooltip>
             </h1>
           </template>
           <template #station="{ _, record }">
             <div>
               <span
-                :style="{
+                  :style="{
                   display: 'inline-block',
                   padding: '2px 4px',
                   backgroundColor: record.departureFlag ? '#cca567' : '#7597d5',
@@ -1100,12 +1113,12 @@ const handleBook = (record) => {
                   fontWeight: 'bolder',
                   marginRight: '2px'
                 }"
-                >{{ record.departureFlag ? '始' : '过' }}</span
+              >{{ record.departureFlag ? '始' : '过' }}</span
               >{{ record.departure }}
             </div>
             <div>
               <span
-                :style="{
+                  :style="{
                   display: 'inline-block',
                   padding: '2px 4px',
                   backgroundColor: record.arrivalFlag ? '#6da77f' : '#7597d5',
@@ -1115,7 +1128,7 @@ const handleBook = (record) => {
                   fontWeight: 'bolder',
                   marginRight: '2px'
                 }"
-                >{{ record.arrivalFlag ? '终' : '过' }}</span
+              >{{ record.arrivalFlag ? '终' : '过' }}</span
               >{{ record.arrival }}
             </div>
           </template>
@@ -1131,7 +1144,7 @@ const handleBook = (record) => {
           </template>
           <template #highSpeedTrain="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 0)?.quantity ??
                     text?.find((item) => item?.type === 12)?.quantity
@@ -1140,10 +1153,10 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 0)?.quantity
+                    text?.find((item) => item?.type === 0)?.quantity
                 )?.label ??
                 getTicketNumber(
-                  text?.find((item) => item?.type === 12)?.quantity
+                    text?.find((item) => item?.type === 12)?.quantity
                 )?.label ??
                 '--'
               }}
@@ -1151,7 +1164,7 @@ const handleBook = (record) => {
           </template>
           <template #firstSeat="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 1)?.quantity
                 )?.color
@@ -1159,14 +1172,14 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 1)?.quantity
+                    text?.find((item) => item?.type === 1)?.quantity
                 )?.label ?? '--'
               }}
             </div>
           </template>
           <template #secondSeat="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 2)?.quantity ??
                     text?.find((item) => item?.type === 3)?.quantity
@@ -1175,10 +1188,10 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 2)?.quantity
+                    text?.find((item) => item?.type === 2)?.quantity
                 )?.label ??
                 getTicketNumber(
-                  text?.find((item) => item?.type === 3)?.quantity
+                    text?.find((item) => item?.type === 3)?.quantity
                 )?.label ??
                 '--'
               }}
@@ -1186,7 +1199,7 @@ const handleBook = (record) => {
           </template>
           <template #bed="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 10)?.quantity
                 )?.color
@@ -1194,7 +1207,7 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 10)?.quantity
+                    text?.find((item) => item?.type === 10)?.quantity
                 )?.label ?? '--'
               }}
             </div>
@@ -1206,7 +1219,7 @@ const handleBook = (record) => {
           </template>
           <template #firstBed="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 6)?.quantity ??
                     text?.find((item) => item?.type === 4)?.quantity
@@ -1215,10 +1228,10 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 6)?.quantity
+                    text?.find((item) => item?.type === 6)?.quantity
                 )?.label ??
                 getTicketNumber(
-                  text?.find((item) => item?.type === 4)?.quantity
+                    text?.find((item) => item?.type === 4)?.quantity
                 )?.label ??
                 '--'
               }}
@@ -1226,7 +1239,7 @@ const handleBook = (record) => {
           </template>
           <template #scondHardBed="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 7)?.quantity ??
                     text?.find((item) => item?.type === 5)?.quantity
@@ -1235,10 +1248,10 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 7)?.quantity
+                    text?.find((item) => item?.type === 7)?.quantity
                 )?.label ??
                 getTicketNumber(
-                  text?.find((item) => item?.type === 5)?.quantity
+                    text?.find((item) => item?.type === 5)?.quantity
                 )?.label ??
                 '--'
               }}
@@ -1246,7 +1259,7 @@ const handleBook = (record) => {
           </template>
           <template #firstSoftSeat="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 11)?.quantity
                 )?.color
@@ -1254,14 +1267,14 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 11)?.quantity
+                    text?.find((item) => item?.type === 11)?.quantity
                 )?.label ?? '--'
               }}
             </div>
           </template>
           <template #hardSeat="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 8)?.quantity
                 )?.color
@@ -1269,14 +1282,14 @@ const handleBook = (record) => {
             >
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 8)?.quantity
+                    text?.find((item) => item?.type === 8)?.quantity
                 )?.label ?? '--'
               }}
             </div>
           </template>
           <template #noSeat="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 13)?.quantity
                 )?.color
@@ -1285,14 +1298,14 @@ const handleBook = (record) => {
               <!-- {{ text?.find((item) => item?.type === 13)?.quantity ?? '--' }} -->
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 13)?.quantity
+                    text?.find((item) => item?.type === 13)?.quantity
                 )?.label ?? '--'
               }}
             </div>
           </template>
           <template #other="{ text }">
             <div
-              :style="{
+                :style="{
                 color: getTicketNumber(
                   text?.find((item) => item?.type === 14)?.quantity
                 )?.color
@@ -1301,7 +1314,7 @@ const handleBook = (record) => {
               <!-- {{ text?.find((item) => item?.type === 14)?.quantity ?? '--' }} -->
               {{
                 getTicketNumber(
-                  text?.find((item) => item?.type === 14)?.quantity
+                    text?.find((item) => item?.type === 14)?.quantity
                 )?.label ?? '--'
               }}
             </div>
@@ -1328,23 +1341,26 @@ const handleBook = (record) => {
           </template>
           <template #operation="{ text, record }">
             <Button
-              type="link"
-              size="small"
-              @click="
+                type="link"
+                size="small"
+                @click="
                 () => {
                   handleBook(record)
                 }
               "
-              :disabled="
+                :disabled="
                 !record.seatClassList.filter((item) => item.quantity)?.length
               "
-              >预定</Button
+            >预定
+            </Button
             >
-          </template></Table
+          </template>
+        </Table
         >
       </div>
       <Alert type="warning"
-        ><template #description>
+      >
+        <template #description>
           <div>
             如果查询结果中没有满足需求的车次，您还可以使用中转换乘功能，查询途中换乘一次的部分列车余票情况。
           </div>
@@ -1364,14 +1380,17 @@ const handleBook = (record) => {
   padding: 0;
   border-radius: 4px;
 }
+
 .spacial-label {
   font-weight: bolder;
 }
+
 .city-name {
   display: inline-block;
   padding: 0 10px;
   font-weight: bolder;
 }
+
 .time-title {
   display: inline-block;
   padding: 0 5px;
@@ -1384,52 +1403,63 @@ const handleBook = (record) => {
       content: '√';
     }
   }
+
   .ant-tooltip-inner {
     background-color: #fff;
     padding: 0px;
     width: 500px;
   }
+
   .ant-tooltip-arrow-content {
     background-color: #1890ff;
   }
+
   .ant-table-thead {
     .ant-table-cell {
-      background: url(https://kyfw.12306.cn/otn/resources/images/bg_tlisthd.png)
-        top repeat-x;
+      background: url(https://kyfw.12306.cn/otn/resources/images/bg_tlisthd.png) top repeat-x;
       background-size: cover;
     }
   }
+
   .ant-tabs {
     border: 1px solid #f0f0f0;
     border-top: none;
   }
+
   .ant-form {
     align-items: center;
     justify-content: space-between;
   }
+
   .ant-divider-vertical {
     height: 100%;
   }
+
   .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab {
     margin-left: 0;
   }
+
   .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
     /* // border-right: none; */
   }
+
   .ant-tabs-nav-wrap {
     width: 100%;
 
     .ant-tabs-nav-list {
       width: 100%;
+
       .ant-tabs-tab:first-child {
         border-left: none;
       }
+
       .ant-tabs-tab {
         /* // flex: 1; */
         width: 6.5%;
         text-align: center;
         border-top-left-radius: 0px !important;
         border-top-right-radius: 0px !important;
+
         .ant-tabs-tab-btn {
           width: 100%;
           text-align: center;
@@ -1443,6 +1473,7 @@ const handleBook = (record) => {
     }
   }
 }
+
 ::v-deep(.custome-table) {
   .ant-table-thead > tr > th {
     color: #fff;

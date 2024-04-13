@@ -1,7 +1,9 @@
 <template>
   <div style="padding: 20px 0">
     <Form layout="inline">
-      <FormItem label="乘车日期"><RangePicker></RangePicker></FormItem>
+      <FormItem label="乘车日期">
+        <RangePicker></RangePicker>
+      </FormItem>
       <FormItem>
         <Checkbox>学生票</Checkbox>
       </FormItem>
@@ -11,8 +13,8 @@
   <div v-if="!loading" class="list-container">
     <div v-for="item in state.data">
       <BadgeRibbon
-        :text="item.ridingDate + getWeekNumber(dayjs(item.ridingDate).day())"
-        placement="start"
+          :text="item.ridingDate + getWeekNumber(dayjs(item.ridingDate).day())"
+          placement="start"
       >
         <div class="list">
           <div class="list-item-container">
@@ -23,7 +25,7 @@
                 <div class="time">{{ item.departureTime + '开' }}</div>
               </div>
               <div class="arrow-container">
-                <SwapRightOutlined style="font-size: 30px; color: #448ef7" />
+                <SwapRightOutlined style="font-size: 30px; color: #448ef7"/>
                 <Tag>车次当日有效</Tag>
               </div>
               <div class="d-container">
@@ -35,7 +37,7 @@
               <div class="seat">
                 {{
                   SEAT_CLASS_TYPE_LIST.find(
-                    (seat) => seat.code === item.seatType
+                      (seat) => seat.code === item.seatType
                   )?.label
                 }}
               </div>
@@ -45,17 +47,17 @@
             </div>
             <div class="flex2">
               <span class="ticket">{{
-                DISCOUNTS_TYPE.find(
-                  (discout) => discout.value === item.ticketType
-                )?.label + '票'
-              }}</span>
+                  DISCOUNTS_TYPE.find(
+                      (discout) => discout.value === item.ticketType
+                  )?.label + '票'
+                }}</span>
               <span class="amount">{{ (item.amount / 100)?.toFixed(2) }}</span>
             </div>
             <div style="font-weight: bolder">
               {{
                 moment(item?.ridingDate ?? new Date()).isAfter(moment())
-                  ? '未出战'
-                  : '已出站'
+                    ? '未出战'
+                    : '已出站'
               }}
             </div>
           </div>
@@ -79,17 +81,17 @@
   <Spin v-else :spinning="true"></Spin>
   <div style="padding: 10px 0; display: flex; justify-content: end">
     <Pagination
-      :current="state.current"
-      :total="state.total"
-      :page-size="state.size"
-      @change="
+        :current="state.current"
+        :total="state.total"
+        :page-size="state.size"
+        @change="
         (page, size) => {
           state.current = page
           state.size = size
         }
       "
-      :show-total="(total) => `共${total}条`"
-      :show-size-changer="true"
+        :show-total="(total) => `共${total}条`"
+        :show-size-changer="true"
     ></Pagination>
   </div>
 </template>
@@ -115,7 +117,7 @@ import {fetchMyTicket} from '@/service'
 import {DISCOUNTS_TYPE, SEAT_CLASS_TYPE_LIST} from '@/constants'
 import moment from 'moment'
 
-const { RangePicker } = DatePicker
+const {RangePicker} = DatePicker
 
 const state = reactive({
   data: [],
@@ -126,23 +128,23 @@ const state = reactive({
 })
 const handleFetchMyTicket = (current, size) => {
   state.loading = true
-  fetchMyTicket({ current, size })
-    .then((res) => {
-      state.data = res.data?.records
-      state.total = res.data?.total
-      state.loading = false
-    })
-    .catch(() => (state.loading = false))
+  fetchMyTicket({current, size})
+      .then((res) => {
+        state.data = res.data?.records
+        state.total = res.data?.total
+        state.loading = false
+      })
+      .catch(() => (state.loading = false))
 }
 
 watch(
-  () => [state.current, state.size],
-  (newValue) => {
-    state.loading = true
-    const [current, size] = newValue
-    handleFetchMyTicket(current, size)
-  },
-  { immediate: true }
+    () => [state.current, state.size],
+    (newValue) => {
+      state.loading = true
+      const [current, size] = newValue
+      handleFetchMyTicket(current, size)
+    },
+    {immediate: true}
 )
 </script>
 <style lang="scss" scoped>
@@ -152,11 +154,13 @@ watch(
 
   .list {
     background-color: #fff;
+
     .button-container {
       display: flex;
       justify-content: space-between;
       padding: 15px 5px;
     }
+
     .list-item-container {
       display: flex;
       width: 100%;
@@ -164,22 +168,27 @@ watch(
       margin: 10px 0;
       padding: 15px 5px;
       align-items: center;
+
       > div {
         padding: 0 10px;
         margin-right: 20px;
         flex: 1;
         text-align: center;
       }
+
       .train-number {
         font-size: 16px;
         font-weight: bolder;
       }
+
       .flex2 {
         flex: 2;
+
         .ticket {
           font-weight: bolder;
           margin-right: 10px;
         }
+
         /* .amount {
         color: #ef8a36;
         &::before {
@@ -188,31 +197,38 @@ watch(
         }
       } */
       }
+
       .da-container {
         display: flex;
         justify-content: space-between;
+
         .arrow-container {
           display: flex;
           flex-direction: column;
         }
+
         .d-container {
           display: flex;
           flex-direction: column;
           align-items: center;
+
           .city {
             font-weight: bolder;
             margin-bottom: 10px;
           }
+
           .seat {
             font-weight: border;
             margin-bottom: 10px;
           }
         }
       }
+
       .d-container {
         display: flex;
         flex-direction: column;
         align-items: center;
+
         .seat {
           font-weight: bolder;
           margin-bottom: 10px;
@@ -221,6 +237,7 @@ watch(
     }
   }
 }
+
 ::v-deep {
   .ant-divider-horizontal {
     margin: 15px 0 0;
