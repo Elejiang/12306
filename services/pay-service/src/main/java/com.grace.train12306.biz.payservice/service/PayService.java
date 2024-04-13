@@ -17,13 +17,6 @@ public interface PayService {
     PayRespDTO commonPay(PayRequest requestParam);
 
     /**
-     * 支付单回调
-     *
-     * @param requestParam 回调支付单实体
-     */
-    void callbackPay(PayCallbackReqDTO requestParam);
-
-    /**
      * 跟据订单号查询支付单详情
      *
      * @param orderSn 订单号
@@ -38,12 +31,4 @@ public interface PayService {
      * @return 支付单详情
      */
     PayInfoRespDTO getPayInfoByPaySn(String paySn);
-
-    /**
-     * 公共退款接口
-     *
-     * @param requestParam 退款请求参数
-     * @return 退款返回详情
-     */
-    RefundRespDTO commonRefund(RefundReqDTO requestParam);
 }

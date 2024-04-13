@@ -36,9 +36,6 @@ public class PayCallbackController {
         payCallbackCommand.setOrderRequestId(requestParam.get("out_trade_no").toString());
         payCallbackCommand.setGmtPayment(DateUtil.parse(requestParam.get("gmt_payment").toString()));
         PayCallbackRequest payCallbackRequest = PayCallbackRequestConvert.command2PayCallbackRequest(payCallbackCommand);
-        /**
-         * {@link AliPayCallbackHandler}
-         */
         // 策略模式：通过策略模式封装支付回调渠道，支付回调时动态选择对应的支付回调组件
         abstractStrategyChoose.chooseAndExecute(payCallbackRequest.buildMark(), payCallbackRequest);
     }
