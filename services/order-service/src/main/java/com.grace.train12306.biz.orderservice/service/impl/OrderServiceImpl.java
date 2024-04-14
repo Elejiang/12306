@@ -1,7 +1,7 @@
 package com.grace.train12306.biz.orderservice.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
-import cn.hutool.core.text.StrBuilder;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -101,10 +101,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public String createTicketOrder(TicketOrderCreateReqDTO requestParam) {
-        // 插入订单
+        // 插入主订单
         String orderSn = insertOrder(requestParam);
         // 添加子订单和乘车人订单
-        insertItem(requestParam, orderSn);
+        insertOrderItem(requestParam, orderSn);
         // 发送 RocketMQ 延时消息，指定时间后取消订单
         sendMessage(requestParam, orderSn);
         return orderSn;
@@ -130,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
             // 更新主订单状态
             updateOrderStatus(orderSn, OrderStatusEnum.CLOSED.getStatus());
             // 更新子订单状态
-            updateOrderItemStatus(orderSn, OrderItemStatusEnum.CLOSED.getStatus());
+            updateOrderItemStatus(orderSn, OrderItemStatusEnum.CLOSED.getStatus(), null);
         } finally {
             lock.unlock();
         }
@@ -151,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
             // 更新主订单状态
             updateOrderStatus(requestParam.getOrderSn(), requestParam.getOrderStatus());
             // 更新子订单状态
-            updateOrderItemStatus(requestParam.getOrderSn(), requestParam.getOrderStatus());
+            updateOrderItemStatus(requestParam.getOrderSn(), requestParam.getOrderStatus(), requestParam.getOrderItemDOList());
         } finally {
             lock.unlock();
         }
@@ -160,6 +160,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void payCallbackOrder(PayResultCallbackOrderEvent requestParam) {
+        // 修改支付时间
         OrderDO updateOrderDO = new OrderDO();
         updateOrderDO.setPayTime(requestParam.getGmtPayment());
         updateOrderDO.setPayType(requestParam.getChannel());
@@ -232,7 +233,7 @@ public class OrderServiceImpl implements OrderService {
         return orderSn;
     }
 
-    private void insertItem(TicketOrderCreateReqDTO requestParam, String orderSn) {
+    private void insertOrderItem(TicketOrderCreateReqDTO requestParam, String orderSn) {
         List<TicketOrderItemCreateReqDTO> ticketOrderItems = requestParam.getTicketOrderItems();
         List<OrderItemDO> orderItemDOList = new ArrayList<>();
         List<OrderItemPassengerDO> orderPassengerRelationDOList = new ArrayList<>();
@@ -305,11 +306,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private void updateOrderItemStatus(String orderSn, Integer orderStatus) {
+    private void updateOrderItemStatus(String orderSn, Integer orderStatus, List<OrderItemDO> orderItemDOList) {
         OrderItemDO orderItemDO = new OrderItemDO();
         orderItemDO.setStatus(orderStatus);
         LambdaUpdateWrapper<OrderItemDO> orderItemUpdateWrapper = Wrappers.lambdaUpdate(OrderItemDO.class)
                 .eq(OrderItemDO::getOrderSn, orderSn);
+        if (CollectionUtil.isNotEmpty(orderItemDOList)) {
+            orderItemUpdateWrapper.in(OrderItemDO::getUserId, orderItemDOList.stream().map(OrderItemDO::getUserId).toList());
+        }
         int orderItemUpdateResult = orderItemMapper.update(orderItemDO, orderItemUpdateWrapper);
         if (orderItemUpdateResult <= 0) {
             throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);

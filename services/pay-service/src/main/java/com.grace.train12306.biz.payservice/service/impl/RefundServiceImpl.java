@@ -93,6 +93,18 @@ public class RefundServiceImpl implements RefundService {
         }
     }
 
+    @NotNull
+    private PayDO getPayDO(RefundReqDTO requestParam) {
+        LambdaQueryWrapper<PayDO> queryWrapper = Wrappers.lambdaQuery(PayDO.class)
+                .eq(PayDO::getOrderSn, requestParam.getOrderSn());
+        PayDO payDO = payMapper.selectOne(queryWrapper);
+        if (Objects.isNull(payDO)) {
+            log.error("支付单不存在，orderSn：{}", requestParam.getOrderSn());
+            throw new ServiceException("支付单不存在");
+        }
+        return payDO;
+    }
+
     private void updatePay(RefundReqDTO requestParam, PayDO payDO, RefundResponse result) {
         payDO.setStatus(result.getStatus());
         LambdaUpdateWrapper<PayDO> updateWrapper = Wrappers.lambdaUpdate(PayDO.class)
@@ -110,18 +122,6 @@ public class RefundServiceImpl implements RefundService {
         RefundRequest refundRequest = RefundRequestConvert.command2RefundRequest(refundCommand);
         RefundResponse result = abstractStrategyChoose.chooseAndExecuteResp(refundRequest.buildMark(), refundRequest);
         return result;
-    }
-
-    @NotNull
-    private PayDO getPayDO(RefundReqDTO requestParam) {
-        LambdaQueryWrapper<PayDO> queryWrapper = Wrappers.lambdaQuery(PayDO.class)
-                .eq(PayDO::getOrderSn, requestParam.getOrderSn());
-        PayDO payDO = payMapper.selectOne(queryWrapper);
-        if (Objects.isNull(payDO)) {
-            log.error("支付单不存在，orderSn：{}", requestParam.getOrderSn());
-            throw new ServiceException("支付单不存在");
-        }
-        return payDO;
     }
 
     private void createRefund(RefundCreateDTO requestParam) {

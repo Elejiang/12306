@@ -4,11 +4,11 @@ import com.grace.train12306.biz.orderservice.common.constant.OrderRocketMQConsta
 import com.grace.train12306.biz.orderservice.common.enums.OrderItemStatusEnum;
 import com.grace.train12306.biz.orderservice.common.enums.OrderStatusEnum;
 import com.grace.train12306.biz.orderservice.dao.entity.OrderItemDO;
-import com.grace.train12306.biz.orderservice.dto.domain.OrderItemStatusReversalDTO;
+import com.grace.train12306.biz.orderservice.dto.domain.OrderStatusReversalDTO;
 import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderPassengerDetailRespDTO;
 import com.grace.train12306.biz.orderservice.mq.domain.MessageWrapper;
 import com.grace.train12306.biz.orderservice.mq.event.RefundResultCallbackOrderEvent;
-import com.grace.train12306.biz.orderservice.service.OrderItemService;
+import com.grace.train12306.biz.orderservice.service.OrderService;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
@@ -35,7 +35,7 @@ import java.util.List;
 )
 public class RefundResultCallbackOrderConsumer implements RocketMQListener<MessageWrapper<RefundResultCallbackOrderEvent>> {
 
-    private final OrderItemService orderItemService;
+    private final OrderService orderService;
 
     @Idempotent(
             uniqueKeyPrefix = "train12306-order:refund_result_callback:",
@@ -47,8 +47,11 @@ public class RefundResultCallbackOrderConsumer implements RocketMQListener<Messa
     @Override
     public void onMessage(MessageWrapper<RefundResultCallbackOrderEvent> message) {
         RefundResultCallbackOrderEvent refundResultCallbackOrderEvent = message.getMessage();
+
         Integer status = refundResultCallbackOrderEvent.getRefundTypeEnum().getCode();
         String orderSn = refundResultCallbackOrderEvent.getOrderSn();
+
+        // 因为可能是部分退款，获取到需要退款的订单
         List<OrderItemDO> orderItemDOList = new ArrayList<>();
         List<TicketOrderPassengerDetailRespDTO> partialRefundTicketDetailList = refundResultCallbackOrderEvent.getPartialRefundTicketDetailList();
         partialRefundTicketDetailList.forEach(partial -> {
@@ -56,15 +59,14 @@ public class RefundResultCallbackOrderConsumer implements RocketMQListener<Messa
             BeanUtil.convert(partial, orderItemDO);
             orderItemDOList.add(orderItemDO);
         });
-        OrderItemStatusReversalDTO refundOrderItemStatusReversalDTO = OrderItemStatusReversalDTO.builder()
+
+        OrderStatusReversalDTO refundOrderItemStatusReversalDTO = OrderStatusReversalDTO.builder()
                 .orderSn(orderSn)
+                .orderStatus(status)
                 .orderItemStatus(OrderItemStatusEnum.REFUNDED.getStatus())
                 .orderItemDOList(orderItemDOList)
                 .build();
-        if (status.equals(OrderStatusEnum.PARTIAL_REFUND.getStatus()))
-            refundOrderItemStatusReversalDTO.setOrderStatus(OrderStatusEnum.PARTIAL_REFUND.getStatus());
-        else if (status.equals(OrderStatusEnum.FULL_REFUND.getStatus()))
-            refundOrderItemStatusReversalDTO.setOrderStatus(OrderStatusEnum.FULL_REFUND.getStatus());
-        orderItemService.orderItemStatusReversal(refundOrderItemStatusReversalDTO);
+
+        orderService.statusReversal(refundOrderItemStatusReversalDTO);
     }
 }
