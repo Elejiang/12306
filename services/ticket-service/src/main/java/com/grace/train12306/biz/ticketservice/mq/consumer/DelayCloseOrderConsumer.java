@@ -17,6 +17,8 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.result.Result;
+import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
+import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -24,6 +26,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -53,6 +56,13 @@ public final class DelayCloseOrderConsumer implements RocketMQListener<MessageWr
     @Value("${ticket.availability.cache-update.type:}")
     private String ticketAvailabilityCacheUpdateType;
 
+    @Idempotent(
+            uniqueKeyPrefix = "train12306-ticket:delay_close_order:",
+            key = "#delayCloseOrderEventMessageWrapper.getKeys()+'_'+#delayCloseOrderEventMessageWrapper.hashCode()",
+            scene = IdempotentSceneEnum.MQ,
+            keyTimeout = 7200L
+    )
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void onMessage(MessageWrapper<DelayCloseOrderEvent> delayCloseOrderEventMessageWrapper) {
         log.info("[延迟关闭订单] 开始消费：{}", JSON.toJSONString(delayCloseOrderEventMessageWrapper));
