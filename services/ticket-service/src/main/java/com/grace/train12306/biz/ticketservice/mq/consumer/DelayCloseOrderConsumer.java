@@ -58,15 +58,15 @@ public final class DelayCloseOrderConsumer implements RocketMQListener<MessageWr
         log.info("[延迟关闭订单] 开始消费：{}", JSON.toJSONString(delayCloseOrderEventMessageWrapper));
         DelayCloseOrderEvent delayCloseOrderEvent = delayCloseOrderEventMessageWrapper.getMessage();
         String orderSn = delayCloseOrderEvent.getOrderSn();
-        Result<Boolean> closedTickOrder;
+        Result<Boolean> closedTicketOrder;
         try {
-            closedTickOrder = ticketOrderRemoteService.closeTickOrder(new CancelTicketOrderReqDTO(orderSn));
+            closedTicketOrder = ticketOrderRemoteService.closeTicketOrder(new CancelTicketOrderReqDTO(orderSn));
         } catch (Throwable ex) {
             log.error("[延迟关闭订单] 订单号：{} 远程调用订单服务失败", orderSn, ex);
             throw ex;
         }
-        if (closedTickOrder.isSuccess() && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
-            if (!closedTickOrder.getData()) {
+        if (closedTicketOrder.isSuccess() && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
+            if (!closedTicketOrder.getData()) {
                 log.info("[延迟关闭订单] 订单号：{} 用户已支付订单", orderSn);
                 return;
             }

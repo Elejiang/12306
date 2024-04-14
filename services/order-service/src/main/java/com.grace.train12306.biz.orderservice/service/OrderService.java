@@ -44,14 +44,14 @@ public interface OrderService {
      *
      * @param requestParam 关闭火车票订单入参
      */
-    boolean closeTickOrder(CancelTicketOrderReqDTO requestParam);
+    boolean closeTicketOrder(CancelTicketOrderReqDTO requestParam);
 
     /**
      * 取消火车票订单
      *
      * @param requestParam 取消火车票订单入参
      */
-    boolean cancelTickOrder(CancelTicketOrderReqDTO requestParam);
+    boolean cancelTicketOrder(CancelTicketOrderReqDTO requestParam);
 
     /**
      * 订单状态反转

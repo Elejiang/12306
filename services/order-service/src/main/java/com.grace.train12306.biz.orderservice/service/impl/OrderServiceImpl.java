@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.grace.train12306.biz.orderservice.common.enums.OrderCanalErrorCodeEnum;
+import com.grace.train12306.biz.orderservice.common.enums.OrderCancelErrorCodeEnum;
 import com.grace.train12306.biz.orderservice.common.enums.OrderItemStatusEnum;
 import com.grace.train12306.biz.orderservice.common.enums.OrderStatusEnum;
 import com.grace.train12306.biz.orderservice.dao.entity.OrderDO;
@@ -48,6 +48,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.grace.train12306.biz.orderservice.common.constant.RedisKeyConstant.ORDER_CANCEL;
+import static com.grace.train12306.biz.orderservice.common.constant.RedisKeyConstant.ORDER_STATUS_REVERSAL;
 
 /**
  * 订单服务接口层实现
@@ -98,165 +101,63 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public String createTicketOrder(TicketOrderCreateReqDTO requestParam) {
-        // 通过基因法将用户 ID 融入到订单号
-        String orderSn = OrderIdGeneratorManager.generateId(requestParam.getUserId());
-        OrderDO orderDO = OrderDO.builder().orderSn(orderSn)
-                .orderTime(requestParam.getOrderTime())
-                .departure(requestParam.getDeparture())
-                .departureTime(requestParam.getDepartureTime())
-                .ridingDate(requestParam.getRidingDate())
-                .arrivalTime(requestParam.getArrivalTime())
-                .trainNumber(requestParam.getTrainNumber())
-                .arrival(requestParam.getArrival())
-                .trainId(requestParam.getTrainId())
-                .source(requestParam.getSource())
-                .status(OrderStatusEnum.PENDING_PAYMENT.getStatus())
-                .username(requestParam.getUsername())
-                .userId(String.valueOf(requestParam.getUserId()))
-                .build();
-        orderMapper.insert(orderDO);
+        // 插入订单
+        String orderSn = insertOrder(requestParam);
         // 添加子订单和乘车人订单
-        List<TicketOrderItemCreateReqDTO> ticketOrderItems = requestParam.getTicketOrderItems();
-        List<OrderItemDO> orderItemDOList = new ArrayList<>();
-        List<OrderItemPassengerDO> orderPassengerRelationDOList = new ArrayList<>();
-        ticketOrderItems.forEach(each -> {
-            OrderItemDO orderItemDO = OrderItemDO.builder()
-                    .trainId(requestParam.getTrainId())
-                    .seatNumber(each.getSeatNumber())
-                    .carriageNumber(each.getCarriageNumber())
-                    .realName(each.getRealName())
-                    .orderSn(orderSn)
-                    .phone(each.getPhone())
-                    .seatType(each.getSeatType())
-                    .username(requestParam.getUsername()).amount(each.getAmount()).carriageNumber(each.getCarriageNumber())
-                    .idCard(each.getIdCard())
-                    .ticketType(each.getTicketType())
-                    .idType(each.getIdType())
-                    .userId(String.valueOf(requestParam.getUserId()))
-                    .status(0)
-                    .build();
-            orderItemDOList.add(orderItemDO);
-            OrderItemPassengerDO orderPassengerRelationDO = OrderItemPassengerDO.builder()
-                    .idType(each.getIdType())
-                    .idCard(each.getIdCard())
-                    .orderSn(orderSn)
-                    .build();
-            orderPassengerRelationDOList.add(orderPassengerRelationDO);
-        });
-        orderItemService.saveBatch(orderItemDOList);
-        orderPassengerRelationService.saveBatch(orderPassengerRelationDOList);
-        try {
-            // 发送 RocketMQ 延时消息，指定时间后取消订单
-            DelayCloseOrderEvent delayCloseOrderEvent = DelayCloseOrderEvent.builder()
-                    .trainId(String.valueOf(requestParam.getTrainId()))
-                    .departure(requestParam.getDeparture())
-                    .arrival(requestParam.getArrival())
-                    .orderSn(orderSn)
-                    .trainPurchaseTicketResults(requestParam.getTicketOrderItems())
-                    .build();
-            SendResult sendResult = delayCloseOrderSendProduce.sendMessage(delayCloseOrderEvent);
-            if (!Objects.equals(sendResult.getSendStatus(), SendStatus.SEND_OK)) {
-                throw new ServiceException("投递延迟关闭订单消息队列失败");
-            }
-        } catch (Throwable ex) {
-            log.error("延迟关闭订单消息队列发送错误，请求参数：{}", JSON.toJSONString(requestParam), ex);
-            throw ex;
-        }
+        insertItem(requestParam, orderSn);
+        // 发送 RocketMQ 延时消息，指定时间后取消订单
+        sendMessage(requestParam, orderSn);
         return orderSn;
     }
 
     @Override
-    public boolean closeTickOrder(CancelTicketOrderReqDTO requestParam) {
-        String orderSn = requestParam.getOrderSn();
-        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
-                .eq(OrderDO::getOrderSn, orderSn)
-                .select(OrderDO::getStatus);
-        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
-        if (Objects.isNull(orderDO) || orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
-            return false;
-        }
-        // 原则上订单关闭和订单取消这两个方法可以复用，为了区分未来考虑到的场景，这里对方法进行拆分但复用逻辑
-        return cancelTickOrder(requestParam);
+    public boolean closeTicketOrder(CancelTicketOrderReqDTO requestParam) {
+        return cancelTicketOrder(requestParam);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean cancelTickOrder(CancelTicketOrderReqDTO requestParam) {
+    public boolean cancelTicketOrder(CancelTicketOrderReqDTO requestParam) {
         String orderSn = requestParam.getOrderSn();
-        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
-                .eq(OrderDO::getOrderSn, orderSn);
-        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
-        if (orderDO == null) {
-            throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_CANAL_UNKNOWN_ERROR);
-        } else if (orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
-            throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_CANAL_STATUS_ERROR);
-        }
-        RLock lock = redissonClient.getLock(StrBuilder.create("order:canal:order_sn_").append(orderSn).toString());
+        // 对订单进行检验，如订单是否存在、订单状态
+        checkOrder(requestParam.getOrderSn());
+        // 上分布式锁
+        RLock lock = redissonClient.getLock(ORDER_CANCEL + orderSn);
         if (!lock.tryLock()) {
-            throw new ClientException(OrderCanalErrorCodeEnum.ORDER_CANAL_REPETITION_ERROR);
+            throw new ClientException(OrderCancelErrorCodeEnum.ORDER_CANCEL_REPETITION_ERROR);
         }
         try {
             // 更新主订单状态
-            OrderDO updateOrderDO = new OrderDO();
-            updateOrderDO.setStatus(OrderStatusEnum.CLOSED.getStatus());
-            updateOrderDO.setOrderSn(orderSn);
-            LambdaUpdateWrapper<OrderDO> updateWrapper = Wrappers.lambdaUpdate(OrderDO.class)
-                    .eq(OrderDO::getOrderSn, orderSn);
-            int updateResult = orderMapper.update(updateOrderDO, updateWrapper);
-            if (updateResult <= 0) {
-                throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_CANAL_ERROR);
-            }
+            updateOrderStatus(orderSn, OrderStatusEnum.CLOSED.getStatus());
             // 更新子订单状态
-            OrderItemDO updateOrderItemDO = new OrderItemDO();
-            updateOrderItemDO.setStatus(OrderItemStatusEnum.CLOSED.getStatus());
-            updateOrderItemDO.setOrderSn(orderSn);
-            LambdaUpdateWrapper<OrderItemDO> updateItemWrapper = Wrappers.lambdaUpdate(OrderItemDO.class)
-                    .eq(OrderItemDO::getOrderSn, orderSn);
-            int updateItemResult = orderItemMapper.update(updateOrderItemDO, updateItemWrapper);
-            if (updateItemResult <= 0) {
-                throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_CANAL_ERROR);
-            }
+            updateOrderItemStatus(orderSn, OrderItemStatusEnum.CLOSED.getStatus());
         } finally {
             lock.unlock();
         }
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void statusReversal(OrderStatusReversalDTO requestParam) {
-        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
-                .eq(OrderDO::getOrderSn, requestParam.getOrderSn());
-        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
-        if (orderDO == null) {
-            throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_CANAL_UNKNOWN_ERROR);
-        } else if (orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
-            throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_CANAL_STATUS_ERROR);
-        }
-        RLock lock = redissonClient.getLock(StrBuilder.create("order:status-reversal:order_sn_").append(requestParam.getOrderSn()).toString());
+        // 对订单进行检验，如订单是否存在、订单状态
+        checkOrder(requestParam.getOrderSn());
+        // 上分布式锁
+        RLock lock = redissonClient.getLock(ORDER_STATUS_REVERSAL + requestParam.getOrderSn());
         if (!lock.tryLock()) {
             log.warn("订单重复修改状态，状态反转请求参数：{}", JSON.toJSONString(requestParam));
         }
         try {
-            OrderDO updateOrderDO = new OrderDO();
-            updateOrderDO.setStatus(requestParam.getOrderStatus());
-            LambdaUpdateWrapper<OrderDO> updateWrapper = Wrappers.lambdaUpdate(OrderDO.class)
-                    .eq(OrderDO::getOrderSn, requestParam.getOrderSn());
-            int updateResult = orderMapper.update(updateOrderDO, updateWrapper);
-            if (updateResult <= 0) {
-                throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);
-            }
-            OrderItemDO orderItemDO = new OrderItemDO();
-            orderItemDO.setStatus(requestParam.getOrderItemStatus());
-            LambdaUpdateWrapper<OrderItemDO> orderItemUpdateWrapper = Wrappers.lambdaUpdate(OrderItemDO.class)
-                    .eq(OrderItemDO::getOrderSn, requestParam.getOrderSn());
-            int orderItemUpdateResult = orderItemMapper.update(orderItemDO, orderItemUpdateWrapper);
-            if (orderItemUpdateResult <= 0) {
-                throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);
-            }
+            // 更新主订单状态
+            updateOrderStatus(requestParam.getOrderSn(), requestParam.getOrderStatus());
+            // 更新子订单状态
+            updateOrderItemStatus(requestParam.getOrderSn(), requestParam.getOrderStatus());
         } finally {
             lock.unlock();
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void payCallbackOrder(PayResultCallbackOrderEvent requestParam) {
         OrderDO updateOrderDO = new OrderDO();
@@ -266,13 +167,15 @@ public class OrderServiceImpl implements OrderService {
                 .eq(OrderDO::getOrderSn, requestParam.getOrderSn());
         int updateResult = orderMapper.update(updateOrderDO, updateWrapper);
         if (updateResult <= 0) {
-            throw new ServiceException(OrderCanalErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);
         }
     }
 
     @Override
     public PageResponse<TicketOrderDetailSelfRespDTO> pageSelfTicketOrder(TicketOrderSelfPageQueryReqDTO requestParam) {
+        // 远程调用获取个人信息
         Result<UserQueryActualRespDTO> userActualResp = userRemoteService.queryActualUserByUsername(UserContext.getUsername());
+        // 根据idcard（分片键）查询本人车票
         LambdaQueryWrapper<OrderItemPassengerDO> queryWrapper = Wrappers.lambdaQuery(OrderItemPassengerDO.class)
                 .eq(OrderItemPassengerDO::getIdCard, userActualResp.getData().getIdCard())
                 .orderByDesc(OrderItemPassengerDO::getCreateTime);
@@ -307,5 +210,109 @@ public class OrderServiceImpl implements OrderService {
             );
         }
         return result;
+    }
+
+    private String insertOrder(TicketOrderCreateReqDTO requestParam) {
+        String orderSn = OrderIdGeneratorManager.generateId(requestParam.getUserId());
+        OrderDO orderDO = OrderDO.builder().orderSn(orderSn)
+                .orderTime(requestParam.getOrderTime())
+                .departure(requestParam.getDeparture())
+                .departureTime(requestParam.getDepartureTime())
+                .ridingDate(requestParam.getRidingDate())
+                .arrivalTime(requestParam.getArrivalTime())
+                .trainNumber(requestParam.getTrainNumber())
+                .arrival(requestParam.getArrival())
+                .trainId(requestParam.getTrainId())
+                .source(requestParam.getSource())
+                .status(OrderStatusEnum.PENDING_PAYMENT.getStatus())
+                .username(requestParam.getUsername())
+                .userId(String.valueOf(requestParam.getUserId()))
+                .build();
+        orderMapper.insert(orderDO);
+        return orderSn;
+    }
+
+    private void insertItem(TicketOrderCreateReqDTO requestParam, String orderSn) {
+        List<TicketOrderItemCreateReqDTO> ticketOrderItems = requestParam.getTicketOrderItems();
+        List<OrderItemDO> orderItemDOList = new ArrayList<>();
+        List<OrderItemPassengerDO> orderPassengerRelationDOList = new ArrayList<>();
+        ticketOrderItems.forEach(each -> {
+            OrderItemDO orderItemDO = OrderItemDO.builder()
+                    .trainId(requestParam.getTrainId())
+                    .seatNumber(each.getSeatNumber())
+                    .carriageNumber(each.getCarriageNumber())
+                    .realName(each.getRealName())
+                    .orderSn(orderSn)
+                    .phone(each.getPhone())
+                    .seatType(each.getSeatType())
+                    .username(requestParam.getUsername()).amount(each.getAmount()).carriageNumber(each.getCarriageNumber())
+                    .idCard(each.getIdCard())
+                    .ticketType(each.getTicketType())
+                    .idType(each.getIdType())
+                    .userId(String.valueOf(requestParam.getUserId()))
+                    .status(0)
+                    .build();
+            orderItemDOList.add(orderItemDO);
+            OrderItemPassengerDO orderPassengerRelationDO = OrderItemPassengerDO.builder()
+                    .idType(each.getIdType())
+                    .idCard(each.getIdCard())
+                    .orderSn(orderSn)
+                    .build();
+            orderPassengerRelationDOList.add(orderPassengerRelationDO);
+        });
+        orderItemService.saveBatch(orderItemDOList);
+        orderPassengerRelationService.saveBatch(orderPassengerRelationDOList);
+    }
+
+    private void sendMessage(TicketOrderCreateReqDTO requestParam, String orderSn) {
+        try {
+            DelayCloseOrderEvent delayCloseOrderEvent = DelayCloseOrderEvent.builder()
+                    .trainId(String.valueOf(requestParam.getTrainId()))
+                    .departure(requestParam.getDeparture())
+                    .arrival(requestParam.getArrival())
+                    .orderSn(orderSn)
+                    .trainPurchaseTicketResults(requestParam.getTicketOrderItems())
+                    .build();
+            SendResult sendResult = delayCloseOrderSendProduce.sendMessage(delayCloseOrderEvent);
+            if (!Objects.equals(sendResult.getSendStatus(), SendStatus.SEND_OK)) {
+                throw new ServiceException("投递延迟关闭订单消息队列失败");
+            }
+        } catch (Throwable ex) {
+            log.error("延迟关闭订单消息队列发送错误，请求参数：{}", JSON.toJSONString(requestParam), ex);
+            throw ex;
+        }
+    }
+
+    private void checkOrder(String orderSn) {
+        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
+                .eq(OrderDO::getOrderSn, orderSn);
+        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
+        if (orderDO == null) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_UNKNOWN_ERROR);
+        } else if (orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_STATUS_ERROR);
+        }
+    }
+
+    private void updateOrderStatus(String orderSn, Integer orderStatus) {
+        OrderDO updateOrderDO = new OrderDO();
+        updateOrderDO.setStatus(orderStatus);
+        LambdaUpdateWrapper<OrderDO> updateWrapper = Wrappers.lambdaUpdate(OrderDO.class)
+                .eq(OrderDO::getOrderSn, orderSn);
+        int updateResult = orderMapper.update(updateOrderDO, updateWrapper);
+        if (updateResult <= 0) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);
+        }
+    }
+
+    private void updateOrderItemStatus(String orderSn, Integer orderStatus) {
+        OrderItemDO orderItemDO = new OrderItemDO();
+        orderItemDO.setStatus(orderStatus);
+        LambdaUpdateWrapper<OrderItemDO> orderItemUpdateWrapper = Wrappers.lambdaUpdate(OrderItemDO.class)
+                .eq(OrderItemDO::getOrderSn, orderSn);
+        int orderItemUpdateResult = orderItemMapper.update(orderItemDO, orderItemUpdateWrapper);
+        if (orderItemUpdateResult <= 0) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_STATUS_REVERSAL_ERROR);
+        }
     }
 }

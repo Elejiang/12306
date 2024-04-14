@@ -6,6 +6,8 @@ import com.grace.train12306.biz.ticketservice.common.constant.TicketRocketMQCons
 import com.grace.train12306.biz.ticketservice.common.enums.CanalExecuteStrategyMarkEnum;
 import com.grace.train12306.biz.ticketservice.mq.event.CanalBinlogEvent;
 import com.grace.train12306.framework.starter.designpattern.strategy.AbstractStrategyChoose;
+import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
+import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -32,6 +34,12 @@ public class CanalCommonSyncBinlogConsumer implements RocketMQListener<CanalBinl
     @Value("${ticket.availability.cache-update.type:}")
     private String ticketAvailabilityCacheUpdateType;
 
+    @Idempotent(
+            uniqueKeyPrefix = "train12306-ticket:binlog_sync:",
+            key = "#message.getId()+'_'+#message.hashCode()",
+            scene = IdempotentSceneEnum.MQ,
+            keyTimeout = 7200L
+    )
     @Override
     public void onMessage(CanalBinlogEvent message) {
         if (message.getIsDdl()

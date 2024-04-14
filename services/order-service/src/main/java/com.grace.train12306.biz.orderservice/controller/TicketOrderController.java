@@ -44,7 +44,6 @@ public class TicketOrderController {
     /**
      * 分页查询车票订单
      */
-    @AutoOperate(type = TicketOrderDetailRespDTO.class, on = "data.records")
     @GetMapping("/api/order-service/order/ticket/page")
     public Result<PageResponse<TicketOrderDetailRespDTO>> pageTicketOrder(TicketOrderPageQueryReqDTO requestParam) {
         return Results.success(orderService.pageTicketOrder(requestParam));
@@ -70,15 +69,15 @@ public class TicketOrderController {
      * 车票订单关闭
      */
     @PostMapping("/api/order-service/order/ticket/close")
-    public Result<Boolean> closeTickOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
-        return Results.success(orderService.closeTickOrder(requestParam));
+    public Result<Boolean> closeTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
+        return Results.success(orderService.closeTicketOrder(requestParam));
     }
 
     /**
      * 车票订单取消
      */
     @PostMapping("/api/order-service/order/ticket/cancel")
-    public Result<Boolean> cancelTickOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
-        return Results.success(orderService.cancelTickOrder(requestParam));
+    public Result<Boolean> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
+        return Results.success(orderService.cancelTicketOrder(requestParam));
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserRemoteService {
 
     /**
-     * 根据乘车人 ID 集合查询乘车人列表
+     * 根据 username 集合查询乘车人列表
      */
     @GetMapping("/api/user-service/actual/query")
     Result<UserQueryActualRespDTO> queryActualUserByUsername(@RequestParam("username") @NotEmpty String username);

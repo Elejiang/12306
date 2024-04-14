@@ -1,5 +1,6 @@
 package com.grace.train12306.biz.userservice.service.impl;
 
+import cn.hutool.core.util.PhoneUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -15,7 +16,6 @@ import com.grace.train12306.biz.userservice.dto.resp.UserQueryRespDTO;
 import com.grace.train12306.biz.userservice.dto.resp.UserRegisterRespDTO;
 import com.grace.train12306.biz.userservice.service.UserLoginService;
 import com.grace.train12306.biz.userservice.service.UserService;
-import com.grace.train12306.biz.userservice.toolkit.RegexUtil;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.exception.ClientException;
@@ -158,7 +158,7 @@ public class UserLoginServiceImpl implements UserLoginService {
             username = Optional.ofNullable(userMailMapper.selectOne(queryWrapper))
                     .map(UserMailDO::getUsername)
                     .orElseThrow(() -> new ClientException("用户名/手机号/邮箱不存在"));
-        } else if (RegexUtil.isValidPhone(usernameOrMailOrPhone)){
+        } else if (PhoneUtil.isMobile(usernameOrMailOrPhone)){
             // 因为分不清手机号和用户名，如果符合手机号正则，先尝试手机号查询
             LambdaQueryWrapper<UserPhoneDO> queryWrapper = Wrappers.lambdaQuery(UserPhoneDO.class)
                     .eq(UserPhoneDO::getPhone, usernameOrMailOrPhone);
