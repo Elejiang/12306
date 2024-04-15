@@ -16,6 +16,7 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPu
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket.TicketAvailabilityTokenBucket;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
+import com.grace.train12306.framework.starter.convention.exception.ServiceException;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
@@ -45,7 +46,7 @@ import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyCon
         selectorExpression = TicketRocketMQConstant.ORDER_DELAY_CLOSE_TAG_KEY,
         consumerGroup = TicketRocketMQConstant.TICKET_DELAY_CLOSE_CG_KEY
 )
-public final class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<DelayCloseOrderEvent>> {
+public class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<DelayCloseOrderEvent>> {
 
     private final SeatService seatService;
     private final TicketOrderRemoteService ticketOrderRemoteService;
@@ -71,26 +72,26 @@ public final class DelayCloseOrderConsumer implements RocketMQListener<MessageWr
         Result<Boolean> closedTicketOrder;
         try {
             closedTicketOrder = ticketOrderRemoteService.closeTicketOrder(new CancelTicketOrderReqDTO(orderSn));
+            if (!closedTicketOrder.isSuccess()) throw new ServiceException("延迟关闭订单出错");
         } catch (Throwable ex) {
             log.error("[延迟关闭订单] 订单号：{} 远程调用订单服务失败", orderSn, ex);
             throw ex;
         }
-        if (closedTicketOrder.isSuccess() && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
-            if (!closedTicketOrder.getData()) {
-                log.info("[延迟关闭订单] 订单号：{} 用户已支付订单", orderSn);
-                return;
-            }
+        if (!StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
+            // 如果没开启binlog，手动进行数据回滚
             String trainId = delayCloseOrderEvent.getTrainId();
             String departure = delayCloseOrderEvent.getDeparture();
             String arrival = delayCloseOrderEvent.getArrival();
             List<TrainPurchaseTicketRespDTO> trainPurchaseTicketResults = delayCloseOrderEvent.getTrainPurchaseTicketResults();
             try {
+                // 解锁车票
                 seatService.unlock(trainId, departure, arrival, trainPurchaseTicketResults);
             } catch (Throwable ex) {
                 log.error("[延迟关闭订单] 订单号：{} 回滚列车DB座位状态失败", orderSn, ex);
                 throw ex;
             }
             try {
+                // 更新缓存余票，回滚令牌
                 StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
                 Map<Integer, List<TrainPurchaseTicketRespDTO>> seatTypeMap = trainPurchaseTicketResults.stream()
                         .collect(Collectors.groupingBy(TrainPurchaseTicketRespDTO::getSeatType));

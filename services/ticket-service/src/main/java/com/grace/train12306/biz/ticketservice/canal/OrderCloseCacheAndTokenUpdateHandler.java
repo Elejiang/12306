@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 订单关闭或取消后置处理组件
+ * 订单关闭或取消后置处理组件，解锁车票，回滚令牌
  */
 @Slf4j
 @Component

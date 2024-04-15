@@ -76,6 +76,11 @@ framework:
       value-timeout: 16
       value-time-unit: days
 
+#ticket:
+#  availability:
+#    cache-update:
+#      type: binlog
+
 remote:
   pay:
     url: 127.0.0.1:9004

@@ -13,7 +13,7 @@ public interface AbstractExecuteStrategy<REQUEST, RESPONSE> {
     }
 
     /**
-     * 执行策略范匹配标识
+     * 根据正则表达式匹配执行策略标识
      */
     default String patternMatchMark() {
         return null;
