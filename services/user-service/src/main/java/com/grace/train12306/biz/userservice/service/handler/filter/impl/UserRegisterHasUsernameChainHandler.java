@@ -36,6 +36,6 @@ public final class UserRegisterHasUsernameChainHandler implements UserRegisterCr
 
     @Override
     public int getOrder() {
-        return 1;
+        return 2;
     }
 }
