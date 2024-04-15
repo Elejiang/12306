@@ -33,18 +33,20 @@ public class TrainPurchaseTicketParamStockChainHandler implements TrainPurchaseT
         String keySuffix = StrUtil.join("_", requestParam.getTrainId(), requestParam.getDeparture(), requestParam.getArrival());
         StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
         List<PurchaseTicketPassengerDetailDTO> passengerDetails = requestParam.getPassengers();
+        // key座位类型，value选择该座位类型的乘车人列表
         Map<Integer, List<PurchaseTicketPassengerDetailDTO>> seatTypeMap = passengerDetails.stream()
                 .collect(Collectors.groupingBy(PurchaseTicketPassengerDetailDTO::getSeatType));
         seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
             Object stockObj = stringRedisTemplate.opsForHash().get(TRAIN_STATION_REMAINING_TICKET + keySuffix, String.valueOf(seatType));
             int stock = Optional.ofNullable(stockObj).map(each -> Integer.parseInt(each.toString())).orElseGet(() -> {
+                // 缓存中没加载余票，加载余票至缓存
                 Map<String, String> seatMarginMap = seatMarginCacheLoader.load(String.valueOf(requestParam.getTrainId()), String.valueOf(seatType), requestParam.getDeparture(), requestParam.getArrival());
                 return Optional.ofNullable(seatMarginMap.get(String.valueOf(seatType))).map(Integer::parseInt).orElse(0);
             });
             if (stock >= passengerSeatDetails.size()) {
                 return;
             }
-            throw new ClientException("列车站点已无余票");
+            throw new ClientException("列车站点余票数量不足");
         });
     }
 

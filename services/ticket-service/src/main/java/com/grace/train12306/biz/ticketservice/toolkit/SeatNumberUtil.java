@@ -1,7 +1,10 @@
 package com.grace.train12306.biz.ticketservice.toolkit;
 
+import com.grace.train12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 座位号转换工具
@@ -9,17 +12,17 @@ import java.util.Map;
 public final class SeatNumberUtil {
 
     /**
-     * 复兴号-商务座
+     * 高铁-商务座
      */
     private static final Map<Integer, String> TRAIN_BUSINESS_CLASS_SEAT_NUMBER_MAP = new HashMap<>();
 
     /**
-     * 复兴号-一等座
+     * 高铁-一等座
      */
     private static final Map<Integer, String> TRAIN_FIRST_CLASS_SEAT_NUMBER_MAP = new HashMap<>();
 
     /**
-     * 复兴号-二等座
+     * 高铁-二等座
      */
     private static final Map<Integer, String> TRAIN_SECOND_CLASS_SEAT_NUMBER_MAP = new HashMap<>();
 
@@ -41,16 +44,16 @@ public final class SeatNumberUtil {
     /**
      * 根据类型转换座位号
      *
-     * @param type 列车座位类型
-     * @param num  座位号
+     * @param type 列车座位类型：0商务座，1一等座，2二等座
+     * @param num  座位号：1，2，3，4，5
      * @return 座位编号
      */
     public static String convert(int type, int num) {
         String serialNumber = null;
-        switch (type) {
-            case 0 -> serialNumber = TRAIN_BUSINESS_CLASS_SEAT_NUMBER_MAP.get(num);
-            case 1 -> serialNumber = TRAIN_FIRST_CLASS_SEAT_NUMBER_MAP.get(num);
-            case 2 -> serialNumber = TRAIN_SECOND_CLASS_SEAT_NUMBER_MAP.get(num);
+        switch (Objects.requireNonNull(VehicleSeatTypeEnum.getByCode(type))) {
+            case BUSINESS_CLASS -> serialNumber = TRAIN_BUSINESS_CLASS_SEAT_NUMBER_MAP.get(num);
+            case FIRST_CLASS -> serialNumber = TRAIN_FIRST_CLASS_SEAT_NUMBER_MAP.get(num);
+            case SECOND_CLASS -> serialNumber = TRAIN_SECOND_CLASS_SEAT_NUMBER_MAP.get(num);
         }
         return serialNumber;
     }

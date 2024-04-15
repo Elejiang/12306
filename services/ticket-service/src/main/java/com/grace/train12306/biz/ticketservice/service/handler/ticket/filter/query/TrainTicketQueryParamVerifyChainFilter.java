@@ -44,7 +44,6 @@ public class TrainTicketQueryParamVerifyChainFilter implements TrainTicketQueryC
 
     @Override
     public void handler(TicketPageQueryReqDTO requestParam) {
-        // 验证出发地和目的地是否存在
         StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
         HashOperations<String, Object, Object> hashOperations = stringRedisTemplate.opsForHash();
         // 查询出发站点和到达站点是否存在，如果不存在也一样属于异常数据
@@ -91,7 +90,7 @@ public class TrainTicketQueryParamVerifyChainFilter implements TrainTicketQueryC
             for (StationDO each : stationDOList) {
                 regionValueMap.put(each.getCode(), each.getName());
             }
-            // 查询完后，通过 putAll 的形式存入缓存，避免多次 put 浪费网络 IO
+            // 查询完后，通过 putAll 的形式存入缓存
             hashOperations.putAll(QUERY_ALL_REGION_LIST, regionValueMap);
             CACHE_DATA_ISNULL_AND_LOAD_FLAG = true;
             emptyCount = regionValueMap.keySet().stream()

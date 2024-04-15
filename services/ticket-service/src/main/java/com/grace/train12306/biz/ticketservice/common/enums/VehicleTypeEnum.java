@@ -74,4 +74,16 @@ public enum VehicleTypeEnum {
                 .map(VehicleTypeEnum::getSeatTypes)
                 .orElse(null);
     }
+
+    /**
+     * 根据code获取到枚举对象
+     */
+    public static VehicleTypeEnum getByCode(int code) {
+        for (VehicleTypeEnum status : VehicleTypeEnum.values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        return null;
+    }
 }
