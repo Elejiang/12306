@@ -110,17 +110,43 @@ public class OrderServiceImpl implements OrderService {
         return orderSn;
     }
 
+    /**
+     * 关闭订单是MQ延时关闭
+     */
     @Override
     public boolean closeTicketOrder(CancelTicketOrderReqDTO requestParam) {
-        return cancelTicketOrder(requestParam);
+        String orderSn = requestParam.getOrderSn();
+        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
+                .eq(OrderDO::getOrderSn, orderSn)
+                .select(OrderDO::getStatus);
+        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
+        if (Objects.isNull(orderDO) || orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
+            return false;
+        }
+        updateOrderStatus2Closed(orderSn);
+        return true;
     }
 
+    /**
+     * 取消订单是用户主动取消
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean cancelTicketOrder(CancelTicketOrderReqDTO requestParam) {
         String orderSn = requestParam.getOrderSn();
-        // 对订单进行检验，如订单是否存在、订单状态
-        checkOrder(requestParam.getOrderSn());
+        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
+                .eq(OrderDO::getOrderSn, orderSn);
+        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
+        if (orderDO == null) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_UNKNOWN_ERROR);
+        } else if (orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_STATUS_ERROR);
+        }
+        updateOrderStatus2Closed(orderSn);
+        return true;
+    }
+
+    private void updateOrderStatus2Closed(String orderSn) {
         // 上分布式锁
         RLock lock = redissonClient.getLock(ORDER_CANCEL + orderSn);
         if (!lock.tryLock()) {
@@ -134,14 +160,18 @@ public class OrderServiceImpl implements OrderService {
         } finally {
             lock.unlock();
         }
-        return true;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void statusReversal(OrderStatusReversalDTO requestParam) {
-        // 对订单进行检验，如订单是否存在、订单状态
-        checkOrder(requestParam.getOrderSn());
+        // 对订单进行检验
+        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
+                .eq(OrderDO::getOrderSn, requestParam.getOrderSn());
+        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
+        if (orderDO == null) {
+            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_UNKNOWN_ERROR);
+        }
         // 上分布式锁
         RLock lock = redissonClient.getLock(ORDER_STATUS_REVERSAL + requestParam.getOrderSn());
         if (!lock.tryLock()) {
@@ -281,17 +311,6 @@ public class OrderServiceImpl implements OrderService {
         } catch (Throwable ex) {
             log.error("延迟关闭订单消息队列发送错误，请求参数：{}", JSON.toJSONString(requestParam), ex);
             throw ex;
-        }
-    }
-
-    private void checkOrder(String orderSn) {
-        LambdaQueryWrapper<OrderDO> queryWrapper = Wrappers.lambdaQuery(OrderDO.class)
-                .eq(OrderDO::getOrderSn, orderSn);
-        OrderDO orderDO = orderMapper.selectOne(queryWrapper);
-        if (orderDO == null) {
-            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_UNKNOWN_ERROR);
-        } else if (orderDO.getStatus() != OrderStatusEnum.PENDING_PAYMENT.getStatus()) {
-            throw new ServiceException(OrderCancelErrorCodeEnum.ORDER_CANCEL_STATUS_ERROR);
         }
     }
 

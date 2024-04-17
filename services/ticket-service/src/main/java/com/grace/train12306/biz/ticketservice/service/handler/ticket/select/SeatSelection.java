@@ -45,7 +45,7 @@ public class SeatSelection {
     }
 
     /**
-     * 找到一排中连续相邻的座位
+     * 找到不相邻的座位
      *
      * @param numSeats   需要的座位数量
      * @param seatLayout 座位情况
