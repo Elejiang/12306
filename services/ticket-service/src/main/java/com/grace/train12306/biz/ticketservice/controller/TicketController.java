@@ -31,7 +31,7 @@ public class TicketController {
      */
     @GetMapping("/api/ticket-service/ticket/query")
     public Result<TicketPageQueryRespDTO> pageListTicketQuery(TicketPageQueryReqDTO requestParam) {
-        return Results.success(ticketService.pageListTicketQueryV1(requestParam));
+        return Results.success(ticketService.pageListTicketQuery(requestParam));
     }
 
     /**
@@ -48,24 +48,7 @@ public class TicketController {
     )
     @PostMapping("/api/ticket-service/ticket/purchase")
     public Result<TicketPurchaseRespDTO> purchaseTickets(@RequestBody PurchaseTicketReqDTO requestParam) {
-        return Results.success(ticketService.purchaseTicketsV1(requestParam));
-    }
-
-    /**
-     * 购买车票v2
-     */
-    @ILog
-    @Idempotent(
-            uniqueKeyPrefix = "train12306-ticket:lock_purchase-tickets:",
-            key = "T(com.grace.train12306.framework.starter.bases.ApplicationContextHolder).getBean('environment').getProperty('unique-name', '')"
-                    + "+'_'+"
-                    + "T(com.grace.train12306.framework.starter.user.core.UserContext).getUsername()",
-            message = "正在执行下单流程，请稍后...",
-            scene = IdempotentSceneEnum.RESTAPI
-    )
-    @PostMapping("/api/ticket-service/ticket/purchase/v2")
-    public Result<TicketPurchaseRespDTO> purchaseTicketsV2(@RequestBody PurchaseTicketReqDTO requestParam) {
-        return Results.success(ticketService.purchaseTicketsV2(requestParam));
+        return Results.success(ticketService.purchaseTickets(requestParam));
     }
 
     /**

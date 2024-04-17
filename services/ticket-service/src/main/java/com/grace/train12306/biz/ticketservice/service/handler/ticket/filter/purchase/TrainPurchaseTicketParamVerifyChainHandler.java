@@ -56,7 +56,7 @@ public class TrainPurchaseTicketParamVerifyChainHandler implements TrainPurchase
             }
             // 查询车次是否在有效期内
             if (new Date().after(trainDO.getDepartureTime())) {
-                throw new ClientException("列车车次已出发禁止购票");
+                throw new ClientException("列车车次已出发，禁止购票");
             }
         }
         // 车站是否存在车次中，以及车站的顺序是否正确

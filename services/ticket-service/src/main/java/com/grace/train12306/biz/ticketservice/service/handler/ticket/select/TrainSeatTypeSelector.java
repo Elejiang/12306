@@ -22,6 +22,7 @@ import com.grace.train12306.framework.starter.user.core.UserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public final class TrainSeatTypeSelector {
+public class TrainSeatTypeSelector {
 
     private final SeatService seatService;
     private final UserRemoteService userRemoteService;
@@ -46,6 +47,7 @@ public final class TrainSeatTypeSelector {
     private final AbstractStrategyChoose abstractStrategyChoose;
     private final ThreadPoolExecutor selectSeatThreadPoolExecutor;
 
+    @Transactional
     public List<TrainPurchaseTicketRespDTO> select(Integer trainType, PurchaseTicketReqDTO requestParam) {
         List<PurchaseTicketPassengerDetailDTO> passengerDetails = requestParam.getPassengers();
         // 根据用户购买的座位类型进行分组
@@ -62,6 +64,40 @@ public final class TrainSeatTypeSelector {
         fillInformation(requestParam, actualResult, passengerRemoteResultList);
         // 锁座位
         seatService.lockSeat(requestParam.getTrainId(), requestParam.getDeparture(), requestParam.getArrival(), actualResult);
+        return actualResult;
+    }
+
+    /**
+     * 选座
+     */
+    private List<TrainPurchaseTicketRespDTO> selectSeat(Integer trainType, PurchaseTicketReqDTO requestParam, List<PurchaseTicketPassengerDetailDTO> passengerDetails, Map<Integer, List<PurchaseTicketPassengerDetailDTO>> seatTypeMap) {
+        List<TrainPurchaseTicketRespDTO> actualResult = new CopyOnWriteArrayList<>();
+        if (seatTypeMap.size() > 1) {
+            // 如果选择了多个类型的座位，使用线程池对每个类型座位进行选座
+            List<Future<List<TrainPurchaseTicketRespDTO>>> futureResults = new ArrayList<>();
+            seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
+                Future<List<TrainPurchaseTicketRespDTO>> completableFuture = selectSeatThreadPoolExecutor
+                        .submit(() -> distributeSeats(trainType, seatType, requestParam, passengerSeatDetails));
+                futureResults.add(completableFuture);
+            });
+            // 获取座位分配结果
+            futureResults.forEach(completableFuture -> {
+                try {
+                    actualResult.addAll(completableFuture.get());
+                } catch (Exception e) {
+                    throw new ServiceException("站点余票不足，请尝试更换座位类型或选择其它站点");
+                }
+            });
+        } else {
+            // 选择的是单一类型座位，直接执行选座
+            seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
+                List<TrainPurchaseTicketRespDTO> aggregationResult = distributeSeats(trainType, seatType, requestParam, passengerSeatDetails);
+                actualResult.addAll(aggregationResult);
+            });
+        }
+        if (CollUtil.isEmpty(actualResult) || !Objects.equals(actualResult.size(), passengerDetails.size())) {
+            throw new ServiceException("站点余票不足，请尝试更换座位类型或选择其它站点");
+        }
         return actualResult;
     }
 
@@ -87,38 +123,6 @@ public final class TrainSeatTypeSelector {
             TrainStationPriceDO trainStationPriceDO = trainStationPriceMapper.selectOne(lambdaQueryWrapper);
             each.setAmount(trainStationPriceDO.getPrice());
         });
-    }
-
-    private List<TrainPurchaseTicketRespDTO> selectSeat(Integer trainType, PurchaseTicketReqDTO requestParam, List<PurchaseTicketPassengerDetailDTO> passengerDetails, Map<Integer, List<PurchaseTicketPassengerDetailDTO>> seatTypeMap) {
-        List<TrainPurchaseTicketRespDTO> actualResult = new CopyOnWriteArrayList<>();
-        if (seatTypeMap.size() > 1) {
-            // 如果选择了多个类型的座位
-            // 添加多线程执行结果类获取 Future，流程执行完成后获取
-            List<Future<List<TrainPurchaseTicketRespDTO>>> futureResults = new ArrayList<>();
-            seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
-                Future<List<TrainPurchaseTicketRespDTO>> completableFuture = selectSeatThreadPoolExecutor
-                        .submit(() -> distributeSeats(trainType, seatType, requestParam, passengerSeatDetails));
-                futureResults.add(completableFuture);
-            });
-            // 获取座位分配结果
-            futureResults.forEach(completableFuture -> {
-                try {
-                    actualResult.addAll(completableFuture.get());
-                } catch (Exception e) {
-                    throw new ServiceException("站点余票不足，请尝试更换座位类型或选择其它站点");
-                }
-            });
-        } else {
-            // 选择的是单一类型座位
-            seatTypeMap.forEach((seatType, passengerSeatDetails) -> {
-                List<TrainPurchaseTicketRespDTO> aggregationResult = distributeSeats(trainType, seatType, requestParam, passengerSeatDetails);
-                actualResult.addAll(aggregationResult);
-            });
-        }
-        if (CollUtil.isEmpty(actualResult) || !Objects.equals(actualResult.size(), passengerDetails.size())) {
-            throw new ServiceException("站点余票不足，请尝试更换座位类型或选择其它站点");
-        }
-        return actualResult;
     }
 
     private List<PassengerRespDTO> getPassengerRemote(List<String> passengerIds) {
@@ -147,6 +151,7 @@ public final class TrainSeatTypeSelector {
                 .requestParam(requestParam)
                 .build();
         try {
+            // 执行相关的选座策略，如高铁商务座选座、高铁一等座选座、高铁二等座选座
             return abstractStrategyChoose.chooseAndExecuteResp(buildStrategyKey, selectSeatDTO);
         } catch (ServiceException ex) {
             // TODO 目前只实现了高铁商务座、高铁一等座、高铁二等座的购票逻辑，但采用了策略模式，需要新增逻辑直接实现对应策略即可

@@ -4,9 +4,8 @@ import cn.hutool.core.collection.ListUtil;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 地区&站点类型枚举
@@ -57,13 +56,14 @@ public enum RegionStationQueryTypeEnum {
     private final List<String> spells;
 
     /**
-     * 根据类型查找拼音集合
+     * 根据code获取到枚举对象
      */
-    public static List<String> findSpellsByType(Integer type) {
-        return Arrays.stream(RegionStationQueryTypeEnum.values())
-                .filter(each -> Objects.equals(each.getType(), type))
-                .findFirst()
-                .map(RegionStationQueryTypeEnum::getSpells)
-                .orElse(null);
+    public static RegionStationQueryTypeEnum getByCode(int code) {
+        for (RegionStationQueryTypeEnum status : RegionStationQueryTypeEnum.values()) {
+            if (status.getType() == code) {
+                return status;
+            }
+        }
+        return null;
     }
 }

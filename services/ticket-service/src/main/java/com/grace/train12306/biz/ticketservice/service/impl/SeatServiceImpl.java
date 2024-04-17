@@ -10,6 +10,7 @@ import com.grace.train12306.biz.ticketservice.common.enums.SeatStatusEnum;
 import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
 import com.grace.train12306.biz.ticketservice.dao.mapper.SeatMapper;
 import com.grace.train12306.biz.ticketservice.dto.domain.RouteDTO;
+import com.grace.train12306.biz.ticketservice.dto.domain.SeatTypeCountDTO;
 import com.grace.train12306.biz.ticketservice.service.SeatService;
 import com.grace.train12306.biz.ticketservice.service.TrainStationService;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPurchaseTicketRespDTO;
@@ -17,6 +18,7 @@ import com.grace.train12306.framework.starter.cache.DistributedCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +54,9 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, SeatDO> implements 
     @Override
     public List<Integer> listSeatRemainingTicket(String trainId, String departure, String arrival, List<String> trainCarriageList) {
         String keySuffix = StrUtil.join("_", trainId, departure, arrival);
+        // TODO 未添加至缓存
         if (distributedCache.hasKey(TRAIN_STATION_CARRIAGE_REMAINING_TICKET + keySuffix)) {
+            // 缓存中有余票信息
             StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
             List<Object> trainStationCarriageRemainingTicket =
                     stringRedisTemplate.opsForHash().multiGet(TRAIN_STATION_CARRIAGE_REMAINING_TICKET + keySuffix, Arrays.asList(trainCarriageList.toArray()));
@@ -83,6 +87,12 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, SeatDO> implements 
     }
 
     @Override
+    public List<SeatTypeCountDTO> listSeatTypeCount(Long trainId, String startStation, String endStation, List<Integer> seatTypes) {
+        return seatMapper.listSeatTypeCount(trainId, startStation, endStation, seatTypes);
+    }
+
+    @Override
+    @Transactional
     public void lockSeat(String trainId, String departure, String arrival, List<TrainPurchaseTicketRespDTO> trainPurchaseTicketRespList) {
         List<RouteDTO> routeList = trainStationService.listTakeoutTrainStationRoute(trainId, departure, arrival);
         trainPurchaseTicketRespList.forEach(each -> routeList.forEach(item -> {

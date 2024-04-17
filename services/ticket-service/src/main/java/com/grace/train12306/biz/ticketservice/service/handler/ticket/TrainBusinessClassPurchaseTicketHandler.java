@@ -4,14 +4,11 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Pair;
 import com.google.common.collect.Lists;
-import com.grace.train12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum;
 import com.grace.train12306.biz.ticketservice.common.enums.VehicleTypeEnum;
 import com.grace.train12306.biz.ticketservice.dto.domain.PurchaseTicketPassengerDetailDTO;
 import com.grace.train12306.biz.ticketservice.dto.domain.TrainSeatBaseDTO;
 import com.grace.train12306.biz.ticketservice.service.SeatService;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.base.AbstractTrainPurchaseTicketTemplate;
-import com.grace.train12306.biz.ticketservice.service.handler.ticket.base.BitMapCheckSeat;
-import com.grace.train12306.biz.ticketservice.service.handler.ticket.base.BitMapCheckSeatStatusFactory;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.SelectSeatDTO;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPurchaseTicketRespDTO;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.select.SeatSelection;
@@ -24,7 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.grace.train12306.biz.ticketservice.service.handler.ticket.base.BitMapCheckSeatStatusFactory.TRAIN_BUSINESS;
+import static com.grace.train12306.biz.ticketservice.common.enums.VehicleSeatTypeEnum.BUSINESS_CLASS;
 
 /**
  * 高铁商务座购票组件
@@ -33,13 +30,12 @@ import static com.grace.train12306.biz.ticketservice.service.handler.ticket.base
 @RequiredArgsConstructor
 public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurchaseTicketTemplate {
 
-    private final SeatService seatService;
-
     private static final Map<Character, Integer> SEAT_Y_INT = Map.of('A', 0, 'C', 1, 'F', 2);
+    private final SeatService seatService;
 
     @Override
     public String mark() {
-        return VehicleTypeEnum.HIGH_SPEED_RAIN.getName() + VehicleSeatTypeEnum.BUSINESS_CLASS.getName();
+        return VehicleTypeEnum.HIGH_SPEED_RAIN.getName() + BUSINESS_CLASS.getName();
     }
 
     @Override
@@ -48,56 +44,61 @@ public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurcha
         String departure = requestParam.getRequestParam().getDeparture();
         String arrival = requestParam.getRequestParam().getArrival();
         List<PurchaseTicketPassengerDetailDTO> passengerSeatDetails = requestParam.getPassengerSeatDetails();
+        // 获取有座位的车厢
         List<String> trainCarriageList = seatService.listUsableCarriageNumber(trainId, requestParam.getSeatType(), departure, arrival);
+        // 每个车厢还有多少座位
         List<Integer> trainStationCarriageRemainingTicket = seatService.listSeatRemainingTicket(trainId, departure, arrival, trainCarriageList);
         int remainingTicketSum = trainStationCarriageRemainingTicket.stream().mapToInt(Integer::intValue).sum();
         if (remainingTicketSum < passengerSeatDetails.size()) {
-            throw new ServiceException("站点余票不足，请尝试更换座位类型或选择其它站点");
+            // 总票数不满足选座需求
+            throw new ServiceException("站点余票不足");
+        }
+        if (CollUtil.isNotEmpty(requestParam.getRequestParam().getChooseSeats())) {
+            // 有选座需求
+            return findMatchSeats(requestParam, trainCarriageList, trainStationCarriageRemainingTicket);
         }
         if (passengerSeatDetails.size() < 3) {
-            if (CollUtil.isNotEmpty(requestParam.getRequestParam().getChooseSeats())) {
-                Pair<List<TrainPurchaseTicketRespDTO>, Boolean> actualSeatPair = findMatchSeats(requestParam, trainCarriageList, trainStationCarriageRemainingTicket);
-                return actualSeatPair.getKey();
-            }
             return selectSeats(requestParam, trainCarriageList, trainStationCarriageRemainingTicket);
         } else {
-            if (CollUtil.isNotEmpty(requestParam.getRequestParam().getChooseSeats())) {
-                Pair<List<TrainPurchaseTicketRespDTO>, Boolean> actualSeatPair = findMatchSeats(requestParam, trainCarriageList, trainStationCarriageRemainingTicket);
-                return actualSeatPair.getKey();
-            }
             return selectComplexSeats(requestParam, trainCarriageList, trainStationCarriageRemainingTicket);
         }
     }
 
-    private Pair<List<TrainPurchaseTicketRespDTO>, Boolean> findMatchSeats(SelectSeatDTO requestParam, List<String> trainCarriageList, List<Integer> trainStationCarriageRemainingTicket) {
+    private List<TrainPurchaseTicketRespDTO> findMatchSeats(SelectSeatDTO requestParam, List<String> trainCarriageList, List<Integer> trainStationCarriageRemainingTicket) {
         TrainSeatBaseDTO trainSeatBaseDTO = buildTrainSeatBaseDTO(requestParam);
         int chooseSeatSize = trainSeatBaseDTO.getChooseSeatList().size();
         List<TrainPurchaseTicketRespDTO> actualResult = Lists.newArrayListWithCapacity(trainSeatBaseDTO.getPassengerSeatDetails().size());
-        BitMapCheckSeat instance = BitMapCheckSeatStatusFactory.getInstance(TRAIN_BUSINESS);
         HashMap<String, List<Pair<Integer, Integer>>> carriagesSeatMap = new HashMap<>(4);
         int passengersNumber = trainSeatBaseDTO.getPassengerSeatDetails().size();
+        // 遍历每个车厢
         for (int i = 0; i < trainStationCarriageRemainingTicket.size(); i++) {
+            // 当前车厢的车厢号
             String carriagesNumber = trainCarriageList.get(i);
+            // 获取列车车厢中可用的座位集合
             List<String> listAvailableSeat = seatService.listAvailableSeat(trainSeatBaseDTO.getTrainId(), carriagesNumber, requestParam.getSeatType(), trainSeatBaseDTO.getDeparture(), trainSeatBaseDTO.getArrival());
+            // 将可用座位放入到实际座位中，0为可选，1为不可选
             int[][] actualSeats = new int[2][3];
             for (int j = 1; j < 3; j++) {
                 for (int k = 1; k < 4; k++) {
-                    actualSeats[j - 1][k - 1] = listAvailableSeat.contains("0" + j + SeatNumberUtil.convert(0, k)) ? 0 : 1;
+                    actualSeats[j - 1][k - 1] = listAvailableSeat.contains("0" + j + SeatNumberUtil.convert(BUSINESS_CLASS.getCode(), k)) ? 0 : 1;
                 }
             }
-            List<Pair<Integer, Integer>> vacantSeatList = CarriageVacantSeatCalculateUtil.buildCarriageVacantSeatList2(actualSeats, 2, 3);
-            boolean isExists = instance.checkChooseSeat(trainSeatBaseDTO.getChooseSeatList(), actualSeats, SEAT_Y_INT);
+            // 得到可选座位的坐标
+            List<Pair<Integer, Integer>> vacantSeatList = CarriageVacantSeatCalculateUtil.buildCarriageVacantSeatList(actualSeats);
+            boolean isExists = checkChooseSeat(trainSeatBaseDTO.getChooseSeatList(), actualSeats);
             long vacantSeatCount = vacantSeatList.size();
             List<Pair<Integer, Integer>> sureSeatList = new ArrayList<>();
             List<String> selectSeats = Lists.newArrayListWithCapacity(passengersNumber);
             boolean flag = false;
             if (isExists && vacantSeatCount >= passengersNumber) {
+                // 本车厢能满足选座需求
                 Iterator<Pair<Integer, Integer>> pairIterator = vacantSeatList.iterator();
                 for (int i1 = 0; i1 < chooseSeatSize; i1++) {
+                    // 用户需要的选座
+                    String chooseSeat = trainSeatBaseDTO.getChooseSeatList().get(i1);
+                    int seatX = Integer.parseInt(chooseSeat.substring(1));
+                    int seatY = SEAT_Y_INT.get(chooseSeat.charAt(0));
                     if (chooseSeatSize == 1) {
-                        String chooseSeat = trainSeatBaseDTO.getChooseSeatList().get(i1);
-                        int seatX = Integer.parseInt(chooseSeat.substring(1));
-                        int seatY = SEAT_Y_INT.get(chooseSeat.charAt(0));
                         if (actualSeats[seatX][seatY] == 0) {
                             sureSeatList.add(new Pair<>(seatX, seatY));
                             while (pairIterator.hasNext()) {
@@ -122,9 +123,6 @@ public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurcha
                             }
                         }
                     } else {
-                        String chooseSeat = trainSeatBaseDTO.getChooseSeatList().get(i1);
-                        int seatX = Integer.parseInt(chooseSeat.substring(1));
-                        int seatY = SEAT_Y_INT.get(chooseSeat.charAt(0));
                         if (actualSeats[seatX][seatY] == 0) {
                             sureSeatList.add(new Pair<>(seatX, seatY));
                             while (pairIterator.hasNext()) {
@@ -157,7 +155,7 @@ public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurcha
                     result.setPassengerId(currentTicketPassenger.getPassengerId());
                     actualResult.add(result);
                 }
-                return new Pair<>(actualResult, Boolean.TRUE);
+                return actualResult;
             } else {
                 if (i < trainStationCarriageRemainingTicket.size()) {
                     if (vacantSeatCount > 0) {
@@ -229,12 +227,12 @@ public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurcha
                                 }
                             }
                         }
-                        return new Pair<>(actualResult, Boolean.TRUE);
+                        return actualResult;
                     }
                 }
             }
         }
-        return new Pair<>(null, Boolean.FALSE);
+        return null;
     }
 
     private List<TrainPurchaseTicketRespDTO> selectSeats(SelectSeatDTO requestParam, List<String> trainCarriageList, List<Integer> trainStationCarriageRemainingTicket) {
@@ -434,17 +432,31 @@ public class TrainBusinessClassPurchaseTicketHandler extends AbstractTrainPurcha
         return actualResult;
     }
 
-    public static int[][] mergeArrays(int[][] array1, int[][] array2) {
+    private int[][] mergeArrays(int[][] array1, int[][] array2) {
         List<int[]> list = new ArrayList<>(Arrays.asList(array1));
         list.addAll(Arrays.asList(array2));
         return list.toArray(new int[0][]);
     }
 
-    public static int[][] deepCopy(int[][] originalArray) {
+    private int[][] deepCopy(int[][] originalArray) {
         int[][] copy = new int[originalArray.length][originalArray[0].length];
         for (int i = 0; i < originalArray.length; i++) {
             System.arraycopy(originalArray[i], 0, copy[i], 0, originalArray[i].length);
         }
         return copy;
+    }
+
+    private boolean checkChooseSeat(List<String> chooseSeatList, int[][] actualSeats) {
+        boolean isExists = true;
+        for (String chooseSeat : chooseSeatList) {
+            // 得到选座信息，A0,A1,C0,C1,F0,F1
+            int seatX = Integer.parseInt(chooseSeat.substring(1));
+            int seatY = SEAT_Y_INT.get(chooseSeat.charAt(0));
+            if (actualSeats[seatX][seatY] != 0) {
+                isExists = false;
+                break;
+            }
+        }
+        return isExists;
     }
 }

@@ -69,9 +69,9 @@ public class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<
         log.info("[延迟关闭订单] 开始消费：{}", JSON.toJSONString(delayCloseOrderEventMessageWrapper));
         DelayCloseOrderEvent delayCloseOrderEvent = delayCloseOrderEventMessageWrapper.getMessage();
         String orderSn = delayCloseOrderEvent.getOrderSn();
-        Result<Boolean> closedTicketOrder;
         try {
-            closedTicketOrder = ticketOrderRemoteService.closeTicketOrder(new CancelTicketOrderReqDTO(orderSn));
+            // 远程调用order模块关闭订单
+            Result<Boolean> closedTicketOrder = ticketOrderRemoteService.closeTicketOrder(new CancelTicketOrderReqDTO(orderSn));
             if (!closedTicketOrder.isSuccess()) throw new ServiceException("延迟关闭订单出错");
         } catch (Throwable ex) {
             log.error("[延迟关闭订单] 订单号：{} 远程调用订单服务失败", orderSn, ex);
@@ -91,8 +91,8 @@ public class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<
                 throw ex;
             }
             try {
-                // 更新缓存余票，回滚令牌
                 StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
+                // 更新缓存余票
                 Map<Integer, List<TrainPurchaseTicketRespDTO>> seatTypeMap = trainPurchaseTicketResults.stream()
                         .collect(Collectors.groupingBy(TrainPurchaseTicketRespDTO::getSeatType));
                 List<RouteDTO> routeDTOList = trainStationService.listTakeoutTrainStationRoute(trainId, departure, arrival);
@@ -103,6 +103,7 @@ public class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<
                                 .increment(TRAIN_STATION_REMAINING_TICKET + keySuffix, String.valueOf(seatType), trainPurchaseTicketRespDTOList.size());
                     });
                 });
+                // 回滚令牌
                 TicketOrderDetailRespDTO ticketOrderDetail = BeanUtil.convert(delayCloseOrderEvent, TicketOrderDetailRespDTO.class);
                 ticketOrderDetail.setPassengerDetails(BeanUtil.convert(delayCloseOrderEvent.getTrainPurchaseTicketResults(), TicketOrderPassengerDetailRespDTO.class));
                 ticketAvailabilityTokenBucket.rollbackInBucket(ticketOrderDetail);

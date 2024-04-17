@@ -62,5 +62,5 @@ public interface TicketOrderRemoteService {
      * @return 订单取消返回结果
      */
     @PostMapping("/api/order-service/order/ticket/cancel")
-    Result<Void> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam);
+    Result<Boolean> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam);
 }

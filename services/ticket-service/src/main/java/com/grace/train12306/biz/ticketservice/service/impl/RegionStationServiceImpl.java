@@ -19,15 +19,19 @@ import com.grace.train12306.framework.starter.cache.core.CacheLoader;
 import com.grace.train12306.framework.starter.cache.toolkit.CacheUtil;
 import com.grace.train12306.framework.starter.common.enums.FlagEnum;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
-import com.grace.train12306.framework.starter.convention.exception.ClientException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.KeyScanOptions;
+import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyConstant.*;
 import static com.grace.train12306.biz.ticketservice.common.constant.Train12306Constant.ADVANCE_TICKET_DAY;
@@ -36,8 +40,9 @@ import static com.grace.train12306.biz.ticketservice.common.constant.Train12306C
  * 地区以及车站接口实现层
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
-public class RegionStationImpl implements RegionStationService {
+public class RegionStationServiceImpl implements RegionStationService {
 
     private final RegionMapper regionMapper;
     private final StationMapper stationMapper;
@@ -46,11 +51,10 @@ public class RegionStationImpl implements RegionStationService {
 
     @Override
     public List<RegionStationQueryRespDTO> listRegionStation(RegionStationQueryReqDTO requestParam) {
-        String key;
         if (StrUtil.isNotBlank(requestParam.getName())) {
-            key = REGION_STATION + requestParam.getName();
+            // 如果是根据名称查询
             return safeGetRegionStation(
-                    key,
+                    REGION_STATION + requestParam.getName(),
                     () -> {
                         LambdaQueryWrapper<StationDO> queryWrapper = Wrappers.lambdaQuery(StationDO.class)
                                 .likeRight(StationDO::getName, requestParam.getName())
@@ -62,24 +66,22 @@ public class RegionStationImpl implements RegionStationService {
                     requestParam.getName()
             );
         }
-        key = REGION_STATION + requestParam.getQueryType();
-        LambdaQueryWrapper<RegionDO> queryWrapper = switch (requestParam.getQueryType()) {
-            case 0 -> Wrappers.lambdaQuery(RegionDO.class)
+        LambdaQueryWrapper<RegionDO> queryWrapper = switch (Objects.requireNonNull(RegionStationQueryTypeEnum.getByCode(requestParam.getQueryType()))) {
+            case HOT -> Wrappers.lambdaQuery(RegionDO.class)
                     .eq(RegionDO::getPopularFlag, FlagEnum.TRUE.code());
-            case 1 -> Wrappers.lambdaQuery(RegionDO.class)
+            case A_E -> Wrappers.lambdaQuery(RegionDO.class)
                     .in(RegionDO::getInitial, RegionStationQueryTypeEnum.A_E.getSpells());
-            case 2 -> Wrappers.lambdaQuery(RegionDO.class)
+            case F_J -> Wrappers.lambdaQuery(RegionDO.class)
                     .in(RegionDO::getInitial, RegionStationQueryTypeEnum.F_J.getSpells());
-            case 3 -> Wrappers.lambdaQuery(RegionDO.class)
+            case K_O -> Wrappers.lambdaQuery(RegionDO.class)
                     .in(RegionDO::getInitial, RegionStationQueryTypeEnum.K_O.getSpells());
-            case 4 -> Wrappers.lambdaQuery(RegionDO.class)
+            case P_T -> Wrappers.lambdaQuery(RegionDO.class)
                     .in(RegionDO::getInitial, RegionStationQueryTypeEnum.P_T.getSpells());
-            case 5 -> Wrappers.lambdaQuery(RegionDO.class)
+            case U_Z -> Wrappers.lambdaQuery(RegionDO.class)
                     .in(RegionDO::getInitial, RegionStationQueryTypeEnum.U_Z.getSpells());
-            default -> throw new ClientException("查询失败，请检查查询参数是否正确");
         };
         return safeGetRegionStation(
-                key,
+                REGION_STATION + requestParam.getQueryType(),
                 () -> {
                     List<RegionDO> regionDOList = regionMapper.selectList(queryWrapper);
                     return JSON.toJSONString(BeanUtil.convert(regionDOList, RegionStationQueryRespDTO.class));
@@ -90,13 +92,20 @@ public class RegionStationImpl implements RegionStationService {
 
     @Override
     public List<StationQueryRespDTO> listAllStation() {
-        return distributedCache.safeGet(
-                STATION_ALL,
-                List.class,
-                () -> BeanUtil.convert(stationMapper.selectList(Wrappers.emptyWrapper()), StationQueryRespDTO.class),
-                ADVANCE_TICKET_DAY,
-                TimeUnit.DAYS
-        );
+        StringRedisTemplate stringRedisTemplate = (StringRedisTemplate) distributedCache.getInstance();
+        Set<String> keys = stringRedisTemplate.keys(STATION_ALL + "*");
+        if (!Objects.requireNonNull(keys).isEmpty()) {
+            // 缓存中存在，返回
+            return Objects.requireNonNull(stringRedisTemplate.opsForValue().multiGet(
+                    keys.stream()
+                            .map(s -> s.replaceFirst(System.getenv("framework.cache.redis.prefix"), ""))
+                            .toList()
+            )).stream().map(each -> JSON.parseObject(each, StationQueryRespDTO.class)).toList();
+        }
+        // 缓存中不存在，加载至缓存
+        List<StationQueryRespDTO> resp = BeanUtil.convert(stationMapper.selectList(Wrappers.emptyWrapper()), StationQueryRespDTO.class);
+        stringRedisTemplate.opsForValue().multiSet(resp.stream().collect(Collectors.toMap((each -> STATION_ALL + each.getCode()), JSON::toJSONString)));
+        return resp;
     }
 
     private List<RegionStationQueryRespDTO> safeGetRegionStation(final String key, CacheLoader<String> loader, String param) {
