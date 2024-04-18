@@ -171,8 +171,8 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, TicketDO> imple
         // 保存车票信息
         saveTicketInformation(requestParam, trainPurchaseTicketResults);
         // 调用远程订单服务新增订单
-        String ticketOrderResult = callRemoteOrderService(requestParam, ticketOrderDetailResults, trainDO, trainPurchaseTicketResults);
-        return new TicketPurchaseRespDTO(ticketOrderResult, ticketOrderDetailResults);
+        String orderSn = callRemoteOrderService(requestParam, ticketOrderDetailResults, trainDO, trainPurchaseTicketResults);
+        return new TicketPurchaseRespDTO(orderSn, ticketOrderDetailResults);
     }
 
     @Override
