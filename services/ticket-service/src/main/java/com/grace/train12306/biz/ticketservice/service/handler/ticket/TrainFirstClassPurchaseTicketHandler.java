@@ -427,13 +427,13 @@ public class TrainFirstClassPurchaseTicketHandler extends AbstractTrainPurchaseT
         return actualResult;
     }
 
-    public static int[][] mergeArrays(int[][] array1, int[][] array2) {
+    private int[][] mergeArrays(int[][] array1, int[][] array2) {
         List<int[]> list = new ArrayList<>(Arrays.asList(array1));
         list.addAll(Arrays.asList(array2));
         return list.toArray(new int[0][]);
     }
 
-    public static int[][] deepCopy(int[][] originalArray) {
+    private int[][] deepCopy(int[][] originalArray) {
         int[][] copy = new int[originalArray.length][originalArray[0].length];
         for (int i = 0; i < originalArray.length; i++) {
             System.arraycopy(originalArray[i], 0, copy[i], 0, originalArray[i].length);
