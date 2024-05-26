@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class EnvironmentUtil {
 
-    private static List<String> ENVIRONMENT_LIST = new ArrayList<>();
+    private static final List<String> ENVIRONMENT_LIST = new ArrayList<>();
 
     static {
         ENVIRONMENT_LIST.add("dev");

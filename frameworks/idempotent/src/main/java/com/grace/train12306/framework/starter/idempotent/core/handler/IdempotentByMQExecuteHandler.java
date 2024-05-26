@@ -8,10 +8,10 @@ import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.core.*;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentMQConsumeKeyEnum;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentMQConsumeStatusEnum;
-import com.grace.train12306.framework.starter.idempotent.toolkit.LogUtil;
 import com.grace.train12306.framework.starter.idempotent.toolkit.SpELUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  * 验证请求幂等性，适用于 MQ 场景
  */
 @RequiredArgsConstructor
+@Slf4j
 public final class IdempotentByMQExecuteHandler extends AbstractIdempotentExecuteHandler {
 
     private final static int TIMEOUT = 600;
@@ -40,7 +41,7 @@ public final class IdempotentByMQExecuteHandler extends AbstractIdempotentExecut
 
     @Override
     public void handler(IdempotentParamWrapper wrapper) {
-        // 拼接前缀和 SpEL 表达式对应的 Key 生成最终放到 Redis 中的唯一标识
+        // 拼接前缀 和 SpEL 表达式对应的 Key 生成最终放到 Redis 中的唯一标识
         String uniqueKey = wrapper.getIdempotent().uniqueKeyPrefix() + wrapper.getLockKey();
         // 取到消费id
         String consumptionId = wrapper.getConsumptionId();
@@ -50,8 +51,8 @@ public final class IdempotentByMQExecuteHandler extends AbstractIdempotentExecut
         if (setIfAbsent != null && !setIfAbsent) {
             // 消息已经被消费或正在消费中
             String consumeStatus = distributedCache.getHash(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey()).toString();
-            boolean error = IdempotentMQConsumeStatusEnum.isError(consumeStatus);
-            LogUtil.getLog(wrapper.getJoinPoint()).warn("[{}] MQ repeated consumption, {}.", uniqueKey, error ? "Wait for the client to delay consumption" : "Status is completed");
+            boolean error = IdempotentMQConsumeStatusEnum.isError(consumeStatus);// 消费中则为true，消费完则为false
+            log.warn("[{}] MQ repeated consumption, {}.", uniqueKey, error ? "Wait for the client to delay consumption" : "Status is completed");
             // 抛出异常，交给上层判断应该重试还是将消息吞掉
             throw new RepeatConsumptionException(error);
         }
@@ -73,6 +74,7 @@ public final class IdempotentByMQExecuteHandler extends AbstractIdempotentExecut
                 distributedCache.putHash(uniqueKey, IdempotentMQConsumeKeyEnum.STATUS.getKey(), IdempotentMQConsumeStatusEnum.CONSUMED.getCode());
                 distributedCache.expire(uniqueKey, idempotent.keyTimeout(), TimeUnit.SECONDS);
             } else {
+                log.error("消息重复消费：{}", idempotent.uniqueKeyPrefix() + idempotent.key() + idempotent.message());
                 throw new ServiceException("消息消费出错");
             }
         }
@@ -91,7 +93,7 @@ public final class IdempotentByMQExecuteHandler extends AbstractIdempotentExecut
                 if (isOwn)
                     distributedCache.delete(uniqueKey);
             } catch (Throwable ex) {
-                LogUtil.getLog(wrapper.getJoinPoint()).error("[{}] Failed to del MQ anti-heavy token.", uniqueKey);
+                log.error("[{}] Failed to del MQ anti-heavy token.", uniqueKey);
             }
         }
     }

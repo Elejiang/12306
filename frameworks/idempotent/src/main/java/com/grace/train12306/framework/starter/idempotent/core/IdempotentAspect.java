@@ -20,11 +20,15 @@ public final class IdempotentAspect {
     @Around("@annotation(com.grace.train12306.framework.starter.idempotent.annotation.Idempotent)")
     public Object idempotentHandler(ProceedingJoinPoint joinPoint) throws Throwable {
         Idempotent idempotent = getIdempotent(joinPoint);
+        // 拿到对应的幂等注解处理器
         IdempotentExecuteHandler instance = IdempotentExecuteHandlerFactory.getInstance(idempotent.scene());
         Object resultObj;
         try {
+            // 对方法进行幂等处理
             instance.execute(joinPoint, idempotent);
+            // 执行方法
             resultObj = joinPoint.proceed();
+            // 一些后处理，如释放锁资源，修改消费状态，设置幂等标识
             instance.postProcessing();
         } catch (RepeatConsumptionException ex) {
             if (!ex.getError()) {

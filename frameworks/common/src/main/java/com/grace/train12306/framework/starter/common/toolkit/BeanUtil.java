@@ -132,22 +132,4 @@ public class BeanUtil {
         }).build();
         mapper.map(source, target);
     }
-
-    /**
-     * 拷贝非空属性
-     *
-     * @param source 数据源
-     * @param target 指向源
-     */
-    public static void convertIgnoreNull(Object source, Object target) {
-        DozerBeanMapperBuilder dozerBeanMapperBuilder = DozerBeanMapperBuilder.create();
-        Mapper mapper = dozerBeanMapperBuilder.withMappingBuilders(new BeanMappingBuilder() {
-
-            @Override
-            protected void configure() {
-                mapping(source.getClass(), target.getClass(), mapNull(false));
-            }
-        }).build();
-        mapper.map(source, target);
-    }
 }
