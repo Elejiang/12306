@@ -49,7 +49,6 @@ public class TrainStationServiceImpl implements TrainStationService {
                 .eq(TrainStationDO::getTrainId, trainId)
                 .select(TrainStationDO::getDeparture);
         List<TrainStationDO> trainStationDOList = trainStationMapper.selectList(queryWrapper);
-        List<String> trainStationAllList = trainStationDOList.stream().map(TrainStationDO::getDeparture).collect(Collectors.toList());
-        return trainStationAllList;
+        return trainStationDOList.stream().map(TrainStationDO::getDeparture).collect(Collectors.toList());
     }
 }

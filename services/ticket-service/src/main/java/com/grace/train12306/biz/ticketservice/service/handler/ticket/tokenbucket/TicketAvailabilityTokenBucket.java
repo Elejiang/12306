@@ -142,7 +142,7 @@ public final class TicketAvailabilityTokenBucket {
     }
 
     private JSONArray getJsonArray(Map<Integer, Long> seatTypeCountMap) {
-        JSONArray seatTypeCountArray = seatTypeCountMap.entrySet().stream()
+        return seatTypeCountMap.entrySet().stream()
                 .map(entry -> {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("seatType", String.valueOf(entry.getKey()));
@@ -150,7 +150,6 @@ public final class TicketAvailabilityTokenBucket {
                     return jsonObject;
                 })
                 .collect(Collectors.toCollection(JSONArray::new));
-        return seatTypeCountArray;
     }
 
     private void loadTokenBucket2Cache(PurchaseTicketReqDTO requestParam, TrainDO trainDO, List<RouteDTO> routeDTOList, StringRedisTemplate stringRedisTemplate, String tokenBucketHashKey) {

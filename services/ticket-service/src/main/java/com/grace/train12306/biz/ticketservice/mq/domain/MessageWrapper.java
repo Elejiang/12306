@@ -2,6 +2,7 @@ package com.grace.train12306.biz.ticketservice.mq.domain;
 
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public final class MessageWrapper<T> implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

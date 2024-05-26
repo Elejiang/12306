@@ -16,7 +16,6 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPu
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket.TicketAvailabilityTokenBucket;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
-import com.grace.train12306.framework.starter.convention.exception.ServiceException;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
