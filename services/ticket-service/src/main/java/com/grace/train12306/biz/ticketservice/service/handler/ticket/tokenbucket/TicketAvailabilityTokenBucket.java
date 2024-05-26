@@ -1,5 +1,6 @@
 package com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket;
 
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
@@ -19,7 +20,6 @@ import com.grace.train12306.biz.ticketservice.service.TrainStationService;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TokenResultDTO;
 import com.grace.train12306.framework.starter.bases.Singleton;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
-import com.grace.train12306.framework.starter.common.toolkit.Assert;
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

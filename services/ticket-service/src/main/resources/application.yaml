@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: ${MYSQL_PASSWORD}
-    url: jdbc:mysql://101.43.97.48:3310/12306_ticket?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.10.46:3306/12306_ticket?characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&serverTimezone=GMT%2B8
     hikari:
       connection-test-query: select 1
       connection-timeout: 20000
