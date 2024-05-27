@@ -2,7 +2,6 @@ package com.grace.train12306.biz.orderservice.mq.consumer;
 
 import com.grace.train12306.biz.orderservice.common.constant.OrderRocketMQConstant;
 import com.grace.train12306.biz.orderservice.common.enums.OrderItemStatusEnum;
-import com.grace.train12306.biz.orderservice.common.enums.OrderStatusEnum;
 import com.grace.train12306.biz.orderservice.dao.entity.OrderItemDO;
 import com.grace.train12306.biz.orderservice.dto.domain.OrderStatusReversalDTO;
 import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderPassengerDetailRespDTO;

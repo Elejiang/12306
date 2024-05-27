@@ -2,7 +2,6 @@ package com.grace.train12306.biz.userservice.controller;
 
 import com.grace.train12306.biz.userservice.dto.req.UserLoginReqDTO;
 import com.grace.train12306.biz.userservice.dto.resp.UserLoginRespDTO;
-import com.grace.train12306.biz.userservice.service.UserLoginService;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.web.Results;
 import lombok.RequiredArgsConstructor;

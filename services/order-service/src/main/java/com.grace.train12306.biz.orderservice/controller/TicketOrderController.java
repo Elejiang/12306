@@ -1,6 +1,5 @@
 package com.grace.train12306.biz.orderservice.controller;
 
-import cn.crane4j.annotation.AutoOperate;
 import com.grace.train12306.biz.orderservice.dto.req.*;
 import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderDetailRespDTO;
 import com.grace.train12306.biz.orderservice.dto.resp.TicketOrderDetailSelfRespDTO;
