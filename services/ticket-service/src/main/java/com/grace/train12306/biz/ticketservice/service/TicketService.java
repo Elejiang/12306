@@ -119,7 +119,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
         TokenResultDTO tokenResult = ticketAvailabilityTokenBucket.takeTokenFromBucket(requestParam);
         if (tokenResult.getTokenIsNull()) {
             // 获取不到令牌，重新加载令牌
-            if (tokenIsNullRefreshToken(requestParam, tokenResult)) {
+            if (!tokenIsNullRefreshToken(requestParam, tokenResult)) {
                 // 如果上锁失败，或者数据库中实际的车票不满足本次购票需求
                 throw new ServiceException("列车站点已无余票");
             }
