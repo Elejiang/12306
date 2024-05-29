@@ -40,6 +40,20 @@ public class TrainStationService {
         return StationCalculateUtil.takeoutStation(trainStationAllList, departure, arrival);
     }
 
+    public int[] getBeginAndEndSequence(String trainId, String departure, String arrival) {
+        LambdaQueryWrapper<TrainStationDO> queryWrapper = Wrappers.lambdaQuery(TrainStationDO.class)
+                .eq(TrainStationDO::getTrainId, trainId)
+                .eq(TrainStationDO::getDeparture, departure)
+                .or()
+                .eq(TrainStationDO::getTrainId, trainId)
+                .eq(TrainStationDO::getArrival, arrival)
+                .orderBy(true, true, TrainStationDO::getSequence);
+        List<TrainStationDO> trainStationDOS = trainStationMapper.selectList(queryWrapper);
+        int begin = Integer.parseInt(trainStationDOS.get(0).getSequence());
+        int end = Integer.parseInt(trainStationDOS.get(1).getSequence());
+        return new int[]{begin, end};
+    }
+
     private List<String> getStationAllList(String trainId) {
         LambdaQueryWrapper<TrainStationDO> queryWrapper = Wrappers.lambdaQuery(TrainStationDO.class)
                 .eq(TrainStationDO::getTrainId, trainId)

@@ -22,7 +22,7 @@ public class PurchaseTicketReqDTO {
     private List<PurchaseTicketPassengerDetailDTO> passengers;
 
     /**
-     * 选择座位，如A1，C1
+     * 选择座位，如A1，C1，不同类型作为选座则没有
      */
     private List<String> chooseSeats;
 

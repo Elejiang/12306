@@ -68,7 +68,7 @@ public final class RedisKeyConstant {
     /**
      * 用户购票分布式锁 Key
      */
-    public static final String LOCK_PURCHASE_TICKETS = "${unique-name:}train12306-ticket-service:lock:purchase_tickets_%s_%d";
+    public static final String LOCK_PURCHASE_TICKETS = "${unique-name:}train12306-ticket-service:lock:purchase_tickets_%s_%d_%d";
 
     /**
      * 获取全部地点集合 Key

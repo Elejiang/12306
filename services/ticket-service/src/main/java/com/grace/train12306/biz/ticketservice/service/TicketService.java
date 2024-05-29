@@ -68,8 +68,6 @@ import static com.grace.train12306.biz.ticketservice.toolkit.DateUtil.convertDat
 @Service
 @RequiredArgsConstructor
 public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
-
-    private final TicketService ticketService;
     private final TrainMapper trainMapper;
     private final TrainStationRelationMapper trainStationRelationMapper;
     private final TrainStationPriceMapper trainStationPriceMapper;
@@ -133,7 +131,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
         try {
             localLockList.forEach(ReentrantLock::lock);
             distributedLockList.forEach(RLock::lock);
-            return ticketService.executePurchaseTickets(requestParam);
+            return executePurchaseTickets(requestParam);
         } finally {
             localLockList.forEach(localLock -> {
                 try {
@@ -285,23 +283,29 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
      * 计算需要获取的车票锁，包括本地锁和分布式锁
      */
     private void addLock(PurchaseTicketReqDTO requestParam, List<ReentrantLock> localLockList, List<RLock> distributedLockList) {
+        // 始发站和终点站的序列号
+        int[] beginAndEndSequence = trainStationService.getBeginAndEndSequence(requestParam.getTrainId(), requestParam.getDeparture(), requestParam.getArrival());
+        // key：座位类型，value：乘客购票信息
         Map<Integer, List<PurchaseTicketPassengerDetailDTO>> seatTypeMap = requestParam.getPassengers().stream()
                 .collect(Collectors.groupingBy(PurchaseTicketPassengerDetailDTO::getSeatType));
+        // 对于每个座位类型，添加锁
         seatTypeMap.forEach((searType, count) -> {
-            // TODO 锁的粒度还能降，不同车站之间可以并发买同一车座类型票
-            String lockKey = environment.resolvePlaceholders(String.format(LOCK_PURCHASE_TICKETS, requestParam.getTrainId(), searType));
-            ReentrantLock localLock = localLockMap.getIfPresent(lockKey);
-            if (localLock == null) {
-                synchronized (TicketService.class) {
-                    if ((localLock = localLockMap.getIfPresent(lockKey)) == null) {
-                        localLock = new ReentrantLock(true);
-                        localLockMap.put(lockKey, localLock);
+            // 每种座位类型，根据始发站和终点站序号加锁，没有重叠区间的购买请求可以并发
+            for (int i = beginAndEndSequence[0] + 1; i <= beginAndEndSequence[1]; i++) {
+                String lockKey = environment.resolvePlaceholders(String.format(LOCK_PURCHASE_TICKETS, requestParam.getTrainId(), searType, i));
+                ReentrantLock localLock = localLockMap.getIfPresent(lockKey);
+                if (localLock == null) {
+                    synchronized (TicketService.class) {
+                        if ((localLock = localLockMap.getIfPresent(lockKey)) == null) {
+                            localLock = new ReentrantLock(true);
+                            localLockMap.put(lockKey, localLock);
+                        }
                     }
                 }
+                localLockList.add(localLock);
+                RLock distributedLock = redissonClient.getFairLock(lockKey);
+                distributedLockList.add(distributedLock);
             }
-            localLockList.add(localLock);
-            RLock distributedLock = redissonClient.getFairLock(lockKey);
-            distributedLockList.add(distributedLock);
         });
     }
 
