@@ -33,6 +33,7 @@ import com.grace.train12306.biz.ticketservice.service.handler.ticket.select.Trai
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.tokenbucket.TicketAvailabilityTokenBucket;
 import com.grace.train12306.biz.ticketservice.toolkit.DateUtil;
 import com.grace.train12306.biz.ticketservice.toolkit.TimeStringComparator;
+import com.grace.train12306.framework.starter.bases.ApplicationContextHolder;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import com.grace.train12306.framework.starter.cache.toolkit.CacheUtil;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
@@ -45,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -67,7 +69,7 @@ import static com.grace.train12306.biz.ticketservice.toolkit.DateUtil.convertDat
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
+public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implements CommandLineRunner {
     private final TrainMapper trainMapper;
     private final TrainStationRelationMapper trainStationRelationMapper;
     private final TrainStationPriceMapper trainStationPriceMapper;
@@ -88,6 +90,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
     private final Cache<String, ReentrantLock> localLockMap = Caffeine.newBuilder()
             .expireAfterWrite(1, TimeUnit.DAYS)
             .build();
+    private TicketService ticketService;
 
     @Value("${ticket.availability.cache-update.type:}")
     private String ticketAvailabilityCacheUpdateType;
@@ -131,7 +134,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
         try {
             localLockList.forEach(ReentrantLock::lock);
             distributedLockList.forEach(RLock::lock);
-            return executePurchaseTickets(requestParam);
+            return ticketService.executePurchaseTickets(requestParam);
         } finally {
             localLockList.forEach(localLock -> {
                 try {
@@ -603,4 +606,8 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> {
         }
     }
 
+    @Override
+    public void run(String... args) throws Exception {
+        ticketService = ApplicationContextHolder.getBean(TicketService.class);
+    }
 }
