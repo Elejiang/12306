@@ -33,6 +33,6 @@ public class CacheAutoConfiguration {
                                                              StringRedisTemplate stringRedisTemplate,
                                                              RedissonClient redissonClient) {
         stringRedisTemplate.setKeySerializer(redisKeySerializer);
-        return new StringRedisTemplateProxy(stringRedisTemplate, redisDistributedProperties, redissonClient);
+        return new StringRedisTemplateProxy(stringRedisTemplate, redissonClient);
     }
 }
