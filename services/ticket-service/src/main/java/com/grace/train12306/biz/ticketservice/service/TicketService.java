@@ -117,13 +117,11 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
     public TicketPurchaseRespDTO purchaseTickets(PurchaseTicketReqDTO requestParam) {
         // 责任链模式，验证 1：参数必填 2：参数正确性 3：乘客是否已买当前车次等...
         purchaseTicketAbstractChainContext.handler(TicketChainMarkEnum.TRAIN_PURCHASE_TICKET_FILTER.name(), requestParam);
+        // 获取令牌
         TokenResultDTO tokenResult = ticketAvailabilityTokenBucket.takeTokenFromBucket(requestParam);
-        if (tokenResult.getTokenIsNull()) {
-            // 获取不到令牌，重新加载令牌
-            if (!tokenIsNullRefreshToken(requestParam, tokenResult)) {
-                // 如果上锁失败，或者数据库中实际的车票不满足本次购票需求
+        if (tokenResult.getTokenIsNull() && !tokenIsNullRefreshToken(requestParam, tokenResult)) {
+            // 获取不到令牌，重新加载令牌，如果上锁失败，或者数据库中实际的车票不满足本次购票需求，则抛异常
                 throw new ServiceException("列车站点已无余票");
-            }
         }
         // 本地锁和分布式锁
         List<ReentrantLock> localLockList = new ArrayList<>();
