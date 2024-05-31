@@ -33,8 +33,6 @@ public class StringRedisTemplateProxy implements DistributedCache {
     private final StringRedisTemplate stringRedisTemplate;
     private final RedisDistributedProperties redisProperties;
     private final RedissonClient redissonClient;
-
-    private static final String LUA_PUT_IF_ALL_ABSENT_SCRIPT_PATH = "lua/putIfAllAbsent.lua";
     private static final String SAFE_GET_DISTRIBUTED_LOCK_KEY_PREFIX = "safe_get_distributed_lock_get:";
 
     @Override
@@ -66,17 +64,6 @@ public class StringRedisTemplateProxy implements DistributedCache {
         return stringRedisTemplate.opsForHash().putIfAbsent(key, hashKey, value);
     }
 
-    @Override
-    public Boolean putIfAllAbsent(@NotNull Collection<String> keys) {
-        DefaultRedisScript<Boolean> actual = Singleton.get(LUA_PUT_IF_ALL_ABSENT_SCRIPT_PATH, () -> {
-            DefaultRedisScript redisScript = new DefaultRedisScript();
-            redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(LUA_PUT_IF_ALL_ABSENT_SCRIPT_PATH)));
-            redisScript.setResultType(Boolean.class);
-            return redisScript;
-        });
-        Boolean result = stringRedisTemplate.execute(actual, Lists.newArrayList(keys), redisProperties.getValueTimeout().toString());
-        return result != null && result;
-    }
 
     @Override
     public Boolean delete(String key) {
