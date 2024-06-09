@@ -29,9 +29,9 @@ public class LocalRedisWorkIdChoose extends AbstractWorkIdChooseTemplate impleme
     public idWrapper chooseId() {
         DefaultRedisScript redisScript = new DefaultRedisScript();
         redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("lua/chooseWorkIdLua.lua")));
+        redisScript.setResultType(List.class);
         List<Long> luaResultList = null;
         try {
-            redisScript.setResultType(List.class);
             luaResultList = (ArrayList) this.stringRedisTemplate.execute(redisScript, null);
         } catch (Exception ex) {
             log.error("Redis Lua 脚本获取 WorkId 失败", ex);

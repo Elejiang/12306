@@ -20,13 +20,6 @@ public final class SnowflakeIdUtil {
     }
 
     /**
-     * 获取雪花算法实例
-     */
-    public static Snowflake getInstance() {
-        return SNOWFLAKE;
-    }
-
-    /**
      * 获取雪花算法下一个 ID
      */
     public static long nextId() {
