@@ -170,10 +170,6 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
         return new TicketPurchaseRespDTO(orderSn, ticketOrderDetailResults);
     }
 
-    public PayInfoRespDTO getPayInfo(String orderSn) {
-        return payRemoteService.getPayInfo(orderSn).getData();
-    }
-
     public void cancelTicketOrder(CancelTicketOrderReqDTO requestParam) {
         try {
             // 远程调用order模块关闭订单

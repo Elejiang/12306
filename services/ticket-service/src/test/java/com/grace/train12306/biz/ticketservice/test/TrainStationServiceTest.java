@@ -21,8 +21,6 @@ public class TrainStationServiceTest {
     @Resource
     private TrainStationService trainStationService;
     @Resource
-    private TrainStationMapper trainStationMapper;
-    @Resource
     private ConfigurableEnvironment environment;
 
     @Test
@@ -35,20 +33,14 @@ public class TrainStationServiceTest {
 
     @Test
     public void test2() {
-        LambdaQueryWrapper<TrainStationDO> queryWrapper = Wrappers.lambdaQuery(TrainStationDO.class)
-                .eq(TrainStationDO::getTrainId, "1")
-                .eq(TrainStationDO::getDeparture, "北京南")
-                .or()
-                .eq(TrainStationDO::getTrainId, "1")
-                .eq(TrainStationDO::getArrival, "杭州东")
-                .orderBy(true, true, TrainStationDO::getSequence);
-        List<TrainStationDO> trainStationDOS = trainStationMapper.selectList(queryWrapper);
-        int begin = Integer.parseInt(trainStationDOS.get(0).getSequence());
-        int end = Integer.parseInt(trainStationDOS.get(1).getSequence());
+        int[] beginAndEndSequence = trainStationService.getBeginAndEndSequence("1", "北京南", "杭州东");
+        int begin = beginAndEndSequence[0];
+        int end = beginAndEndSequence[1];
         for (int i = begin + 1; i <= end; i++) {
             String lockKey = environment.resolvePlaceholders(String.format(LOCK_PURCHASE_TICKETS, "1", 1, i));
             System.out.println(lockKey);
         }
         System.out.println(begin + " " + end);
+
     }
 }

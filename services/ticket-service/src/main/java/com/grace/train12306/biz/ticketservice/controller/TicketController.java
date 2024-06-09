@@ -29,6 +29,7 @@ public class TicketController {
     /**
      * 根据条件查询车票
      */
+    @ILog
     @GetMapping("/api/ticket-service/ticket/query")
     public Result<TicketPageQueryRespDTO> pageListTicketQuery(TicketPageQueryReqDTO requestParam) {
         return Results.success(ticketService.pageListTicketQuery(requestParam));
@@ -54,19 +55,10 @@ public class TicketController {
     /**
      * 取消车票订单
      */
-    @ILog
     @PostMapping("/api/ticket-service/ticket/cancel")
     public Result<Void> cancelTicketOrder(@RequestBody CancelTicketOrderReqDTO requestParam) {
         ticketService.cancelTicketOrder(requestParam);
         return Results.success();
-    }
-
-    /**
-     * 支付单详情查询
-     */
-    @GetMapping("/api/ticket-service/ticket/pay/query")
-    public Result<PayInfoRespDTO> getPayInfo(@RequestParam(value = "orderSn") String orderSn) {
-        return Results.success(ticketService.getPayInfo(orderSn));
     }
 
     /**

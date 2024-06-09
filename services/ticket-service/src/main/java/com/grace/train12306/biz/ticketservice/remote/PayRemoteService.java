@@ -17,12 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface PayRemoteService {
 
     /**
-     * 支付单详情查询
-     */
-    @GetMapping("/api/pay-service/pay/query")
-    Result<PayInfoRespDTO> getPayInfo(@RequestParam(value = "orderSn") String orderSn);
-
-    /**
      * 公共退款接口
      */
     @PostMapping("/api/pay-service/common/refund")

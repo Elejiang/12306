@@ -24,7 +24,6 @@ spring:
               args:
                 blackPathPre:
                   - /api/ticket-service/ticket/purchase
-                  - /api/ticket-service/ticket/pay/query
                   - /api/ticket-service/ticket/cancel
 
         - id: train12306-pay-service

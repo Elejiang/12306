@@ -35,11 +35,4 @@ public enum CanalExecuteStrategyMarkEnum {
                 .anyMatch(each -> StrUtil.isNotBlank(each.getPatternMatchTable()) && Pattern.compile(each.getPatternMatchTable()).matcher(tableName).matches());
     }
 
-    public static String getPatternMatch(String tableName) {
-        return Arrays.stream(CanalExecuteStrategyMarkEnum.values())
-                .filter(each -> Objects.equals(tableName, each.getActualTable()))
-                .findFirst()
-                .map(CanalExecuteStrategyMarkEnum::getPatternMatchTable)
-                .orElse(null);
-    }
 }

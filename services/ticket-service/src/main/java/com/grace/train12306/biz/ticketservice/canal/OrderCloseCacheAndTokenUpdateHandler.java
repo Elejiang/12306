@@ -36,18 +36,22 @@ public class OrderCloseCacheAndTokenUpdateHandler implements AbstractExecuteStra
     public void execute(CanalBinlogEvent message) {
         List<Map<String, Object>> messageDataList = message.getData().stream()
                 .filter(each -> each.get("status") != null)
+                // order status 30 代表取消的订单
                 .filter(each -> Objects.equals(each.get("status"), "30"))
                 .toList();
         if (CollUtil.isEmpty(messageDataList)) {
             return;
         }
         for (Map<String, Object> each : messageDataList) {
+            // 得到订单详细
             Result<TicketOrderDetailRespDTO> orderDetailResult = ticketOrderRemoteService.queryTicketOrderByOrderSn(each.get("order_sn").toString());
             TicketOrderDetailRespDTO orderDetailResultData = orderDetailResult.getData();
             if (orderDetailResult.isSuccess() && orderDetailResultData != null) {
                 String trainId = String.valueOf(orderDetailResultData.getTrainId());
                 List<TicketOrderPassengerDetailRespDTO> passengerDetails = orderDetailResultData.getPassengerDetails();
+                // 解锁座位
                 seatService.unlock(trainId, orderDetailResultData.getDeparture(), orderDetailResultData.getArrival(), BeanUtil.convert(passengerDetails, TrainPurchaseTicketRespDTO.class));
+                // 回滚令牌和余票
                 ticketAvailabilityTokenBucket.rollbackInBucket(orderDetailResultData);
             }
         }
