@@ -18,7 +18,7 @@ import com.grace.train12306.biz.payservice.dto.base.RefundRequest;
 import com.grace.train12306.biz.payservice.dto.base.RefundResponse;
 import com.grace.train12306.biz.payservice.mq.event.RefundResultCallbackOrderEvent;
 import com.grace.train12306.biz.payservice.mq.produce.RefundResultCallbackOrderSendProduce;
-import com.grace.train12306.biz.payservice.remote.TicketOrderRemoteService;
+import com.grace.train12306.biz.payservice.remote.OrderRemoteService;
 import com.grace.train12306.biz.payservice.remote.dto.TicketOrderDetailRespDTO;
 import com.grace.train12306.framework.starter.common.toolkit.BeanUtil;
 import com.grace.train12306.framework.starter.convention.exception.ServiceException;
@@ -45,7 +45,7 @@ public class RefundService {
 
     private final PayMapper payMapper;
     private final RefundMapper refundMapper;
-    private final TicketOrderRemoteService ticketOrderRemoteService;
+    private final OrderRemoteService orderRemoteService;
     private final AbstractStrategyChoose abstractStrategyChoose;
     private final RefundResultCallbackOrderSendProduce refundResultCallbackOrderSendProduce;
 
@@ -122,7 +122,7 @@ public class RefundService {
     }
 
     private void createRefund(RefundCreateDTO requestParam) {
-        Result<TicketOrderDetailRespDTO> queryTicketResult = ticketOrderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
+        Result<TicketOrderDetailRespDTO> queryTicketResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
         if (!queryTicketResult.isSuccess() && Objects.isNull(queryTicketResult.getData())) {
             throw new ServiceException("车票订单不存在");
         }

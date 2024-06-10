@@ -24,7 +24,7 @@ import com.grace.train12306.biz.ticketservice.dto.resp.TicketOrderDetailRespDTO;
 import com.grace.train12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
 import com.grace.train12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
 import com.grace.train12306.biz.ticketservice.remote.PayRemoteService;
-import com.grace.train12306.biz.ticketservice.remote.TicketOrderRemoteService;
+import com.grace.train12306.biz.ticketservice.remote.OrderRemoteService;
 import com.grace.train12306.biz.ticketservice.remote.dto.*;
 import com.grace.train12306.biz.ticketservice.service.cache.SeatMarginCacheLoader;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TokenResultDTO;
@@ -74,7 +74,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
     private final TrainStationRelationMapper trainStationRelationMapper;
     private final TrainStationPriceMapper trainStationPriceMapper;
     private final DistributedCache distributedCache;
-    private final TicketOrderRemoteService ticketOrderRemoteService;
+    private final OrderRemoteService orderRemoteService;
     private final PayRemoteService payRemoteService;
     private final StationMapper stationMapper;
     private final SeatService seatService;
@@ -173,7 +173,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
     public void cancelTicketOrder(CancelTicketOrderReqDTO requestParam) {
         try {
             // 远程调用order模块关闭订单
-            Result<Boolean> cancelOrderResult = ticketOrderRemoteService.cancelTicketOrder(new CancelTicketOrderReqDTO(requestParam.getOrderSn()));
+            Result<Boolean> cancelOrderResult = orderRemoteService.cancelTicketOrder(new CancelTicketOrderReqDTO(requestParam.getOrderSn()));
             if (!cancelOrderResult.isSuccess()) throw new ServiceException("延迟关闭订单出错");
         } catch (Throwable ex) {
             log.error("[延迟关闭订单] 订单号：{} 远程调用订单服务失败", requestParam.getOrderSn(), ex);
@@ -181,7 +181,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
         }
         if (!StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
             // 如果没开启binlog，手动进行数据回滚
-            Result<com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> ticketOrderDetailResult = ticketOrderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
+            Result<com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> ticketOrderDetailResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
             com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO ticketOrderDetail = ticketOrderDetailResult.getData();
             String trainId = String.valueOf(ticketOrderDetail.getTrainId());
             String departure = ticketOrderDetail.getDeparture();
@@ -390,7 +390,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
                     .trainId(Long.parseLong(requestParam.getTrainId()))
                     .ticketOrderItems(orderItemCreateRemoteReqDTOList)
                     .build();
-            ticketOrderResult = ticketOrderRemoteService.createTicketOrder(orderCreateRemoteReqDTO);
+            ticketOrderResult = orderRemoteService.createTicketOrder(orderCreateRemoteReqDTO);
             if (!ticketOrderResult.isSuccess() || StrUtil.isBlank(ticketOrderResult.getData())) {
                 log.error("订单服务调用失败，返回结果：{}", ticketOrderResult.getMessage());
                 throw new ServiceException("订单服务调用失败");
@@ -521,7 +521,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
      * 远程调用Order获取到订单乘车人信息
      */
     private List<TicketOrderPassengerDetailRespDTO> getRemoteTicketOrderPassengerDetail(RefundTicketReqDTO requestParam) {
-        Result<com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> orderDetailRespDTOResult = ticketOrderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
+        Result<com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO> orderDetailRespDTOResult = orderRemoteService.queryTicketOrderByOrderSn(requestParam.getOrderSn());
         if (!orderDetailRespDTOResult.isSuccess() && Objects.isNull(orderDetailRespDTOResult.getData())) {
             throw new ServiceException("车票订单不存在");
         }
@@ -542,7 +542,7 @@ public class TicketService extends ServiceImpl<TicketMapper, TicketDO> implement
             ticketOrderItemQueryReqDTO.setOrderSn(requestParam.getOrderSn());
             ticketOrderItemQueryReqDTO.setOrderItemRecordIds(requestParam.getSubOrderRecordIdReqList());
             // 根据子订单记录id查询车票子订单详情
-            Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById = ticketOrderRemoteService.queryTicketItemOrderById(ticketOrderItemQueryReqDTO);
+            Result<List<TicketOrderPassengerDetailRespDTO>> queryTicketItemOrderById = orderRemoteService.queryTicketItemOrderById(ticketOrderItemQueryReqDTO);
             List<TicketOrderPassengerDetailRespDTO> partialRefundPassengerDetails = passengerDetails.stream()
                     .filter(item -> queryTicketItemOrderById.getData().contains(item))
                     .collect(Collectors.toList());

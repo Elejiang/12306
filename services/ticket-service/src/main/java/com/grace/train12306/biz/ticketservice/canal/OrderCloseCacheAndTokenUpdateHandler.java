@@ -3,7 +3,7 @@ package com.grace.train12306.biz.ticketservice.canal;
 import cn.hutool.core.collection.CollUtil;
 import com.grace.train12306.biz.ticketservice.common.enums.CanalExecuteStrategyMarkEnum;
 import com.grace.train12306.biz.ticketservice.mq.event.CanalBinlogEvent;
-import com.grace.train12306.biz.ticketservice.remote.TicketOrderRemoteService;
+import com.grace.train12306.biz.ticketservice.remote.OrderRemoteService;
 import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
 import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
 import com.grace.train12306.biz.ticketservice.service.SeatService;
@@ -28,7 +28,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class OrderCloseCacheAndTokenUpdateHandler implements AbstractExecuteStrategy<CanalBinlogEvent, Void> {
 
-    private final TicketOrderRemoteService ticketOrderRemoteService;
+    private final OrderRemoteService orderRemoteService;
     private final SeatService seatService;
     private final TicketAvailabilityTokenBucket ticketAvailabilityTokenBucket;
 
@@ -44,7 +44,7 @@ public class OrderCloseCacheAndTokenUpdateHandler implements AbstractExecuteStra
         }
         for (Map<String, Object> each : messageDataList) {
             // 得到订单详细
-            Result<TicketOrderDetailRespDTO> orderDetailResult = ticketOrderRemoteService.queryTicketOrderByOrderSn(each.get("order_sn").toString());
+            Result<TicketOrderDetailRespDTO> orderDetailResult = orderRemoteService.queryTicketOrderByOrderSn(each.get("order_sn").toString());
             TicketOrderDetailRespDTO orderDetailResultData = orderDetailResult.getData();
             if (orderDetailResult.isSuccess() && orderDetailResultData != null) {
                 String trainId = String.valueOf(orderDetailResultData.getTrainId());

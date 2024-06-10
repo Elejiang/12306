@@ -7,7 +7,7 @@ import com.grace.train12306.biz.ticketservice.dto.domain.RouteDTO;
 import com.grace.train12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
 import com.grace.train12306.biz.ticketservice.mq.domain.MessageWrapper;
 import com.grace.train12306.biz.ticketservice.mq.event.DelayCloseOrderEvent;
-import com.grace.train12306.biz.ticketservice.remote.TicketOrderRemoteService;
+import com.grace.train12306.biz.ticketservice.remote.OrderRemoteService;
 import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
 import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPurchaseTicketRespDTO;
@@ -48,7 +48,7 @@ import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyCon
 public class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<DelayCloseOrderEvent>> {
 
     private final SeatService seatService;
-    private final TicketOrderRemoteService ticketOrderRemoteService;
+    private final OrderRemoteService orderRemoteService;
     private final TrainStationService trainStationService;
     private final DistributedCache distributedCache;
     private final TicketAvailabilityTokenBucket ticketAvailabilityTokenBucket;
@@ -71,13 +71,14 @@ public class DelayCloseOrderConsumer implements RocketMQListener<MessageWrapper<
         Result<Boolean> closedTicketOrder;
         try {
             // 远程调用order模块关闭订单
-            closedTicketOrder = ticketOrderRemoteService.closeTicketOrder(new CancelTicketOrderReqDTO(orderSn));
+            closedTicketOrder = orderRemoteService.closeTicketOrder(new CancelTicketOrderReqDTO(orderSn));
         } catch (Throwable ex) {
             log.error("[延迟关闭订单] 订单号：{} 远程调用订单服务失败", orderSn, ex);
             throw ex;
         }
+
+        // 成功关闭且如果没开启binlog，手动进行数据回滚
         if (closedTicketOrder.isSuccess() && !StrUtil.equals(ticketAvailabilityCacheUpdateType, "binlog")) {
-            // 成功关闭且如果没开启binlog，手动进行数据回滚
             String trainId = delayCloseOrderEvent.getTrainId();
             String departure = delayCloseOrderEvent.getDeparture();
             String arrival = delayCloseOrderEvent.getArrival();

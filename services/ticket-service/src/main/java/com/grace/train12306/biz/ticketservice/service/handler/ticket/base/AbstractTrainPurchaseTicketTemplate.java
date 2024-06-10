@@ -21,7 +21,7 @@ import static com.grace.train12306.biz.ticketservice.common.constant.RedisKeyCon
 /**
  * 抽象高铁购票模板基础服务
  */
-public abstract class AbstractTrainPurchaseTicketTemplate implements IPurchaseTicket, CommandLineRunner, AbstractExecuteStrategy<SelectSeatDTO, List<TrainPurchaseTicketRespDTO>> {
+public abstract class AbstractTrainPurchaseTicketTemplate implements CommandLineRunner, AbstractExecuteStrategy<SelectSeatDTO, List<TrainPurchaseTicketRespDTO>> {
 
     private DistributedCache distributedCache;
     private String ticketAvailabilityCacheUpdateType;

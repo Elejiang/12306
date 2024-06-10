@@ -6,6 +6,7 @@ import com.grace.train12306.biz.orderservice.common.enums.OrderStatusEnum;
 import com.grace.train12306.biz.orderservice.dto.domain.OrderStatusReversalDTO;
 import com.grace.train12306.biz.orderservice.mq.domain.MessageWrapper;
 import com.grace.train12306.biz.orderservice.mq.event.PayResultCallbackOrderEvent;
+import com.grace.train12306.biz.orderservice.remote.TicketRemoteService;
 import com.grace.train12306.biz.orderservice.service.OrderService;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
 import com.grace.train12306.framework.starter.idempotent.enums.IdempotentSceneEnum;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PayResultCallbackOrderConsumer implements RocketMQListener<MessageWrapper<PayResultCallbackOrderEvent>> {
 
     private final OrderService orderService;
+    private final TicketRemoteService ticketRemoteService;
 
     @Idempotent(
             uniqueKeyPrefix = "train12306-order:pay_result_callback:",
@@ -48,5 +50,6 @@ public class PayResultCallbackOrderConsumer implements RocketMQListener<MessageW
                 .build();
         orderService.statusReversal(orderStatusReversalDTO);
         orderService.payCallbackOrder(payResultCallbackOrderEvent);
+        ticketRemoteService.updateTicketStatusSold(orderService.queryTicketOrderByOrderSn(payResultCallbackOrderEvent.getOrderSn()));
     }
 }

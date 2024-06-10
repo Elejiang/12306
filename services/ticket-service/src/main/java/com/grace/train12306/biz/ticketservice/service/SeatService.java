@@ -11,6 +11,8 @@ import com.grace.train12306.biz.ticketservice.dao.entity.SeatDO;
 import com.grace.train12306.biz.ticketservice.dao.mapper.SeatMapper;
 import com.grace.train12306.biz.ticketservice.dto.domain.RouteDTO;
 import com.grace.train12306.biz.ticketservice.dto.domain.SeatTypeCountDTO;
+import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
+import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderPassengerDetailRespDTO;
 import com.grace.train12306.biz.ticketservice.service.handler.ticket.dto.TrainPurchaseTicketRespDTO;
 import com.grace.train12306.framework.starter.cache.DistributedCache;
 import lombok.RequiredArgsConstructor;
@@ -116,5 +118,21 @@ public class SeatService extends ServiceImpl<SeatMapper, SeatDO> {
                     .build();
             seatMapper.update(updateSeatDO, updateWrapper);
         }));
+    }
+
+
+    public void updateTicketStatusSold(TicketOrderDetailRespDTO ticketOrderDetail) {
+        for (TicketOrderPassengerDetailRespDTO each : ticketOrderDetail.getPassengerDetails()) {
+            LambdaUpdateWrapper<SeatDO> updateWrapper = Wrappers.lambdaUpdate(SeatDO.class)
+                    .eq(SeatDO::getTrainId, ticketOrderDetail.getTrainId())
+                    .eq(SeatDO::getCarriageNumber, each.getCarriageNumber())
+                    .eq(SeatDO::getSeatNumber, each.getSeatNumber())
+                    .eq(SeatDO::getSeatType, each.getSeatType())
+                    .eq(SeatDO::getStartStation, ticketOrderDetail.getDeparture())
+                    .eq(SeatDO::getEndStation, ticketOrderDetail.getArrival());
+            SeatDO updateSeatDO = new SeatDO();
+            updateSeatDO.setSeatStatus(SeatStatusEnum.SOLD.getCode());
+            seatMapper.update(updateSeatDO, updateWrapper);
+        }
     }
 }

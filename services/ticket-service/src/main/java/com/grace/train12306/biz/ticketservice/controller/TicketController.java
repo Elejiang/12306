@@ -1,13 +1,11 @@
 package com.grace.train12306.biz.ticketservice.controller;
 
-import com.grace.train12306.biz.ticketservice.dto.req.CancelTicketOrderReqDTO;
-import com.grace.train12306.biz.ticketservice.dto.req.PurchaseTicketReqDTO;
-import com.grace.train12306.biz.ticketservice.dto.req.RefundTicketReqDTO;
-import com.grace.train12306.biz.ticketservice.dto.req.TicketPageQueryReqDTO;
+import com.grace.train12306.biz.ticketservice.dto.req.*;
 import com.grace.train12306.biz.ticketservice.dto.resp.RefundTicketRespDTO;
 import com.grace.train12306.biz.ticketservice.dto.resp.TicketPageQueryRespDTO;
 import com.grace.train12306.biz.ticketservice.dto.resp.TicketPurchaseRespDTO;
-import com.grace.train12306.biz.ticketservice.remote.dto.PayInfoRespDTO;
+import com.grace.train12306.biz.ticketservice.remote.dto.TicketOrderDetailRespDTO;
+import com.grace.train12306.biz.ticketservice.service.SeatService;
 import com.grace.train12306.biz.ticketservice.service.TicketService;
 import com.grace.train12306.framework.starter.convention.result.Result;
 import com.grace.train12306.framework.starter.idempotent.annotation.Idempotent;
@@ -25,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class TicketController {
 
     private final TicketService ticketService;
+    private final SeatService seatService;
 
     /**
      * 根据条件查询车票
@@ -67,5 +66,14 @@ public class TicketController {
     @PostMapping("/api/ticket-service/ticket/refund")
     public Result<RefundTicketRespDTO> commonTicketRefund(@RequestBody RefundTicketReqDTO requestParam) {
         return Results.success(ticketService.commonTicketRefund(requestParam));
+    }
+
+    /**
+     * 更改座位状态为已售
+     */
+    @PostMapping("/api/ticket-service/ticket/update")
+    public Result<Void> updateTicketStatusSold(@RequestBody TicketOrderDetailRespDTO requestParam) {
+        seatService.updateTicketStatusSold(requestParam);
+        return Results.success();
     }
 }

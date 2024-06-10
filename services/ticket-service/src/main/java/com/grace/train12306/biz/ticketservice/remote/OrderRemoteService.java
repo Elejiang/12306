@@ -19,7 +19,7 @@ import java.util.List;
  * 车票订单远程服务调用
  */
 @FeignClient(value = "train12306-order${unique-name:}-service", url = "${remote.order.url}")
-public interface TicketOrderRemoteService {
+public interface OrderRemoteService {
 
     /**
      * 跟据订单号查询车票订单

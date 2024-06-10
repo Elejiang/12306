@@ -61,3 +61,5 @@ management:
 remote:
   user:
     url: 127.0.0.1:9001
+  ticket:
+    url: 127.0.0.1:9002
